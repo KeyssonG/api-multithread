@@ -22,7 +22,7 @@ const Login = () => {
   return (
     <div className="container">
       <header className="header">
-        <h1>Sistema de Gestão</h1>
+        <h1>GESTAON</h1>
       </header>
 
       <div className="login-box">
@@ -76,8 +76,9 @@ const Login = () => {
       </div>
 
       <footer>
-        <p>Sistema de Gestão - Desenvolvido por Keysson</p>
+        <p>O Sistema de Gestão ideal para o seu négocio.</p>
         <p className="reserved">Todos os direitos reservados © 2025</p>
+        <p>Desenvolvimento por keysson</p>
       </footer>
     </div>
   );
