@@ -6,17 +6,34 @@ const Login = () => {
   const [senha, setSenha] = useState("");
   const [empresaId, setEmpresaId] = useState("");
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     const dadosLogin = {
       username,
-      senha,
-      empresaId: Number(empresaId),
+      password: senha,
+      idEmpresa: Number(empresaId),
     };
 
     console.log("Dados de login:", dadosLogin);
-    // Aqui virá a chamada para API futuramente
+    try{
+        const  response = await fetch('http://localhost:8087/login', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(dadosLogin),
+        });
+        if (!response.ok) {
+            throw new Error('Erro ao realizar o login');
+        }
+
+        const data = await response.json();
+        console.log('Resposta da API: ', data);
+    } catch (error) {
+        console.error('Falha na autenticação:', error);
+        alert('Não foi possível fazer o login. Verifique os seus dados.')
+    }
   };
 
   return (
