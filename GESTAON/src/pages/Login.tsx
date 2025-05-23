@@ -1,10 +1,16 @@
 import React, { useState } from "react";
-import "../styles/Login.css"; // Caminho para o seu CSS
+import "../styles/Login.css"; 
+import { useAuth } from "../contexts/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 const Login = () => {
   const [username, setUsername] = useState("");
   const [senha, setSenha] = useState("");
   const [empresaId, setEmpresaId] = useState("");
+
+
+  const { login } = useAuth();
+  const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -30,6 +36,15 @@ const Login = () => {
 
         const data = await response.json();
         console.log('Resposta da API: ', data);
+
+        const token = data.token;
+
+        if (token) {
+          login(token);
+          navigate('/dashboard')
+        } else {
+          alert('Token não encontrado na resposta da API.')
+        }
     } catch (error) {
         console.error('Falha na autenticação:', error);
         alert('Não foi possível fazer o login. Verifique os seus dados.')
