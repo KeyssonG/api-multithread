@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        DOCKERHUB_IMAGE = "keyssong/react-gestao"
+        DOCKERHUB_IMAGE = "keyssong/react-gestaon"
         DEPLOYMENT_FILE = "k8s\\frontend-gestaon.deployment.yaml"
         IMAGE_TAG = "latest"
     }
