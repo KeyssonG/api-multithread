@@ -7,7 +7,7 @@ spec:
     app: frontend-react
   ports:
     - protocol: TCP
-      port: 80
+      port: 5173
       targetPort: 5173
       nodePort: 31006
   type: NodePort    
