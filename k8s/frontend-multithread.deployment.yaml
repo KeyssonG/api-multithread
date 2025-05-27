@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: frontend-container
-          image: keyssong/react-gestaon:latest  
+          image: keyssong/react-multithread:latest  
           imagePullPolicy: Always              
           ports:
             - containerPort: 5173                

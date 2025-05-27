@@ -2,8 +2,8 @@ pipeline {
     agent any
 
     environment {
-        DOCKERHUB_IMAGE = "keyssong/react-gestaon"
-        DEPLOYMENT_FILE = "k8s\\frontend-gestaon.deployment.yaml"
+        DOCKERHUB_IMAGE = "keyssong/react-multithread"
+        DEPLOYMENT_FILE = "k8s\\frontend-multithread.deployment.yaml"
         IMAGE_TAG = "latest"
     }
 
@@ -28,7 +28,7 @@ pipeline {
         stage('Checkout do Código') {
             steps {
                 git credentialsId: 'Github',
-                    url: 'https://github.com/KeyssonG/front-GESTAON.git',
+                    url: 'https://github.com/KeyssonG/Front-MultiThread.git',
                     branch: 'master'
             }
         }
@@ -82,7 +82,7 @@ pipeline {
 
     post {
         success {
-            echo "Pipeline concluída com sucesso! A imagem 'keyssong/react-gestaon' foi atualizada e o ArgoCD aplicará as alterações automaticamente. 🚀"
+            echo "Pipeline concluída com sucesso! A imagem 'keyssong/react-multithread' foi atualizada e o ArgoCD aplicará as alterações automaticamente. 🚀"
         }
         failure {
             echo "Erro na pipeline. Confira os logs para mais detalhes."

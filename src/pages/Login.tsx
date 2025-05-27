@@ -54,7 +54,7 @@ const Login = () => {
   return (
     <div className="container">
       <header className="header">
-        <h1>GESTAON</h1>
+        <h1>MultiThread</h1>
       </header>
 
       <div className="login-box">

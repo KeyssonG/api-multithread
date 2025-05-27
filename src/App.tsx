@@ -3,6 +3,7 @@ import { Routes, Route } from 'react-router-dom';
 import Login from './pages/Login';
 import './styles/global.css';
 import CadastroEmpresa from './pages/cadastroEmpresa';
+import Dashboard from './pages/Dashboard';
 
 const App = () => {
   return (
@@ -11,8 +12,9 @@ const App = () => {
         <main style={{ padding: '20px' }}>
           <Routes>
             <Route path="/login" element={<Login />} />
-            <Route path="/cadastrar" element={<CadastroEmpresa
-             />} />
+            <Route path="/cadastrar" element={<CadastroEmpresa/>} />
+            <Route path='/dashboard' element={<Dashboard />}></Route>
+            <Route path='/' element={<Login />}></Route>
           </Routes>
         </main>
       </div>
