@@ -1,8 +1,7 @@
 import React, { useState } from "react";
-import "../styles/CadastroEmpresa.css"; // CSS próprio baseado no estilo do Login
+import styles from "../styles/CadastroEmpresa.module.css"; // Correção da importação
 import { useNavigate } from "react-router-dom";
 
-// Interface para os dados do formulário
 interface FormData {
   name: string;
   email: string;
@@ -50,7 +49,7 @@ const CadastroEmpresa: React.FC = () => {
       const data = await response.json();
       console.log("Cadastro realizado:", data);
       alert("Empresa cadastrada com sucesso!");
-      navigate("/login"); 
+      navigate("/login");
     } catch (error) {
       console.error("Falha no cadastro:", error);
       alert(error instanceof Error ? error.message : "Não foi possível realizar o cadastro.");
@@ -58,20 +57,20 @@ const CadastroEmpresa: React.FC = () => {
   };
 
   return (
-    <div className="container">
-      <header className="header">
+    <div className={styles.container}>
+      <header className={styles.header}>
         <h1>MultiThread</h1>
       </header>
 
-      <div className="register-box">
-        <div className="login-header">
+      <div className={styles["register-box"]}>
+        <div className={styles["login-header"]}>
           <header>Cadastrar Empresa</header>
         </div>
 
         <form onSubmit={handleSubmit}>
-          <div className="input-box">
+          <div className={styles["input-box"]}>
             <input
-              className="input-field"
+              className={styles["input-field"]}
               type="text"
               placeholder="Nome da Empresa"
               name="name"
@@ -81,9 +80,9 @@ const CadastroEmpresa: React.FC = () => {
             />
           </div>
 
-          <div className="input-box">
+          <div className={styles["input-box"]}>
             <input
-              className="input-field"
+              className={styles["input-field"]}
               type="email"
               placeholder="E-mail Corporativo"
               name="email"
@@ -93,9 +92,9 @@ const CadastroEmpresa: React.FC = () => {
             />
           </div>
 
-          <div className="input-box">
+          <div className={styles["input-box"]}>
             <input
-              className="input-field"
+              className={styles["input-field"]}
               type="text"
               placeholder="CNPJ"
               name="cnpj"
@@ -105,9 +104,9 @@ const CadastroEmpresa: React.FC = () => {
             />
           </div>
 
-          <div className="input-box">
+          <div className={styles["input-box"]}>
             <input
-              className="input-field"
+              className={styles["input-field"]}
               type="text"
               placeholder="Usuário"
               name="username"
@@ -117,9 +116,9 @@ const CadastroEmpresa: React.FC = () => {
             />
           </div>
 
-          <div className="input-box">
+          <div className={styles["input-box"]}>
             <input
-              className="input-field"
+              className={styles["input-field"]}
               type="password"
               placeholder="Senha"
               name="password"
@@ -129,13 +128,13 @@ const CadastroEmpresa: React.FC = () => {
             />
           </div>
 
-          <div className="input-submit">
-            <button className="submit-btn" type="submit">
-              <label>Cadastrar</label>
+          <div className={styles["input-submit"]}>
+            <button className={styles["submit-btn"]} type="submit">
+              <label className={styles["submit-label"]}>Cadastrar</label>
             </button>
           </div>
 
-          <div className="sign-up-link">
+          <div className={styles["sign-up-link"]}>
             <p>
               Já tem uma conta? <a href="/login">Entrar</a>
             </p>
@@ -143,9 +142,9 @@ const CadastroEmpresa: React.FC = () => {
         </form>
       </div>
 
-      <footer>
+      <footer className={styles.footer}>
         <p>O Sistema de Gestão ideal para o seu negócio.</p>
-        <p className="reserved">Todos os direitos reservados © 2025</p>
+        <p className={styles.reserved}>Todos os direitos reservados © 2025</p>
         <p>Desenvolvimento por keysson</p>
       </footer>
     </div>
