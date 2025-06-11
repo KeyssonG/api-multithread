@@ -42,8 +42,16 @@ const CadastroEmpresa: React.FC = () => {
       });
 
       if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || "Erro ao cadastrar empresa");
+        const text = await response.text();
+        let errorMessage = "Erro ao cadastrar empresa";
+        
+        try {
+          const json = JSON.parse(text);
+          errorMessage = json.message || errorMessage;
+        } catch {
+
+        }
+        throw new Error(errorMessage);
       }
 
       const data = await response.json();
