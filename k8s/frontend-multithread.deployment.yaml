@@ -1,19 +1,19 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: frontend-deployment
+  name: multithread-deployment
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: frontend-react
+      app: multithread-react
   template:
     metadata:
       labels:
-        app: frontend-react
+        app: multithread-react
     spec:
       containers:
-        - name: frontend-container
+        - name: multithread-container
           image: keyssong/react-multithread:latest  
           imagePullPolicy: Always              
           ports:
