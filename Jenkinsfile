@@ -3,7 +3,7 @@ pipeline {
 
     environment {
         DOCKERHUB_IMAGE = "keyssong/react-multithread"
-        DEPLOYMENT_FILE = "k8s\\frontend-multithread.deployment.yaml"
+        DEPLOYMENT_FILE = "k8s\\multithread.deployment.yaml"
         IMAGE_TAG = "latest"
     }
 
@@ -28,7 +28,7 @@ pipeline {
         stage('Checkout do Código') {
             steps {
                 git credentialsId: 'Github',
-                    url: 'https://github.com/KeyssonG/Front-MultiThread.git',
+                    url: 'https://github.com/KeyssonG/api-multithread.git',
                     branch: 'master'
             }
         }
