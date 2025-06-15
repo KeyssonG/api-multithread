@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import styles from "../styles/CadastroEmpresa.module.css"; // Correção da importação
 import { useNavigate } from "react-router-dom";
+import { IMaskInput } from "react-imask";
 
 interface FormData {
   name: string;
@@ -101,13 +102,15 @@ const CadastroEmpresa: React.FC = () => {
           </div>
 
           <div className={styles["input-box"]}>
-            <input
-              className={styles["input-field"]}
-              type="text"
-              placeholder="CNPJ"
+            <IMaskInput
+              mask="00.000.000/0000-00"
               name="cnpj"
               value={formData.cnpj}
-              onChange={handleChange}
+              onAccept={(value: string) =>
+                setFormData((prev) => ({ ...prev, cnpj: value.replace(/[^\d]/g, "") }))
+              }
+              className={styles["input-field"]}
+              placeholder="CNPJ"
               required
             />
           </div>
