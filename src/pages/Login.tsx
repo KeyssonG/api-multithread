@@ -1,44 +1,32 @@
 import React, { useState } from "react";
-import styles from "../styles/Login.module.css"; // Import com 'styles'
+import styles from "../styles/Login.module.css";
 import { useAuth } from "../contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
+import { loginRequest } from "../services/authService";
+import type { LoginData } from "../types/login";
 
 const Login = () => {
   const [username, setUsername] = useState("");
   const [senha, setSenha] = useState("");
   const [empresaId, setEmpresaId] = useState("");
+  const [carregando, setCarregando] = useState(false);
 
   const { login } = useAuth();
   const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setCarregando(true);
 
-    const dadosLogin = {
+    const dadosLogin: LoginData = {
       username,
       password: senha,
       idEmpresa: Number(empresaId),
     };
 
-    console.log("Dados de login:", dadosLogin);
     try {
-      const response = await fetch("http://localhost:8087/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(dadosLogin),
-      });
-
-      if (!response.ok) {
-        throw new Error("Erro ao realizar o login");
-      }
-
-      const data = await response.json();
-      console.log("Resposta da API: ", data);
-
+      const data = await loginRequest(dadosLogin);
       const token = data.token;
-
       if (token) {
         login(token);
         navigate("/dashboard");
@@ -48,6 +36,8 @@ const Login = () => {
     } catch (error) {
       console.error("Falha na autenticação:", error);
       alert("Não foi possível fazer o login. Verifique os seus dados.");
+    } finally {
+      setCarregando(false);
     }
   };
 
@@ -94,8 +84,8 @@ const Login = () => {
           </div>
 
           <div className={styles.inputSubmit}>
-            <button className={styles.submitBtn} type="submit">
-              <label>Entrar</label>
+            <button className={styles.submitBtn} type="submit" disabled={carregando}>
+              <label>{carregando ? "Carregando..." : "Entrar"}</label>
             </button>
           </div>
 
