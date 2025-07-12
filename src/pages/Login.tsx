@@ -2,40 +2,63 @@ import React, { useState } from "react";
 import styles from "../styles/Login.module.css";
 import { useAuth } from "../contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
-import { loginRequest } from "../services/authService";
-import type { LoginData } from "../types/login";
+import { authService } from "../services/authService";
+import AuthHeader from "../components/AuthHeader";
+import Footer from "../components/Footer";
+import { ROUTES } from "../constants/config";
+import type { LoginFormData } from "../types/common";
 
 const Login = () => {
-  const [username, setUsername] = useState("");
-  const [senha, setSenha] = useState("");
-  const [empresaId, setEmpresaId] = useState("");
+  const [formData, setFormData] = useState<LoginFormData>({
+    username: "",
+    password: "",
+    empresaId: "",
+  });
   const [carregando, setCarregando] = useState(false);
 
   const { login } = useAuth();
   const navigate = useNavigate();
 
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setCarregando(true);
 
-    const dadosLogin: LoginData = {
-      username,
-      password: senha,
-      idEmpresa: Number(empresaId),
-    };
-
     try {
-      const data = await loginRequest(dadosLogin);
-      const token = data.token;
+      const data = await authService.login(
+        formData.username, 
+        formData.password, 
+        formData.empresaId
+      );
+      const token = data.data.token;
       if (token) {
-        login(token);
-        navigate("/dashboard");
+        login(token, formData.username);
+        navigate(ROUTES.DASHBOARD);
       } else {
         alert("Token não encontrado na resposta da API.");
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error("Falha na autenticação:", error);
-      alert("Não foi possível fazer o login. Verifique os seus dados.");
+      
+      // Melhor tratamento de erro
+      let errorMessage = "Não foi possível fazer o login. Verifique os seus dados.";
+      
+      if (error.response) {
+        // Erro da API
+        errorMessage = error.response.data?.message || errorMessage;
+      } else if (error.request) {
+        // Erro de rede
+        errorMessage = "Erro de conexão. Verifique sua internet.";
+      }
+      
+      alert(errorMessage);
     } finally {
       setCarregando(false);
     }
@@ -43,9 +66,7 @@ const Login = () => {
 
   return (
     <div className={styles.container}>
-      <header className={styles.header}>
-        <h1>MultiThread</h1>
-      </header>
+      <AuthHeader />
 
       <div className={styles.loginBox}>
         <div className={styles.loginHeader}>
@@ -58,8 +79,10 @@ const Login = () => {
               className={styles.inputField}
               type="text"
               placeholder="Usuário"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
+              name="username"
+              value={formData.username}
+              onChange={handleChange}
+              required
             />
           </div>
 
@@ -68,8 +91,10 @@ const Login = () => {
               className={styles.inputField}
               type="password"
               placeholder="Senha"
-              value={senha}
-              onChange={(e) => setSenha(e.target.value)}
+              name="password"
+              value={formData.password}
+              onChange={handleChange}
+              required
             />
           </div>
 
@@ -78,8 +103,10 @@ const Login = () => {
               className={styles.inputField}
               type="number"
               placeholder="ID da Empresa"
-              value={empresaId}
-              onChange={(e) => setEmpresaId(e.target.value)}
+              name="empresaId"
+              value={formData.empresaId}
+              onChange={handleChange}
+              required
             />
           </div>
 
@@ -91,17 +118,13 @@ const Login = () => {
 
           <div className={styles.signUpLink}>
             <p>
-              Não tem uma conta? <a href="/cadastrar">Cadastre-se</a>
+              Não tem uma conta? <a href={ROUTES.REGISTER}>Cadastre-se</a>
             </p>
           </div>
         </form>
       </div>
 
-      <footer className={styles.footer}>
-        <p>O Sistema de Gestão ideal para o seu négocio.</p>
-        <p className={styles.reserved}>Todos os direitos reservados © 2025</p>
-        <p>Desenvolvimento por keysson</p>
-      </footer>
+      <Footer />
     </div>
   );
 };

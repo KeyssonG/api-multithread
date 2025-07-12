@@ -1,0 +1,38 @@
+.sharedContainer {
+  position: fixed;
+  left: 0;
+  width: 100%;
+  background-color: #000;
+  color: #fff;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 20px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+  transition: background-color 0.3s;
+}
+
+.sharedText {
+  color: white;
+  font-size: 16px;
+}
+
+.sharedButton {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+@media (max-width: 768px) {
+  .sharedContainer {
+    padding: 0 15px;
+  }
+
+  .sharedText,
+  .sharedButton {
+    font-size: 14px;
+  }
+}

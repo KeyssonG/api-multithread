@@ -1,15 +1,11 @@
 import React, { useState } from "react";
-import styles from "../styles/CadastroEmpresa.module.css"; // Correção da importação
+import styles from "../styles/CadastroEmpresa.module.css";
 import { useNavigate } from "react-router-dom";
 import { IMaskInput } from "react-imask";
-
-interface FormData {
-  name: string;
-  email: string;
-  cnpj: string;
-  username: string;
-  password: string;
-}
+import AuthHeader from "../components/AuthHeader";
+import Footer from "../components/Footer";
+import { API_CONFIG, ROUTES } from "../constants/config";
+import type { FormData } from "../types/common";
 
 const CadastroEmpresa: React.FC = () => {
   const [formData, setFormData] = useState<FormData>({
@@ -34,7 +30,7 @@ const CadastroEmpresa: React.FC = () => {
     e.preventDefault();
 
     try {
-      const response = await fetch("http://localhost:8085/register", {
+      const response = await fetch(`${API_CONFIG.BASE_URL}${API_CONFIG.ENDPOINTS.REGISTER}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -50,7 +46,7 @@ const CadastroEmpresa: React.FC = () => {
           const json = JSON.parse(text);
           errorMessage = json.message || errorMessage;
         } catch {
-
+          // Se não conseguir fazer parse do JSON, usa a mensagem padrão
         }
         throw new Error(errorMessage);
       }
@@ -58,7 +54,7 @@ const CadastroEmpresa: React.FC = () => {
       const data = await response.json();
       console.log("Cadastro realizado:", data);
       alert("Empresa cadastrada com sucesso!");
-      navigate("/login");
+      navigate(ROUTES.LOGIN);
     } catch (error) {
       console.error("Falha no cadastro:", error);
       alert(error instanceof Error ? error.message : "Não foi possível realizar o cadastro.");
@@ -67,9 +63,7 @@ const CadastroEmpresa: React.FC = () => {
 
   return (
     <div className={styles.container}>
-      <header className={styles.header}>
-        <h1>MultiThread</h1>
-      </header>
+      <AuthHeader />
 
       <div className={styles["register-box"]}>
         <div className={styles["login-header"]}>
@@ -147,17 +141,13 @@ const CadastroEmpresa: React.FC = () => {
 
           <div className={styles["sign-up-link"]}>
             <p>
-              Já tem uma conta? <a href="/login">Entrar</a>
+              Já tem uma conta? <a href={ROUTES.LOGIN}>Entrar</a>
             </p>
           </div>
         </form>
       </div>
 
-      <footer className={styles.footer}>
-        <p>O Sistema de Gestão ideal para o seu negócio.</p>
-        <p className={styles.reserved}>Todos os direitos reservados © 2025</p>
-        <p>Desenvolvimento por keysson</p>
-      </footer>
+      <Footer />
     </div>
   );
 };
