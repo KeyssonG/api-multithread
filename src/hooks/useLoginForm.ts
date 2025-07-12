@@ -18,6 +18,7 @@ type LoginHookReturn = {
 export const useLoginForm = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [empresaId, setEmpresaId] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const { login } = useAuth();
@@ -29,7 +30,7 @@ export const useLoginForm = () => {
     setError(null);
 
     try {
-      const { data }: { data: LoginResponse } = await authService.login(username, password);
+      const { data }: { data: LoginResponse } = await authService.login(username, password, empresaId);
       
       if (!data.token) {
         throw new Error('Token não encontrado na resposta da API');
@@ -64,11 +65,13 @@ export const useLoginForm = () => {
   return {
     formState: {
       username,
-      password
+      password,
+      empresaId
     },
     formActions: {
       setUsername,
-      setPassword
+      setPassword,
+      setEmpresaId
     },
     apiState: {
       isLoading,
