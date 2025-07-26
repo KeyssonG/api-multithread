@@ -16,3 +16,5 @@ export const departmentService = {
     });
   },
 };
+
+export default departmentService;

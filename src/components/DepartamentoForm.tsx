@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { departmentService } from "../services/departmentService";
+import departmentService from "../services/departmentService";
 import { useAuth } from "../contexts/AuthContext";
 import styles from "../styles/FuncionarioForm.module.css";
 import type { DepartmentData } from "../types/Types";
