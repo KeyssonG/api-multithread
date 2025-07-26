@@ -1,8 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { IMaskInput } from 'react-imask';
 import { funcionarioService } from '../services/funcionarioService';
+import DepartmentService from '../services/DepartmentService';
 import { useAuth } from '../contexts/AuthContext';
 import type { FuncionarioFormData } from '../types/funcionario';
+import type { DepartmentData } from '../types/Types';
 import styles from '../styles/FuncionarioForm.module.css';
 
 interface FuncionarioFormProps {
@@ -26,6 +28,26 @@ const FuncionarioForm: React.FC<FuncionarioFormProps> = ({ onSuccess, onError })
 
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [departamentos, setDepartamentos] = useState<DepartmentData[]>([]);
+  const [loadingDepartamentos, setLoadingDepartamentos] = useState(false);
+
+  useEffect(() => {
+    const carregarDepartamentos = async () => {
+      setLoadingDepartamentos(true);
+      try {
+        if (token) {
+          const departamentosList = await DepartmentService.listarDepartamentos(token);
+          setDepartamentos(departamentosList);
+        }
+      } catch (error) {
+        console.error('Erro ao carregar departamentos:', error);
+      } finally {
+        setLoadingDepartamentos(false);
+      }
+    };
+
+    carregarDepartamentos();
+  }, [token]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -245,15 +267,23 @@ const FuncionarioForm: React.FC<FuncionarioFormProps> = ({ onSuccess, onError })
 
         <div className={styles.formGroup}>
           <label htmlFor="departamento">Departamento *</label>
-          <input
-            type="text"
+          <select
             id="departamento"
             name="departamento"
             value={formData.departamento}
             onChange={handleChange}
             className={errors.departamento ? styles.inputError : styles.input}
-            placeholder="Recursos Humanos"
-          />
+            disabled={loadingDepartamentos}
+          >
+            <option value="">
+              {loadingDepartamentos ? 'Carregando departamentos...' : 'Selecione um departamento'}
+            </option>
+            {departamentos.map((dept, index) => (
+              <option key={index} value={dept.nomeDepartamento}>
+                {dept.nomeDepartamento}
+              </option>
+            ))}
+          </select>
           {errors.departamento && <span className={styles.errorMessage}>{errors.departamento}</span>}
         </div>
 

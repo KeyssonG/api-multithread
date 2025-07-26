@@ -15,6 +15,15 @@ export const DepartmentService = {
       },
     });
   },
+
+  async listarDepartamentos(token: string): Promise<DepartmentData[]> {
+    const response = await axios.get(BASE_URL, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return response.data;
+  },
 };
 
 export default DepartmentService;
