@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 import FuncionarioForm from "../components/FuncionarioForm";
+import DepartamentoForm from "../components/DepartamentoForm";
 import styles from "../styles/Gestao.module.css";
 
 const Gestao = () => {
@@ -71,28 +72,18 @@ const Gestao = () => {
                   <p>Gerencie o cadastro de funcionários da empresa</p>
                 </div>
 
-                <div className={styles.featureCard}>
+                <div className={styles.featureCard} onClick={() => handleSectionClick('departamentos')}>
                   <div className={styles.featureIcon}>
                     <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                      <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                      <path d="M2 17L12 22L22 17" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                      <path d="M2 12L12 17L22 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                      <rect x="3" y="3" width="18" height="18" rx="2" ry="2" stroke="currentColor" strokeWidth="2"/>
+                      <path d="M9 9h6v6H9z" stroke="currentColor" strokeWidth="2"/>
+                      <path d="M3 9h18" stroke="currentColor" strokeWidth="2"/>
+                      <path d="M9 3v18" stroke="currentColor" strokeWidth="2"/>
+                      <path d="M15 3v18" stroke="currentColor" strokeWidth="2"/>
                     </svg>
                   </div>
-                  <h3>Funcionalidade 2</h3>
-                  <p>Descrição da funcionalidade</p>
-                </div>
-
-                <div className={styles.featureCard}>
-                  <div className={styles.featureIcon}>
-                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                      <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                      <path d="M2 17L12 22L22 17" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                      <path d="M2 12L12 17L22 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                    </svg>
-                  </div>
-                  <h3>Funcionalidade 3</h3>
-                  <p>Descrição da funcionalidade</p>
+                  <h3>Cadastrar novo departamento</h3>
+                  <p>Gestão de Departamentos</p>
                 </div>
               </div>
             </>
@@ -120,6 +111,30 @@ const Gestao = () => {
                 />
               </div>
             </div>
+          ) : activeSection === 'departamentos' ? (
+            <div className={styles.sectionContent}>
+              <div className={styles.sectionHeader}>
+                <button className={styles.backToMainButton} onClick={handleBackToMain}>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M19 12H5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                    <path d="M12 19L5 12L12 5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                  Voltar
+                </button>
+                <h2 className={styles.sectionTitle}>Cadastro de Departamentos</h2>
+              </div>
+              
+              <div className={styles.formContainer}>
+                <p className={styles.formDescription}>
+                  Preencha os dados do departamento para realizar o cadastro.
+                </p>
+                
+                <DepartamentoForm 
+                  onSuccess={handleFormSuccess}
+                  onError={handleFormError}
+                />
+              </div>
+            </div>
           ) : null}
         </div>
       </div>
@@ -129,4 +144,4 @@ const Gestao = () => {
   );
 };
 
-export default Gestao; 
+export default Gestao;
