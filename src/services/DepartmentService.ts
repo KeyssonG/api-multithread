@@ -3,7 +3,7 @@ import type { DepartmentData } from "../types/Types";
 
 const BASE_URL = "http://localhost:8086/administracao/departamento";
 
-export const departmentService = {
+export const DepartmentService = {
   async cadastrarDepartamento(
     data: DepartmentData,
     token: string
@@ -17,4 +17,4 @@ export const departmentService = {
   },
 };
 
-export default departmentService;
+export default DepartmentService;

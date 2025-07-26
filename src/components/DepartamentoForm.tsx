@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import departmentService from "../services/departmentService";
+import DepartmentService from "../services/departmentService";
 import { useAuth } from "../contexts/AuthContext";
 import styles from "../styles/FuncionarioForm.module.css";
 import type { DepartmentData } from "../types/Types";
@@ -52,7 +52,7 @@ const DepartamentoForm: React.FC<Props> = ({ onSuccess, onError }) => {
 
     const departamentoData: DepartmentData = { nomeDepartamento: nome.trim() };
     try {
-      await departmentService.cadastrarDepartamento(departamentoData, token!);
+      await DepartmentService.cadastrarDepartamento(departamentoData, token!);
       setNome('');
       setErrors({});
       onSuccess();
