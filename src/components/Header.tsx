@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styles from '../styles/Header.module.css';
 import { useAuth } from '../contexts/AuthContext';
@@ -18,13 +18,11 @@ const Header = () => {
   }
 
   const { name, logout, isAuthenticated } = authContext;
-  const [showDropdown, setShowDropdown] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
   const handleLogout = () => {
     logout();
     navigate('/login');
-    setShowDropdown(false);
   };
 
   const handleLogoClick = () => {
@@ -38,7 +36,6 @@ const Header = () => {
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
       if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
-        setShowDropdown(false);
       }
     };
     document.addEventListener('mousedown', handleClickOutside);
@@ -52,23 +49,6 @@ const Header = () => {
       <h1 className={styles.headerTitle} onClick={handleLogoClick} style={{ cursor: 'pointer' }}>
         MultiThread
       </h1>
-      
-      {isAuthenticated && (
-        <div className={styles.menuContainer} ref={menuRef}>
-          <button
-            className={styles.dropdownButton}
-            onClick={() => setShowDropdown((prev) => !prev)}
-          >
-            Consultas ▼
-          </button>
-          {showDropdown && (
-            <ul className={styles.dropdownMenu}>
-              {/* Nenhum item no momento */}
-            </ul>
-          )}
-        </div>
-      )}
-
       {isAuthenticated ? (
         <div className={styles.userActions}>
           <span className={styles.userName}>
