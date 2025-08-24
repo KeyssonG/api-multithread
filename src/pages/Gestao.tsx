@@ -290,6 +290,7 @@ const Gestao = () => {
                             </div>
                             <div className={styles.departamentoInfo}>
                               <h4 className={styles.departamentoNome}>{departamento.nomeDepartamento}</h4>
+                              <span className={styles.departamentoId}>ID: {departamento.idDepartamento}</span>
                             </div>
                           </div>
                         ))}
