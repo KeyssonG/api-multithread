@@ -70,6 +70,22 @@ const Gestao = () => {
     console.error('Erro no formulário:', message);
   };
 
+  const [menuAberto, setMenuAberto] = useState<number | null>(null);
+  const [deletando, setDeletando] = useState<number | null>(null);
+
+  const deletarDepartamento = async (id: number) => {
+    setDeletando(id);
+    try {
+      await DepartmentService.deletarDepartamento({idDepartamento: id}, token!);
+      carregarDepartamentos();
+    } catch (error) {
+      alert('Erro ao deletar departamento');
+    } finally {
+      setDeletando(null);
+      setMenuAberto(null);
+    }
+  }
+
   return (
     <div className={styles.container}>
       <Header />
@@ -291,6 +307,35 @@ const Gestao = () => {
                             <div className={styles.departamentoInfo}>
                               <h4 className={styles.departamentoNome}>{departamento.nomeDepartamento}</h4>
                               <span className={styles.departamentoId}>ID: {departamento.idDepartamento}</span>
+                            </div>
+                            <div className={styles.menuContainer}>
+                              <button
+                                className={styles.menuButton}
+                                onClick={() =>
+                                  setMenuAberto(
+                                    menuAberto === departamento.idDepartamento
+                                      ? null
+                                      : departamento.idDepartamento ?? null
+                                  )
+                                }
+                              >
+                                &#x22EE;
+                              </button>
+                              {menuAberto === departamento.idDepartamento && (
+                                <div className={styles.menuDropdown}>
+                                  <button
+                                    className={styles.deleteButton}
+                                    onClick={() => {
+                                      if (typeof departamento.idDepartamento === 'number') {
+                                        deletarDepartamento(departamento.idDepartamento);
+                                      }
+                                    }}
+                                    disabled={deletando === departamento.idDepartamento}
+                                  >
+                                    {deletando === departamento.idDepartamento ? 'Deletando...' : 'Deletar'}
+                                  </button>
+                                </div>
+                              )}
                             </div>
                           </div>
                         ))}

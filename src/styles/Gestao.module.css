@@ -203,6 +203,60 @@
   margin-bottom: 10px;
 }
 
+.menuContainer {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  height: 100%;
+}
+
+.menuButton {
+  background: none;
+  border: none;
+  font-size: 22px;
+  color: #555;
+  cursor: pointer;
+  padding: 0 8px;
+  border-radius: 50%;
+  transition: background 0.2s;
+}
+.menuButton:hover {
+  background: #e3e3e3;
+}
+
+.menuDropdown {
+  position: absolute;
+  top: 44px; /* antes era 28px, agora mais abaixo */
+  right: 0;
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+  z-index: 10;
+  min-width: 120px;
+  padding: 8px 0;
+}
+
+.deleteButton {
+  background: #e53935;
+  color: #fff;
+  border: none;
+  padding: 8px 16px;
+  width: 100%;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 15px;
+  transition: background 0.2s;
+}
+.deleteButton:hover {
+  background: #b71c1c;
+}
+.deleteButton:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+}
+
 @media (max-width: 768px) {
   .content {
     padding: 80px 20px 20px 20px;
@@ -244,6 +298,39 @@
 
   .formContainer {
     padding: 25px;
+  }
+
+  .subMenuGrid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+    padding: 20px;
+  }
+  
+  .subMenuCard {
+    padding: 30px 20px;
+  }
+  
+  .subMenuIcon {
+    width: 60px;
+    height: 60px;
+  }
+  
+  .departamentosContainer {
+    padding: 20px;
+  }
+  
+  .listHeader {
+    flex-direction: column;
+    gap: 15px;
+    align-items: stretch;
+  }
+  
+  .departamentosGrid {
+    grid-template-columns: 1fr;
+  }
+  
+  .departamentoCard {
+    padding: 15px;
   }
 }
 
@@ -560,4 +647,4 @@
   .departamentoCard {
     padding: 15px;
   }
-} 
+}
