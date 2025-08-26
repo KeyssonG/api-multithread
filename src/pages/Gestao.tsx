@@ -230,120 +230,114 @@ const Gestao = () => {
                 </div>
               </div>
             ) : subSection === 'consultar' ? (
-              // Lista de departamentos
-              <div className={styles.sectionContent}>
-                <div className={styles.sectionHeader}>
-                  <button className={styles.backToMainButton} onClick={handleBackToDepartamentos}>
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                      <path d="M19 12H5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                      <path d="M12 19L5 12L12 5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                    </svg>
-                    Voltar
-                  </button>
-                  <h2 className={styles.sectionTitle}>Departamentos Cadastrados</h2>
-                </div>
-                
-                <div className={styles.departamentosContainer}>
-                  {loadingDepartamentos ? (
-                    <div className={styles.loadingContainer}>
-                      <div className={styles.spinner}></div>
-                      <p>Carregando departamentos...</p>
+              // Lista de departamentos sem container/fundo branco e sem envoltório extra
+              <>
+                <button style={{ marginBottom: 24 }} className={styles.backToMainButton} onClick={handleBackToDepartamentos}>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M19 12H5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                    <path d="M12 19L5 12L12 5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                  Voltar
+                </button>
+                <h2 className={styles.sectionTitle} style={{ marginBottom: 16 }}>Departamentos Cadastrados</h2>
+                {loadingDepartamentos ? (
+                  <div className={styles.loadingContainer}>
+                    <div className={styles.spinner}></div>
+                    <p>Carregando departamentos...</p>
+                  </div>
+                ) : errorDepartamentos ? (
+                  <div className={styles.errorContainer}>
+                    <p className={styles.errorMessage}>{errorDepartamentos}</p>
+                    <button className={styles.retryButton} onClick={carregarDepartamentos}>
+                      Tentar Novamente
+                    </button>
+                  </div>
+                ) : departamentos.length === 0 ? (
+                  <div className={styles.emptyContainer}>
+                    <div className={styles.emptyIcon}>
+                      <svg width="64" height="64" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <rect x="3" y="3" width="18" height="18" rx="2" ry="2" stroke="currentColor" strokeWidth="2"/>
+                        <path d="M9 9h6v6H9z" stroke="currentColor" strokeWidth="2"/>
+                        <path d="M3 9h18" stroke="currentColor" strokeWidth="2"/>
+                        <path d="M9 3v18" stroke="currentColor" strokeWidth="2"/>
+                        <path d="M15 3v18" stroke="currentColor" strokeWidth="2"/>
+                      </svg>
                     </div>
-                  ) : errorDepartamentos ? (
-                    <div className={styles.errorContainer}>
-                      <p className={styles.errorMessage}>{errorDepartamentos}</p>
-                      <button className={styles.retryButton} onClick={carregarDepartamentos}>
-                        Tentar Novamente
-                      </button>
-                    </div>
-                  ) : departamentos.length === 0 ? (
-                    <div className={styles.emptyContainer}>
-                      <div className={styles.emptyIcon}>
-                        <svg width="64" height="64" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                          <rect x="3" y="3" width="18" height="18" rx="2" ry="2" stroke="currentColor" strokeWidth="2"/>
-                          <path d="M9 9h6v6H9z" stroke="currentColor" strokeWidth="2"/>
-                          <path d="M3 9h18" stroke="currentColor" strokeWidth="2"/>
-                          <path d="M9 3v18" stroke="currentColor" strokeWidth="2"/>
-                          <path d="M15 3v18" stroke="currentColor" strokeWidth="2"/>
-                        </svg>
-                      </div>
-                      <h3>Nenhum departamento encontrado</h3>
-                      <p>Ainda não há departamentos cadastrados no sistema.</p>
+                    <h3>Nenhum departamento encontrado</h3>
+                    <p>Ainda não há departamentos cadastrados no sistema.</p>
+                    <button 
+                      className={styles.addButton}
+                      onClick={() => setSubSection('cadastrar')}
+                    >
+                      Cadastrar Primeiro Departamento
+                    </button>
+                  </div>
+                ) : (
+                  <>
+                    <div className={styles.listHeader}>
+                      <h3>Total: {departamentos.length} departamento(s)</h3>
                       <button 
-                        className={styles.addButton}
+                        className={styles.addNewButton}
                         onClick={() => setSubSection('cadastrar')}
                       >
-                        Cadastrar Primeiro Departamento
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <path d="M12 5v14" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                          <path d="M5 12h14" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                        </svg>
+                        Novo Departamento
                       </button>
                     </div>
-                  ) : (
-                    <div className={styles.departamentosList}>
-                      <div className={styles.listHeader}>
-                        <h3>Total: {departamentos.length} departamento(s)</h3>
-                        <button 
-                          className={styles.addNewButton}
-                          onClick={() => setSubSection('cadastrar')}
-                        >
-                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M12 5v14" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                            <path d="M5 12h14" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                          </svg>
-                          Novo Departamento
-                        </button>
-                      </div>
-                      
-                      <div className={styles.departamentosGrid}>
-                        {departamentos.map((departamento, index) => (
-                          <div key={index} className={styles.departamentoCard}>
-                            <div className={styles.departamentoIcon}>
-                              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <rect x="3" y="3" width="18" height="18" rx="2" ry="2" stroke="currentColor" strokeWidth="2"/>
-                                <path d="M9 9h6v6H9z" stroke="currentColor" strokeWidth="2"/>
-                                <path d="M3 9h18" stroke="currentColor" strokeWidth="2"/>
-                                <path d="M9 3v18" stroke="currentColor" strokeWidth="2"/>
-                                <path d="M15 3v18" stroke="currentColor" strokeWidth="2"/>
-                              </svg>
-                            </div>
-                            <div className={styles.departamentoInfo}>
-                              <h4 className={styles.departamentoNome}>{departamento.nomeDepartamento}</h4>
-                              <span className={styles.departamentoId}>ID: {departamento.idDepartamento}</span>
-                            </div>
-                            <div className={styles.menuContainer}>
-                              <button
-                                className={styles.menuButton}
-                                onClick={() =>
-                                  setMenuAberto(
-                                    menuAberto === departamento.idDepartamento
-                                      ? null
-                                      : departamento.idDepartamento ?? null
-                                  )
-                                }
-                              >
-                                &#x22EE;
-                              </button>
-                              {menuAberto === departamento.idDepartamento && (
-                                <div className={styles.menuDropdown}>
-                                  <button
-                                    className={styles.deleteButton}
-                                    onClick={() => {
-                                      if (typeof departamento.idDepartamento === 'number') {
-                                        deletarDepartamento(departamento.idDepartamento);
-                                      }
-                                    }}
-                                    disabled={deletando === departamento.idDepartamento}
-                                  >
-                                    {deletando === departamento.idDepartamento ? 'Deletando...' : 'Deletar'}
-                                  </button>
-                                </div>
-                              )}
-                            </div>
+                    <div className={styles.departamentosGrid}>
+                      {departamentos.map((departamento, index) => (
+                        <div key={index} className={styles.departamentoCard}>
+                          <div className={styles.departamentoIcon}>
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                              <rect x="3" y="3" width="18" height="18" rx="2" ry="2" stroke="currentColor" strokeWidth="2"/>
+                              <path d="M9 9h6v6H9z" stroke="currentColor" strokeWidth="2"/>
+                              <path d="M3 9h18" stroke="currentColor" strokeWidth="2"/>
+                              <path d="M9 3v18" stroke="currentColor" strokeWidth="2"/>
+                              <path d="M15 3v18" stroke="currentColor" strokeWidth="2"/>
+                            </svg>
                           </div>
-                        ))}
-                      </div>
+                          <div className={styles.departamentoInfo}>
+                            <h4 className={styles.departamentoNome}>{departamento.nomeDepartamento}</h4>
+                            <span className={styles.departamentoId}>ID: {departamento.idDepartamento}</span>
+                          </div>
+                          <div className={styles.menuContainer}>
+                            <button
+                              className={styles.menuButton}
+                              onClick={() =>
+                                setMenuAberto(
+                                  menuAberto === departamento.idDepartamento
+                                    ? null
+                                    : departamento.idDepartamento ?? null
+                                )
+                              }
+                            >
+                              &#x22EE;
+                            </button>
+                            {menuAberto === departamento.idDepartamento && (
+                              <div className={styles.menuDropdown}>
+                                <button
+                                  className={styles.deleteButton}
+                                  onClick={() => {
+                                    if (typeof departamento.idDepartamento === 'number') {
+                                      deletarDepartamento(departamento.idDepartamento);
+                                    }
+                                  }}
+                                  disabled={deletando === departamento.idDepartamento}
+                                >
+                                  {deletando === departamento.idDepartamento ? 'Deletando...' : 'Deletar'}
+                                </button>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      ))}
                     </div>
-                  )}
-                </div>
-              </div>
+                  </>
+                )}
+              </>
             ) : null
           ) : null}
         </div>
