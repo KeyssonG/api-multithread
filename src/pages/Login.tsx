@@ -123,7 +123,6 @@ const Login = () => {
           </div>
         </form>
       </div>
-
       <Footer />
     </div>
   );

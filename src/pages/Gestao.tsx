@@ -341,8 +341,8 @@ const Gestao = () => {
             ) : null
           ) : null}
         </div>
-        <Footer />
       </div>
+      <Footer />
     </div>
   );
 };
