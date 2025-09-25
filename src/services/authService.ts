@@ -11,10 +11,16 @@ type LoginResponse = {
 };
 
 export const authService = {
-  async login(username: string, password: string): Promise<{ data: LoginResponse }> {
-    const response = await authApi.post<LoginResponse>('/login-multithread', { username, password });
-    localStorage.setItem('token', response.data.token);
-    return response;
+  async login(username: string, password: string, empresaId: string): Promise<{ data: LoginResponse }> {
+    const response = await authApi.post<LoginResponse>('/login', {
+      username,
+      password,
+      idEmpresa: empresaId,
+    });
+    if (response.data.token) {
+      localStorage.setItem('token', response.data.token);
+    }
+    return { data: response.data };
   },
 
   async changePassword(token: string, newPassword: string) {
