@@ -34,8 +34,7 @@ const Login = () => {
     try {
       const data = await authService.login(
         formData.username, 
-        formData.password, 
-        formData.empresaId
+        formData.password
       );
       const token = data.data.token;
       if (token) {

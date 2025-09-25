@@ -1,11 +1,10 @@
 import React, { useState } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import { authService } from '../services/authService';
 import styles from '../styles/Login.module.css';
 
 const ResetSenhaConfirmar: React.FC = () => {
   const location = useLocation();
-  const navigate = useNavigate();
   const [showInfo, setShowInfo] = useState(true);
   const infoMsg = location.state?.info || '';
   const [token, setToken] = useState('');
