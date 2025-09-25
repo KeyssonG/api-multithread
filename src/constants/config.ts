@@ -27,6 +27,8 @@ export const ROUTES = {
   DASHBOARD: '/dashboard',
   REGISTER: '/cadastrar',
   GESTAO: '/gestao',
+  RESET_SENHA_SOLICITAR: '/reset-senha/solicitar',
+  RESET_SENHA_CONFIRMAR: '/reset-senha/confirmar',
 } as const;
 
 // Configurações de validação

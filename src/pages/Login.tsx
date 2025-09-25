@@ -121,6 +121,11 @@ const Login = () => {
               Não tem uma conta? <a href={ROUTES.REGISTER}>Cadastre-se</a>
             </p>
           </div>
+          <div style={{ textAlign: 'right', marginTop: 8 }}>
+            <a href="/reset-senha/solicitar" style={{ fontSize: '0.95em', color: '#007bff', textDecoration: 'underline', cursor: 'pointer' }}>
+              Esqueceu a senha?
+            </a>
+          </div>
         </form>
       </div>
       <Footer />
