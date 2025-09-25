@@ -30,7 +30,7 @@ export const useLoginForm = () => {
     setError(null);
 
     try {
-      const { data }: { data: LoginResponse } = await authService.login(username, password, empresaId);
+      const { data }: { data: LoginResponse } = await authService.login(username, password);
       
       if (!data.token) {
         throw new Error('Token não encontrado na resposta da API');
