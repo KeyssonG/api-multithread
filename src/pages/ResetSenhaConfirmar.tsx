@@ -69,6 +69,17 @@ const ResetSenhaConfirmar: React.FC = () => {
           {carregando ? 'Processando...' : 'Alterar Senha'}
         </button>
       </form>
+      {mensagem && (
+        <div style={{ marginTop: 16 }}>
+          <button
+            className={styles.submitBtn}
+            onClick={() => window.location.href = '/login'}
+            style={{ backgroundColor: '#007bff', color: '#fff' }}
+          >
+            Voltar para Login
+          </button>
+        </div>
+      )}
     </div>
   );
 };
