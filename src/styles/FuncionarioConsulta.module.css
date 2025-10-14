@@ -104,6 +104,245 @@
   box-shadow: 0 4px 12px rgba(0, 123, 255, 0.15);
 }
 
+.resultBlock.expanded {
+  background: white;
+  border-color: #007bff;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 123, 255, 0.15);
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 25px;
+}
+
+.expandedContent {
+  width: 100%;
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid #e9ecef;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 15px;
+}
+
+.expandedField {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.expandedFieldLabel {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #6c757d;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-family: 'Poppins', sans-serif;
+}
+
+.expandedFieldValue {
+  font-size: 0.9rem;
+  color: #2c3e50;
+  font-weight: 500;
+  font-family: 'Poppins', sans-serif;
+}
+
+.expandIcon {
+  margin-left: auto;
+  transition: transform 0.3s ease;
+  color: #6c757d;
+  cursor: pointer;
+}
+
+.expandIcon.expanded {
+  transform: rotate(180deg);
+}
+
+.resultBlockHeader {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  gap: 15px;
+}
+
+/* Modal flutuante */
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  animation: fadeIn 0.3s ease-out;
+}
+
+.modalContent {
+  background: white;
+  border-radius: 20px;
+  padding: 30px;
+  max-width: 600px;
+  width: 90%;
+  max-height: 80vh;
+  overflow-y: auto;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  animation: slideIn 0.3s ease-out;
+  position: relative;
+}
+
+.modalHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 25px;
+  padding-bottom: 20px;
+  border-bottom: 2px solid #e9ecef;
+}
+
+.modalTitle {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin: 0;
+}
+
+.modalTitleIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 50px;
+  height: 50px;
+  background: linear-gradient(135deg, #007bff, #0056b3);
+  border-radius: 12px;
+  color: white;
+}
+
+.modalTitleText {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #2c3e50;
+  font-family: 'Poppins', sans-serif;
+  margin: 0;
+}
+
+.closeButton {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  color: #6c757d;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 50%;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+}
+
+.closeButton:hover {
+  background-color: #f8f9fa;
+  color: #dc3545;
+  transform: scale(1.1);
+}
+
+.modalFields {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
+}
+
+.modalField {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 20px;
+  background: #f8f9fa;
+  border-radius: 12px;
+  border-left: 4px solid #007bff;
+  transition: all 0.3s ease;
+}
+
+.modalField:hover {
+  background: #e9ecef;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 123, 255, 0.15);
+}
+
+.modalFieldLabel {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #6c757d;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-family: 'Poppins', sans-serif;
+}
+
+.modalFieldValue {
+  font-size: 1rem;
+  color: #2c3e50;
+  font-weight: 500;
+  font-family: 'Poppins', sans-serif;
+  word-break: break-word;
+}
+
+/* Animações */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-50px) scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes slideOut {
+  from {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-50px) scale(0.9);
+  }
+}
+
+/* Responsividade para mobile */
+@media (max-width: 768px) {
+  .modalContent {
+    width: 95%;
+    padding: 20px;
+    margin: 20px;
+  }
+  
+  .modalFields {
+    grid-template-columns: 1fr;
+    gap: 15px;
+  }
+  
+  .modalField {
+    padding: 15px;
+  }
+  
+  .modalTitleText {
+    font-size: 1.2rem;
+  }
+}
+
 .funcionarioIcon {
   display: flex;
   align-items: center;

@@ -3,7 +3,7 @@ import { IMaskInput } from 'react-imask';
 import { funcionarioService } from '../services/funcionarioService';
 import DepartmentService from '../services/DepartmentService';
 import { useAuth } from '../contexts/AuthContext';
-import type { FuncionarioFormData } from '../types/funcionario';
+import type { FuncionarioFormData, FuncionarioConsulta } from '../types/funcionario';
 import type { DepartmentData } from '../types/Types';
 import styles from '../styles/FuncionarioConsulta.module.css';
 
@@ -33,8 +33,9 @@ const FuncionarioForm: React.FC<FuncionarioFormProps> = ({ onSuccess, onError, m
   const [loadingDepartamentos, setLoadingDepartamentos] = useState(false);
   const [dataInicio, setDataInicio] = useState('');
   const [dataFim, setDataFim] = useState('');
-  const [resultados, setResultados] = useState<any[]>([]);
+  const [resultados, setResultados] = useState<FuncionarioConsulta[]>([]);
   const [departamentoSelecionado, setDepartamentoSelecionado] = useState('');
+  const [selectedFuncionario, setSelectedFuncionario] = useState<FuncionarioConsulta | null>(null);
 
   useEffect(() => {
     const carregarDepartamentos = async () => {
@@ -53,6 +54,20 @@ const FuncionarioForm: React.FC<FuncionarioFormProps> = ({ onSuccess, onError, m
 
     carregarDepartamentos();
   }, [token]);
+
+  // Adicionar listener para tecla ESC
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape' && selectedFuncionario) {
+        setSelectedFuncionario(null);
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [selectedFuncionario]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -181,9 +196,43 @@ const FuncionarioForm: React.FC<FuncionarioFormProps> = ({ onSuccess, onError, m
           const data = await funcionarioService.buscarFuncionariosPorDepartamento(departamentoSelecionado, dataInicio, dataFim, token);
           setResultados(data);
         }
+        // Limpar funcionário selecionado quando buscar novos resultados
+        setSelectedFuncionario(null);
       } catch (error: any) {
         console.error('Erro ao buscar funcionários:', error);
         alert(error.message || 'Erro inesperado ao buscar funcionários.');
+      }
+    };
+
+    const openModal = (funcionario: FuncionarioConsulta) => {
+      setSelectedFuncionario(funcionario);
+    };
+
+    const closeModal = () => {
+      setSelectedFuncionario(null);
+    };
+
+    const handleOverlayClick = (e: React.MouseEvent) => {
+      if (e.target === e.currentTarget) {
+        closeModal();
+      }
+    };
+
+    const formatDate = (dateString: string) => {
+      try {
+        const date = new Date(dateString);
+        return date.toLocaleDateString('pt-BR');
+      } catch {
+        return dateString;
+      }
+    };
+
+    const formatSexo = (sexo: string) => {
+      switch (sexo) {
+        case 'M': return 'Masculino';
+        case 'F': return 'Feminino';
+        case 'I': return 'Prefiro não informar';
+        default: return sexo;
       }
     };
 
@@ -226,7 +275,11 @@ const FuncionarioForm: React.FC<FuncionarioFormProps> = ({ onSuccess, onError, m
         {resultados.length > 0 ? (
           <div className={styles.resultBlocks}>
             {resultados.map((funcionario) => (
-              <div key={funcionario.id} className={styles.resultBlock}>
+              <div 
+                key={funcionario.id} 
+                className={styles.resultBlock}
+                onClick={() => openModal(funcionario)}
+              >
                 <div className={styles.funcionarioIcon}>
                   <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
@@ -237,14 +290,79 @@ const FuncionarioForm: React.FC<FuncionarioFormProps> = ({ onSuccess, onError, m
                   <h4 className={styles.funcionarioNome}>{funcionario.nome}</h4>
                   <div className={styles.funcionarioMeta}>
                     <div><strong>Departamento:</strong> {funcionario.departamento}</div>
-                    <div><strong>Data do Registro:</strong> {funcionario.dataCriacao}</div>
+                    <div><strong>Data do Registro:</strong> {formatDate(funcionario.dataCriacao)}</div>
                   </div>
+                </div>
+                <div className={styles.expandIcon}>
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M9 18l6-6-6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
                 </div>
               </div>
             ))}
           </div>
         ) : (
           <p className={styles.noResultsMessage}>Nenhum registro encontrado para os filtros aplicados.</p>
+        )}
+
+        {/* Modal flutuante */}
+        {selectedFuncionario && (
+          <div className={styles.modalOverlay} onClick={handleOverlayClick}>
+            <div className={styles.modalContent}>
+              <div className={styles.modalHeader}>
+                <div className={styles.modalTitle}>
+                  <div className={styles.modalTitleIcon}>
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                      <circle cx="12" cy="7" r="4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                  </div>
+                  <h2 className={styles.modalTitleText}>{selectedFuncionario.nome}</h2>
+                </div>
+                <button className={styles.closeButton} onClick={closeModal}>
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M18 6L6 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                    <path d="M6 6l12 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                </button>
+              </div>
+              
+              <div className={styles.modalFields}>
+                <div className={styles.modalField}>
+                  <span className={styles.modalFieldLabel}>ID</span>
+                  <span className={styles.modalFieldValue}>{selectedFuncionario.id}</span>
+                </div>
+                <div className={styles.modalField}>
+                  <span className={styles.modalFieldLabel}>Nome Completo</span>
+                  <span className={styles.modalFieldValue}>{selectedFuncionario.nome}</span>
+                </div>
+                <div className={styles.modalField}>
+                  <span className={styles.modalFieldLabel}>CPF</span>
+                  <span className={styles.modalFieldValue}>{selectedFuncionario.cpf}</span>
+                </div>
+                <div className={styles.modalField}>
+                  <span className={styles.modalFieldLabel}>Sexo</span>
+                  <span className={styles.modalFieldValue}>{formatSexo(selectedFuncionario.sexo)}</span>
+                </div>
+                <div className={styles.modalField}>
+                  <span className={styles.modalFieldLabel}>Data de Nascimento</span>
+                  <span className={styles.modalFieldValue}>{formatDate(selectedFuncionario.dataNascimento)}</span>
+                </div>
+                <div className={styles.modalField}>
+                  <span className={styles.modalFieldLabel}>Departamento</span>
+                  <span className={styles.modalFieldValue}>{selectedFuncionario.departamento}</span>
+                </div>
+                <div className={styles.modalField}>
+                  <span className={styles.modalFieldLabel}>Data de Criação</span>
+                  <span className={styles.modalFieldValue}>{formatDate(selectedFuncionario.dataCriacao)}</span>
+                </div>
+                <div className={styles.modalField}>
+                  <span className={styles.modalFieldLabel}>ID da Empresa</span>
+                  <span className={styles.modalFieldValue}>{selectedFuncionario.companyId}</span>
+                </div>
+              </div>
+            </div>
+          </div>
         )}
       </>
     );

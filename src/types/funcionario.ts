@@ -26,4 +26,15 @@ export interface FuncionarioResponse {
   success: boolean;
   message: string;
   data?: any;
+}
+
+export interface FuncionarioConsulta {
+  id: number;
+  nome: string;
+  departamento: string;
+  cpf: string;
+  sexo: string;
+  dataNascimento: string;
+  dataCriacao: string;
+  companyId: number;
 } 
