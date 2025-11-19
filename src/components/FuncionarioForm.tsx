@@ -63,6 +63,7 @@ const FuncionarioForm: React.FC<FuncionarioFormProps> = ({ onSuccess, onError, m
       }
     };
 
+
     document.addEventListener('keydown', handleKeyDown);
     return () => {
       document.removeEventListener('keydown', handleKeyDown);
@@ -337,8 +338,24 @@ const FuncionarioForm: React.FC<FuncionarioFormProps> = ({ onSuccess, onError, m
                   <span className={styles.modalFieldValue}>{selectedFuncionario.nome}</span>
                 </div>
                 <div className={styles.modalField}>
+                  <span className={styles.modalFieldLabel}>Departamento</span>
+                  <span className={styles.modalFieldValue}>{selectedFuncionario.departamento}</span>
+                </div>
+                <div className={styles.modalField}>
+                  <span className={styles.modalFieldLabel}>Telefone</span>
+                  <span className={styles.modalFieldValue}>{selectedFuncionario.telefone}</span>
+                </div>
+                <div className={styles.modalField}>
+                  <span className={styles.modalFieldLabel}>Email</span>
+                  <span className={styles.modalFieldValue}>{selectedFuncionario.email}</span>
+                </div>
+                <div className={styles.modalField}>
                   <span className={styles.modalFieldLabel}>CPF</span>
                   <span className={styles.modalFieldValue}>{selectedFuncionario.cpf}</span>
+                </div>
+                <div className={styles.modalField}>
+                  <span className={styles.modalFieldLabel}>Endereço</span>
+                  <span className={styles.modalFieldValue}>{selectedFuncionario.endereco}</span>
                 </div>
                 <div className={styles.modalField}>
                   <span className={styles.modalFieldLabel}>Sexo</span>
@@ -347,10 +364,6 @@ const FuncionarioForm: React.FC<FuncionarioFormProps> = ({ onSuccess, onError, m
                 <div className={styles.modalField}>
                   <span className={styles.modalFieldLabel}>Data de Nascimento</span>
                   <span className={styles.modalFieldValue}>{formatDate(selectedFuncionario.dataNascimento)}</span>
-                </div>
-                <div className={styles.modalField}>
-                  <span className={styles.modalFieldLabel}>Departamento</span>
-                  <span className={styles.modalFieldValue}>{selectedFuncionario.departamento}</span>
                 </div>
                 <div className={styles.modalField}>
                   <span className={styles.modalFieldLabel}>Data de Criação</span>
