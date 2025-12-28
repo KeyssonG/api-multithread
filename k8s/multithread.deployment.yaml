@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: multithread-container
-          image: keyssong/react-multithread:latest  
+          image: keyssong/react-multithread:latest
           imagePullPolicy: Always              
           ports:
             - containerPort: 5173                
