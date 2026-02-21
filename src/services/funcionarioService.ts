@@ -92,4 +92,52 @@ export const funcionarioService = {
       throw error;
     }
   },
+
+  async atualizarFuncionario(data: any, token: string): Promise<any> {
+    try {
+      const response = await axios.put(
+        'http://localhost:8087/employee/update',
+        data,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`,
+          },
+        }
+      );
+      
+      if (response.status >= 200 && response.status < 300) {
+        return {
+          success: true,
+          message: 'Funcionário atualizado com sucesso!',
+          data: response.data || null,
+        };
+      } else {
+        return {
+          success: false,
+          message: 'Erro ao atualizar funcionário',
+        };
+      }
+    } catch (error: any) {
+      if (error.response) {
+        const errorMessage = error.response.data?.message || 
+                           error.response.data?.error || 
+                           'Erro ao atualizar funcionário';
+        return {
+          success: false,
+          message: errorMessage,
+        };
+      } else if (error.request) {
+        return {
+          success: false,
+          message: 'Erro de conexão. Verifique sua internet.',
+        };
+      } else {
+        return {
+          success: false,
+          message: 'Erro inesperado ao atualizar funcionário',
+        };
+      }
+    }
+  },
 };

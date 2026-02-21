@@ -36,6 +36,8 @@ const FuncionarioForm: React.FC<FuncionarioFormProps> = ({ onSuccess, onError, m
   const [resultados, setResultados] = useState<FuncionarioConsulta[]>([]);
   const [departamentoSelecionado, setDepartamentoSelecionado] = useState('');
   const [selectedFuncionario, setSelectedFuncionario] = useState<FuncionarioConsulta | null>(null);
+  const [editingFuncionario, setEditingFuncionario] = useState<FuncionarioConsulta | null>(null);
+  const [editFormData, setEditFormData] = useState<FuncionarioConsulta | null>(null);
 
   useEffect(() => {
     const carregarDepartamentos = async () => {
@@ -237,6 +239,63 @@ const FuncionarioForm: React.FC<FuncionarioFormProps> = ({ onSuccess, onError, m
       }
     };
 
+    const openEditModal = (funcionario: FuncionarioConsulta) => {
+      setEditingFuncionario(funcionario);
+      setEditFormData({
+        id: funcionario.id,
+        nome: funcionario.nome,
+        departamento: funcionario.departamento,
+        telefone: funcionario.telefone,
+        email: funcionario.email,
+        cpf: funcionario.cpf,
+        endereco: funcionario.endereco,
+        sexo: funcionario.sexo,
+        dataNascimento: funcionario.dataNascimento,
+        dataCriacao: funcionario.dataCriacao,
+        companyId: funcionario.companyId
+      });
+    };
+
+    const closeEditModal = () => {
+      setEditingFuncionario(null);
+      setEditFormData(null);
+    };
+
+    const handleEditChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+      const { name, value } = e.target;
+      setEditFormData(prev => prev ? ({
+        ...prev,
+        [name]: value,
+      }) : null);
+    };
+
+    const handleEditSubmit = async (e: React.FormEvent) => {
+      e.preventDefault();
+      
+      if (!editFormData || !token) {
+        return;
+      }
+
+      setLoading(true);
+      try {
+        const response = await funcionarioService.atualizarFuncionario(editFormData, token);
+        
+        if (response && response.success) {
+          alert(response.message || 'Funcionário atualizado com sucesso!');
+          closeEditModal();
+          // Recarregar a lista de funcionários
+          buscarFuncionarios();
+        } else {
+          alert(`Erro: ${response?.message || 'Erro ao atualizar funcionário'}`);
+        }
+      } catch (error: any) {
+        console.error('Erro ao atualizar funcionário:', error);
+        alert(`Erro: ${error?.message || 'Erro inesperado ao atualizar funcionário'}`);
+      } finally {
+        setLoading(false);
+      }
+    };
+
     return (
       <>
         <div className={styles.filters}>
@@ -270,7 +329,13 @@ const FuncionarioForm: React.FC<FuncionarioFormProps> = ({ onSuccess, onError, m
             onChange={(e) => setDataFim(e.target.value)}
           />
 
-          <button onClick={buscarFuncionarios}>Buscar Funcionários</button>
+          <button onClick={buscarFuncionarios} className={styles.submitButton}>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="11" cy="11" r="8" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              <path d="m21 21-4.35-4.35" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+            Buscar Funcionários
+          </button>
         </div>
 
         {resultados.length > 0 ? (
@@ -279,26 +344,40 @@ const FuncionarioForm: React.FC<FuncionarioFormProps> = ({ onSuccess, onError, m
               <div 
                 key={funcionario.id} 
                 className={styles.resultBlock}
-                onClick={() => openModal(funcionario)}
               >
-                <div className={styles.funcionarioIcon}>
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                    <circle cx="12" cy="7" r="4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                  </svg>
-                </div>
-                <div className={styles.funcionarioInfo}>
-                  <h4 className={styles.funcionarioNome}>{funcionario.nome}</h4>
-                  <div className={styles.funcionarioMeta}>
-                    <div><strong>Departamento:</strong> {funcionario.departamento}</div>
-                    <div><strong>Data do Registro:</strong> {formatDate(funcionario.dataCriacao)}</div>
+                <div onClick={() => openModal(funcionario)} className={styles.resultBlockMain}>
+                  <div className={styles.funcionarioIcon}>
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                      <circle cx="12" cy="7" r="4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                  </div>
+                  <div className={styles.funcionarioInfo}>
+                    <h4 className={styles.funcionarioNome}>{funcionario.nome}</h4>
+                    <div className={styles.funcionarioMeta}>
+                      <div><strong>Departamento:</strong> {funcionario.departamento}</div>
+                      <div><strong>Data do Registro:</strong> {formatDate(funcionario.dataCriacao)}</div>
+                    </div>
+                  </div>
+                  <div className={styles.expandIcon}>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M9 18l6-6-6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
                   </div>
                 </div>
-                <div className={styles.expandIcon}>
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M9 18l6-6-6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                <button 
+                  className={styles.editButton}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    openEditModal(funcionario);
+                  }}
+                  title="Editar funcionário"
+                >
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                   </svg>
-                </div>
+                </button>
               </div>
             ))}
           </div>
@@ -374,6 +453,175 @@ const FuncionarioForm: React.FC<FuncionarioFormProps> = ({ onSuccess, onError, m
                   <span className={styles.modalFieldValue}>{selectedFuncionario.companyId}</span>
                 </div>
               </div>
+            </div>
+          </div>
+        )}
+
+        {/* Edit Modal */}
+        {editingFuncionario && editFormData && (
+          <div className={styles.modalOverlay} onClick={(e) => {
+            if (e.target === e.currentTarget) {
+              closeEditModal();
+            }
+          }}>
+            <div className={styles.modalContent}>
+              <div className={styles.modalHeader}>
+                <div className={styles.modalTitle}>
+                  <div className={styles.modalTitleIcon}>
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                      <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                  </div>
+                  <h2 className={styles.modalTitleText}>Editar Funcionário</h2>
+                </div>
+                <button className={styles.closeButton} onClick={closeEditModal}>
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M18 6L6 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                    <path d="M6 6l12 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                </button>
+              </div>
+              
+              <form onSubmit={handleEditSubmit} className={styles.form}>
+                <div className={styles.formGrid}>
+                  <div className={styles.formGroup}>
+                    <label htmlFor="edit-nome">Nome Completo *</label>
+                    <input
+                      type="text"
+                      id="edit-nome"
+                      name="nome"
+                      value={editFormData.nome}
+                      onChange={handleEditChange}
+                      className={styles.input}
+                      placeholder="Digite o nome completo"
+                    />
+                  </div>
+
+                  <div className={styles.formGroup}>
+                    <label htmlFor="edit-dataNascimento">Data de Nascimento *</label>
+                    <input
+                      type="date"
+                      id="edit-dataNascimento"
+                      name="dataNascimento"
+                      value={editFormData.dataNascimento}
+                      onChange={handleEditChange}
+                      className={styles.input}
+                    />
+                  </div>
+
+                  <div className={styles.formGroup}>
+                    <label htmlFor="edit-telefone">Telefone *</label>
+                    <input
+                      type="text"
+                      id="edit-telefone"
+                      name="telefone"
+                      value={editFormData.telefone}
+                      onChange={handleEditChange}
+                      className={styles.input}
+                      placeholder="(11) 98765-4321"
+                    />
+                  </div>
+
+                  <div className={styles.formGroup}>
+                    <label htmlFor="edit-email">E-mail *</label>
+                    <input
+                      type="email"
+                      id="edit-email"
+                      name="email"
+                      value={editFormData.email}
+                      onChange={handleEditChange}
+                      className={styles.input}
+                      placeholder="email@exemplo.com"
+                    />
+                  </div>
+
+                  <div className={styles.formGroup}>
+                    <label htmlFor="edit-cpf">CPF *</label>
+                    <input
+                      type="text"
+                      id="edit-cpf"
+                      name="cpf"
+                      value={editFormData.cpf}
+                      onChange={handleEditChange}
+                      className={styles.input}
+                      placeholder="123.456.789-00"
+                    />
+                  </div>
+
+                  <div className={styles.formGroup}>
+                    <label htmlFor="edit-sexo">Sexo *</label>
+                    <select
+                      id="edit-sexo"
+                      name="sexo"
+                      value={editFormData.sexo}
+                      onChange={handleEditChange}
+                      className={styles.input}
+                    >
+                      <option value="">Selecione</option>
+                      <option value="M">Masculino</option>
+                      <option value="F">Feminino</option>
+                      <option value="I">Prefiro não informar</option>
+                    </select>
+                  </div>
+
+                  <div className={styles.formGroup}>
+                    <label htmlFor="edit-departamento">Departamento *</label>
+                    <select
+                      id="edit-departamento"
+                      name="departamento"
+                      value={editFormData.departamento}
+                      onChange={handleEditChange}
+                      className={styles.input}
+                    >
+                      {departamentos.map((dept, index) => (
+                        <option key={index} value={dept.nomeDepartamento}>
+                          {dept.nomeDepartamento}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+
+                  <div className={styles.formGroup} style={{ gridColumn: '1 / -1' }}>
+                    <label htmlFor="edit-endereco">Endereço Completo *</label>
+                    <textarea
+                      id="edit-endereco"
+                      name="endereco"
+                      value={editFormData.endereco}
+                      onChange={handleEditChange}
+                      className={styles.textarea}
+                      placeholder="Rua das Flores, 123, Bairro Jardim, São Paulo - SP"
+                      rows={3}
+                    />
+                  </div>
+                </div>
+
+                <div className={styles.formActions}>
+                  <button
+                    type="button"
+                    onClick={closeEditModal}
+                    className={styles.cancelButton}
+                  >
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M18 6L6 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                      <path d="M6 6l12 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                    Cancelar
+                  </button>
+                  <button
+                    type="submit"
+                    className={styles.submitButton}
+                    disabled={loading}
+                  >
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                      <polyline points="17,21 17,13 7,13 7,21" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                      <polyline points="7,3 7,8 15,8" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                    {loading ? 'Salvando...' : 'Salvar Alterações'}
+                  </button>
+                </div>
+              </form>
             </div>
           </div>
         )}
@@ -528,6 +776,12 @@ const FuncionarioForm: React.FC<FuncionarioFormProps> = ({ onSuccess, onError, m
             className={styles.submitButton}
             disabled={loading}
           >
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              <circle cx="8.5" cy="7" r="4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              <line x1="20" y1="8" x2="20" y2="14" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              <line x1="23" y1="11" x2="17" y2="11" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
             {loading ? 'Cadastrando...' : 'Cadastrar Funcionário'}
           </button>
         </div>

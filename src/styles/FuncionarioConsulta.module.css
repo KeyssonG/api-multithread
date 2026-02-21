@@ -43,6 +43,9 @@
   cursor: pointer;
   transition: all 0.3s ease;
   box-shadow: 0 2px 8px rgba(25, 118, 210, 0.3);
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
 
 .filters button:hover {
@@ -294,6 +297,7 @@
   from {
     opacity: 0;
   }
+
   to {
     opacity: 1;
   }
@@ -304,6 +308,7 @@
     opacity: 0;
     transform: translateY(-50px) scale(0.9);
   }
+
   to {
     opacity: 1;
     transform: translateY(0) scale(1);
@@ -315,6 +320,7 @@
     opacity: 1;
     transform: translateY(0) scale(1);
   }
+
   to {
     opacity: 0;
     transform: translateY(-50px) scale(0.9);
@@ -328,16 +334,16 @@
     padding: 20px;
     margin: 20px;
   }
-  
+
   .modalFields {
     grid-template-columns: 1fr;
     gap: 15px;
   }
-  
+
   .modalField {
     padding: 15px;
   }
-  
+
   .modalTitleText {
     font-size: 1.2rem;
   }
@@ -442,6 +448,42 @@
   box-shadow: 0 0 0 3px rgba(211, 47, 47, 0.1);
 }
 
+.textarea {
+  padding: 12px 15px;
+  border: 2px solid #e1e5e9;
+  border-radius: 8px;
+  font-family: 'Poppins', sans-serif;
+  font-size: 0.9rem;
+  transition: all 0.3s ease;
+  background: #fff;
+  resize: vertical;
+  min-height: 80px;
+}
+
+.textarea:focus {
+  outline: none;
+  border-color: #1976d2;
+  box-shadow: 0 0 0 3px rgba(25, 118, 210, 0.1);
+}
+
+.textareaError {
+  padding: 12px 15px;
+  border: 2px solid #d32f2f;
+  border-radius: 8px;
+  font-family: 'Poppins', sans-serif;
+  font-size: 0.9rem;
+  transition: all 0.3s ease;
+  background: #fff;
+  resize: vertical;
+  min-height: 80px;
+}
+
+.textareaError:focus {
+  outline: none;
+  border-color: #d32f2f;
+  box-shadow: 0 0 0 3px rgba(211, 47, 47, 0.1);
+}
+
 .errorMessage {
   font-family: 'Poppins', sans-serif;
   font-size: 0.8rem;
@@ -454,15 +496,18 @@
   color: white;
   border: none;
   border-radius: 8px;
-  padding: 15px 30px;
+  padding: 12px 24px;
   font-family: 'Poppins', sans-serif;
-  font-size: 1rem;
+  font-size: 0.95rem;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
   box-shadow: 0 4px 15px rgba(25, 118, 210, 0.3);
-  align-self: flex-start;
-  margin-top: 10px;
+  align-self: center;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  width: fit-content;
 }
 
 .submitButton:hover {
@@ -480,8 +525,202 @@
 
 .formActions {
   display: flex;
-  justify-content: flex-start;
+  justify-content: center;
   margin-top: 20px;
+}
+
+/* Botão de editar no card */
+.editButton {
+  background: linear-gradient(135deg, #28a745, #20c997);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 10px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(40, 167, 69, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 40px;
+  min-height: 40px;
+  position: relative;
+  overflow: hidden;
+}
+
+.editButton:hover {
+  background: linear-gradient(135deg, #218838, #1ea085);
+  transform: translateY(-2px) scale(1.05);
+  box-shadow: 0 4px 15px rgba(40, 167, 69, 0.4);
+}
+
+.editButton:active {
+  transform: translateY(0) scale(0.98);
+}
+
+.editButton::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.5s;
+}
+
+.editButton:hover::before {
+  left: 100%;
+}
+
+/* Botão de cancelar */
+.cancelButton {
+  background: linear-gradient(135deg, #6c757d, #5a6268);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 24px;
+  font-family: 'Poppins', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 600;
+  line-height: 1;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(108, 117, 125, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 45px;
+}
+
+.cancelButton svg {
+  flex-shrink: 0;
+  vertical-align: middle;
+}
+
+.cancelButton:hover {
+  background: linear-gradient(135deg, #5a6268, #495057);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(108, 117, 125, 0.4);
+}
+
+.cancelButton:active {
+  transform: translateY(0) scale(0.98);
+}
+
+/* Botão salvar alterações (estilo especial para edição) */
+.formActions .submitButton {
+  background: linear-gradient(135deg, #007bff, #0056b3);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 24px;
+  font-family: 'Poppins', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 600;
+  line-height: 1;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(0, 123, 255, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  position: relative;
+  overflow: hidden;
+  height: 45px;
+}
+
+.formActions .submitButton svg {
+  align-self: center;
+}
+
+.formActions .submitButton::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.5s;
+}
+
+.formActions .submitButton:hover::before {
+  left: 100%;
+}
+
+.formActions .submitButton:hover {
+  background: linear-gradient(135deg, #0056b3, #004085);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 123, 255, 0.4);
+}
+
+.formActions .submitButton:active {
+  transform: translateY(0) scale(0.98);
+}
+
+.formActions .submitButton:disabled {
+  background: linear-gradient(135deg, #ccc, #999);
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.formActions .submitButton:disabled::before {
+  display: none;
+}
+
+/* Melhorias no formActions */
+.formActions {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  margin-top: 30px;
+  padding-top: 20px;
+  border-top: 2px solid #e9ecef;
+  align-items: center;
+}
+
+/* Responsividade para botões */
+@media (max-width: 768px) {
+  .formActions {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .formActions .submitButton,
+  .cancelButton {
+    width: 100%;
+    justify-content: center;
+    padding: 14px 20px;
+  }
+
+  .editButton {
+    min-width: 35px;
+    min-height: 35px;
+    padding: 8px;
+  }
+}
+
+/* Animações de carregamento */
+@keyframes pulse {
+  0% {
+    box-shadow: 0 4px 15px rgba(0, 123, 255, 0.3);
+  }
+
+  50% {
+    box-shadow: 0 4px 25px rgba(0, 123, 255, 0.6);
+  }
+
+  100% {
+    box-shadow: 0 4px 15px rgba(0, 123, 255, 0.3);
+  }
+}
+
+.formActions .submitButton:disabled:not(:hover) {
+  animation: pulse 2s infinite;
 }
 
 /* Responsividade para diferentes tamanhos de tela */
@@ -489,31 +728,31 @@
   .container {
     padding: 20px;
   }
-  
+
   .filters {
     flex-direction: column;
     gap: 15px;
   }
-  
+
   .filters input,
   .filters select {
     max-width: 100%;
   }
-  
+
   .resultBlocks {
     grid-template-columns: 1fr;
     gap: 15px;
   }
-  
+
   .resultBlock {
     padding: 15px;
   }
-  
+
   .formContainer {
     padding: 20px;
     margin: 0 10px;
   }
-  
+
   .formGrid {
     grid-template-columns: 1fr;
   }
