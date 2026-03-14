@@ -2,6 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: multithread-deployment
+  namespace: producao
 spec:
   replicas: 1
   selector:
@@ -15,6 +16,11 @@ spec:
       containers:
         - name: multithread-container
           image: keyssong/react-multithread:latest
-          imagePullPolicy: Always              
+          imagePullPolicy: Always
           ports:
-            - containerPort: 5173                
+            - containerPort: 5173
+          envFrom:
+            - configMapRef:
+                name: app-config
+            - secretRef:
+                name: app-secret
