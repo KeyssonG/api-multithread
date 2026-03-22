@@ -100,7 +100,7 @@ const Gestao = () => {
             Voltar
           </button>
           
-          <h1 className={styles.pageTitle}>Gestão</h1>
+          <h1 className={styles.pageTitle}>Gestão de Pessoas</h1>
         </div>
 
         <div className={styles.mainContent}>
