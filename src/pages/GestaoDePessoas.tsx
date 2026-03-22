@@ -7,9 +7,9 @@ import DepartamentoForm from "../components/DepartamentoForm";
 import DepartmentService from "../services/DepartmentService";
 import { useAuth } from "../contexts/AuthContext";
 import type { DepartmentData } from "../types/Types";
-import styles from "../styles/Gestao.module.css";
+import styles from "../styles/GestaoDePessoas.module.css";
 
-const Gestao = () => {
+const GestaoDePessoas = () => {
   const navigate = useNavigate();
   const { token } = useAuth();
   const [activeSection, setActiveSection] = useState<string | null>(null);
@@ -84,7 +84,7 @@ const Gestao = () => {
             Voltar
           </button>
           
-          <h1 className={styles.pageTitle}>Gestão de Pessoas</h1>
+          <h1 className={styles.pageTitle}>Gestão</h1>
         </div>
 
         <div className={styles.mainContent}>
@@ -94,7 +94,7 @@ const Gestao = () => {
                 Bem-vindo ao módulo de Gestão!
               </p>
               <p className={styles.descriptionText}>
-                Aqui você poderá gerenciar seus funcionários e departamentos
+                Aqui você poderá gerenciar todos os aspectos do seu negócio.
               </p>
               
               <div className={styles.featuresGrid}>
@@ -307,4 +307,4 @@ const Gestao = () => {
   );
 };
 
-export default Gestao;
+export default GestaoDePessoas;

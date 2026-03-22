@@ -28,7 +28,7 @@ const Dashboard = () => {
                   <path d="M2 12L12 17L22 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                 </svg>
               </div>
-              <span className={styles.moduleText}>Gestão</span>
+              <span className={styles.moduleText}>Gestão de Pessoas</span>
             </div>
           </div>
         </div>
