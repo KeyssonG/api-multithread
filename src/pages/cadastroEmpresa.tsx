@@ -146,7 +146,6 @@ const CadastroEmpresa: React.FC = () => {
           </div>
         </form>
       </div>
-
       <Footer />
     </div>
   );

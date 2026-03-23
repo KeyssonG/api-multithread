@@ -1,6 +1,7 @@
 import axios from "axios";
 import type { DepartmentData } from "../types/Types";
 
+
 const BASE_URL = "http://localhost:8086/administracao/departamento";
 
 export const DepartmentService = {
@@ -24,6 +25,13 @@ export const DepartmentService = {
     });
     return response.data;
   },
+
+  async deletarDepartamento(data: { idDepartamento: number }, token: string): Promise<void> {
+    await axios.delete(BASE_URL, {
+      headers: { Authorization: `Bearer ${token}` },
+      data,
+    });
+  }
 };
 
 export default DepartmentService;

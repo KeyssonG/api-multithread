@@ -10,9 +10,7 @@
 
 .content {
   flex: 1;
-  padding: 100px 40px 40px 40px;
-  margin-bottom: 70px;
-}
+  padding: 100px 40px 40px 40px}
 
 .headerSection {
   display: flex;
@@ -63,8 +61,10 @@
 }
 
 .mainContent {
-  max-width: 1200px;
+  max-width: 100%;
   margin: 0 auto;
+  padding-left: 24px;
+  padding-right: 24px;
 }
 
 .welcomeText {
@@ -73,6 +73,7 @@
   color: #555;
   margin-bottom: 10px;
   font-weight: 500;
+  text-align: center;
 }
 
 .descriptionText {
@@ -81,19 +82,23 @@
   color: #666;
   margin-bottom: 40px;
   line-height: 1.6;
+  text-align: center;
 }
 
 .featuresGrid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 30px;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 20px;
   margin-top: 40px;
+  max-width: 800px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .featureCard {
   background: white;
   border-radius: 15px;
-  padding: 30px;
+  padding: 30px 25px;
   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
   transition: all 0.3s ease;
   border: 2px solid transparent;
@@ -107,9 +112,14 @@
 }
 
 .featureIcon {
-  margin-bottom: 20px;
+  margin-bottom: 10px;
   color: #1976d2;
   transition: color 0.3s ease;
+}
+
+.featureIcon svg {
+  width: 28px;
+  height: 28px;
 }
 
 .featureCard:hover .featureIcon {
@@ -174,10 +184,7 @@
 }
 
 .formContainer {
-  background: white;
-  border-radius: 15px;
   padding: 30px;
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
 }
 
 .formDescription {
@@ -201,6 +208,60 @@
   font-size: 1rem;
   color: #666;
   margin-bottom: 10px;
+}
+
+.menuContainer {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  height: 100%;
+}
+
+.menuButton {
+  background: none;
+  border: none;
+  font-size: 22px;
+  color: #555;
+  cursor: pointer;
+  padding: 0 8px;
+  border-radius: 50%;
+  transition: background 0.2s;
+}
+.menuButton:hover {
+  background: #e3e3e3;
+}
+
+.menuDropdown {
+  position: absolute;
+  top: 44px; /* antes era 28px, agora mais abaixo */
+  right: 0;
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+  z-index: 10;
+  min-width: 120px;
+  padding: 8px 0;
+}
+
+.deleteButton {
+  background: #e53935;
+  color: #fff;
+  border: none;
+  padding: 8px 16px;
+  width: 100%;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 15px;
+  transition: background 0.2s;
+}
+.deleteButton:hover {
+  background: #b71c1c;
+}
+.deleteButton:disabled {
+  background: #ccc;
+  cursor: not-allowed;
 }
 
 @media (max-width: 768px) {
@@ -245,6 +306,39 @@
   .formContainer {
     padding: 25px;
   }
+
+  .subMenuGrid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+    padding: 20px;
+  }
+  
+  .subMenuCard {
+    padding: 30px 20px;
+  }
+  
+  .subMenuIcon {
+    width: 60px;
+    height: 60px;
+  }
+  
+  .departamentosContainer {
+    padding: 20px;
+  }
+  
+  .listHeader {
+    flex-direction: column;
+    gap: 15px;
+    align-items: stretch;
+  }
+  
+  .departamentosGrid {
+    grid-template-columns: 1fr;
+  }
+  
+  .departamentoCard {
+    padding: 15px;
+  }
 }
 
 @media (max-width: 480px) {
@@ -287,7 +381,7 @@
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   gap: 30px;
-  max-width: 800px;
+    max-width: 650px;
   margin: 0 auto;
   padding: 40px 20px;
 }
@@ -475,7 +569,10 @@
 .departamentosGrid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 20px;
+  column-gap: 40px;
+  row-gap: 20px;
+  max-width: 1800px;
+  margin: 0 auto;
 }
 
 .departamentoCard {
@@ -560,4 +657,4 @@
   .departamentoCard {
     padding: 15px;
   }
-} 
+}

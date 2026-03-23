@@ -7,6 +7,8 @@ import Dashboard from './pages/Dashboard';
 import Gestao from './pages/Gestao';
 import PrivateRoute from './components/PrivateRoute';
 import { ROUTES } from './constants/config';
+import ResetSenhaSolicitar from './pages/ResetSenhaSolicitar';
+import ResetSenhaConfirmar from './pages/ResetSenhaConfirmar';
 
 const App = () => {
   return (
@@ -30,6 +32,8 @@ const App = () => {
             </PrivateRoute>
           } 
         />
+        <Route path={ROUTES.RESET_SENHA_SOLICITAR} element={<ResetSenhaSolicitar />} />
+        <Route path={ROUTES.RESET_SENHA_CONFIRMAR} element={<ResetSenhaConfirmar />} />
         <Route path={ROUTES.HOME} element={<Login />} />
       </Routes>
     </div>

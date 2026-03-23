@@ -24,3 +24,17 @@ body {
     display: flex;
     flex-direction: column;
 }
+
+/* Garantir que containers principais tenham altura mínima e empurrem o footer para baixo */
+.container {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+/* Garantir que o conteúdo principal ocupe todo o espaço disponível */
+.content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
