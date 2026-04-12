@@ -9,6 +9,8 @@ import PrivateRoute from './components/PrivateRoute';
 import { ROUTES } from './constants/config';
 import ResetSenhaSolicitar from './pages/ResetSenhaSolicitar';
 import ResetSenhaConfirmar from './pages/ResetSenhaConfirmar';
+import GestaoAcesso from './pages/GestaoAcesso';
+// Force TS reload
 
 const App = () => {
   return (
@@ -29,6 +31,14 @@ const App = () => {
           element={
             <PrivateRoute>
               <Gestao />
+            </PrivateRoute>
+          } 
+        />
+        <Route 
+          path={ROUTES.GESTAO_ACESSO} 
+          element={
+            <PrivateRoute>
+              <GestaoAcesso />
             </PrivateRoute>
           } 
         />

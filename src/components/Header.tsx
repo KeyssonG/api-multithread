@@ -1,10 +1,14 @@
-import { useEffect, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState, useEffect, useRef } from 'react';
+import { useNavigate, useLocation, Link } from 'react-router-dom';
+import { ROUTES } from '../constants/config';
 import styles from '../styles/Header.module.css';
 import { useAuth } from '../contexts/AuthContext';
 
 const Header = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
   
   let authContext;
   try {
@@ -18,7 +22,6 @@ const Header = () => {
   }
 
   const { name, logout, isAuthenticated } = authContext;
-  const menuRef = useRef<HTMLDivElement>(null);
 
   const handleLogout = () => {
     logout();
@@ -33,43 +36,82 @@ const Header = () => {
     }
   };
 
+  const getInitial = (name: string | null) => {
+    if (!name) return 'K';
+    return name.charAt(0).toUpperCase();
+  };
+
   useEffect(() => {
-    const handleClickOutside = (e: MouseEvent) => {
-      if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsDropdownOpen(false);
       }
     };
-    document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener("mousedown", handleClickOutside);
     return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
 
   return (
     <header className={styles.header}>
-      <h1 className={styles.headerTitle} onClick={handleLogoClick} style={{ cursor: 'pointer' }}>
-        MultiThread
-      </h1>
+      <div className={styles.logoArea} onClick={handleLogoClick}>
+        <div className={styles.iconWrapper}>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+             <path d="M13 2L3 14H12L11 22L21 10H12L13 2Z" fill="white" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+          </svg>
+        </div>
+        <div className={styles.logoText}>
+          <span className={styles.logoFirst}>Multi</span>
+          <span className={styles.logoSecond}>Thread</span>
+        </div>
+      </div>
+
+      {isAuthenticated && (
+        <nav className={styles.navMenu}>
+          <Link 
+            to="/dashboard" 
+            className={`${styles.navLink} ${location.pathname === '/dashboard' || location.pathname === '/' ? styles.active : ''}`}
+          >
+            Home
+          </Link>
+          <Link
+            to={ROUTES.GESTAO_ACESSO}
+            className={`${styles.navLink} ${location.pathname === ROUTES.GESTAO_ACESSO ? styles.active : ''}`}
+          >
+            Gestão de Módulos
+          </Link>
+        </nav>
+      )}
+
       {isAuthenticated ? (
-        <div className={styles.userActions}>
-          <span className={styles.userName}>
-            Olá, <strong>{name || 'Usuário'}</strong>
-          </span>
-          <button className={styles.logoutButton} onClick={handleLogout}>
-            Sair
-          </button>
+        <div className={styles.userContainer} ref={dropdownRef}>
+          <div className={styles.userArea} onClick={() => setIsDropdownOpen(!isDropdownOpen)}>
+            <div className={styles.avatar}>
+              {getInitial(name)}
+            </div>
+            <span className={styles.greeting}>
+              Olá, <strong>{name || 'keysson'}</strong>
+            </span>
+          </div>
+          {isDropdownOpen && (
+            <div className={styles.dropdownMenu}>
+              <button 
+                className={styles.dropdownItem} 
+                onClick={handleLogout}
+              >
+                Sair
+              </button>
+            </div>
+          )}
         </div>
       ) : (
-        <div className={styles.userActions}>
-          <button 
-            className={styles.logoutButton} 
-            onClick={() => navigate('/login')}
-          >
-            Entrar
-          </button>
+        <div className={styles.userArea} onClick={() => navigate('/login')}>
+          <span className={styles.greeting}>Entrar</span>
         </div>
       )}
     </header>
   );
 };
 
-export default Header;
+export default Header;

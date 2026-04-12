@@ -91,26 +91,55 @@ const Gestao = () => {
       <Header />
       
       <div className={styles.content}>
-        <div className={styles.headerSection}>
-          <button className={styles.backButton} onClick={handleVoltar}>
+        
+        {/* Dynamic Header */}
+        <div className={styles.dynamicHeader}>
+          <button 
+            className={styles.backIconButton} 
+            onClick={
+              subSection ? handleBackToDepartamentos : (activeSection ? handleBackToMain : handleVoltar)
+            }
+            title="Voltar"
+          >
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M19 12H5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-              <path d="M12 19L5 12L12 5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              <path d="M15 18L9 12L15 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
             </svg>
-            Voltar
           </button>
           
-          <h1 className={styles.pageTitle}>Gestão de Pessoas</h1>
+          <span className={!activeSection ? styles.breadcrumbTextActive : styles.breadcrumbText} onClick={handleBackToMain}>
+            Gestão de Pessoas
+          </span>
+          
+          {activeSection && (
+            <>
+              <span className={styles.breadcrumbSeparator}>/</span>
+              <span 
+                className={!subSection ? styles.breadcrumbTextActive : styles.breadcrumbText} 
+                onClick={handleBackToDepartamentos}
+              >
+                {activeSection === 'funcionarios' ? 'Funcionários' : 'Departamentos'}
+              </span>
+            </>
+          )}
+          
+          {subSection && (
+            <>
+              <span className={styles.breadcrumbSeparator}>/</span>
+              <span className={styles.breadcrumbTextActive}>
+                {subSection === 'cadastrar' ? 'Cadastrar' : 'Consultar'}
+              </span>
+            </>
+          )}
         </div>
 
         <div className={styles.mainContent}>
           {!activeSection ? (
             <>
-              <p className={styles.welcomeText}>
-                Bem-vindo ao módulo de Gestão!
-              </p>
+              <h2 className={styles.welcomeText}>
+                Visão Geral
+              </h2>
               <p className={styles.descriptionText}>
-                Aqui você poderá gerenciar seus funcionários e departamentos
+                Selecione o que você deseja gerenciar no sistema
               </p>
               
               <div className={styles.featuresGrid}>
@@ -124,7 +153,7 @@ const Gestao = () => {
                     </svg>
                   </div>
                   <h3>Funcionários</h3>
-                  <p>Gerencie o cadastro de funcionários da empresa</p>
+                  <p>Gerencie o cadastro de todos os funcionários da empresa com facilidade.</p>
                 </div>
 
                 <div className={styles.featureCard} onClick={() => handleSectionClick('departamentos')}>
@@ -138,7 +167,7 @@ const Gestao = () => {
                     </svg>
                   </div>
                   <h3>Departamentos</h3>
-                  <p>Gestão de Departamentos</p>
+                  <p>Gestão completa da estrutura e áreas organizacionais.</p>
                 </div>
               </div>
             </>
@@ -146,17 +175,6 @@ const Gestao = () => {
             <>
               {!subSection ? (
                 <>
-                  <div className={styles.sectionHeader}>
-                    <button className={styles.backToMainButton} onClick={handleBackToMain}>
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M19 12H5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                        <path d="M12 19L5 12L12 5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                      </svg>
-                      Voltar
-                    </button>
-                    <h2 className={styles.sectionTitle}>Gestão de Funcionários</h2>
-                  </div>
-
                   <div className={styles.subMenuGrid}>
                     <div className={styles.subMenuCard} onClick={() => setSubSection('cadastrar')}>
                       <div className={styles.subMenuIcon}>
@@ -166,7 +184,7 @@ const Gestao = () => {
                         </svg>
                       </div>
                       <h3>Cadastrar Funcionário</h3>
-                      <p>Adicionar novo funcionário ao sistema</p>
+                      <p>Adicionar novo perfil de usuário ao sistema.</p>
                     </div>
                     <div className={styles.subMenuCard} onClick={() => setSubSection('consultar')}>
                       <div className={styles.subMenuIcon}>
@@ -176,21 +194,12 @@ const Gestao = () => {
                         </svg>
                       </div>
                       <h3>Consultar Funcionários</h3>
-                      <p>Visualizar funcionários cadastrados</p>
+                      <p>Visualizar catálogo e perfis de ativos.</p>
                     </div>
                   </div>
                 </>
               ) : subSection === 'cadastrar' ? (
                 <>
-                  <div className={styles.sectionHeader}>
-                    <button className={styles.backToMainButton} onClick={handleBackToDepartamentos}>
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M19 12H5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                        <path d="M12 19L5 12L12 5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                      </svg>
-                      Voltar
-                    </button>
-                  </div>
                   <div className={styles.formContainer}>
                     <FuncionarioForm 
                       onSuccess={handleFormSuccess}
@@ -200,15 +209,6 @@ const Gestao = () => {
                 </>
               ) : subSection === 'consultar' ? (
                 <>
-                  <div className={styles.sectionHeader}>
-                    <button className={styles.backToMainButton} onClick={handleBackToDepartamentos}>
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M19 12H5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                        <path d="M12 19L5 12L12 5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                      </svg>
-                      Voltar
-                    </button>
-                  </div>
                   <FuncionarioForm modoConsulta={true} />
                 </>
               ) : null}
@@ -217,17 +217,6 @@ const Gestao = () => {
             !subSection ? (
               // Submenu com as duas opções
               <div className={styles.sectionContent}>
-                <div className={styles.sectionHeader}>
-                  <button className={styles.backToMainButton} onClick={handleBackToMain}>
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                      <path d="M19 12H5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                      <path d="M12 19L5 12L12 5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                    </svg>
-                    Voltar
-                  </button>
-                  <h2 className={styles.sectionTitle}>Gestão de Departamentos</h2>
-                </div>
-                
                 <div className={styles.subMenuGrid}>
                   <div className={styles.subMenuCard} onClick={() => setSubSection('cadastrar')}>
                     <div className={styles.subMenuIcon}>
@@ -236,8 +225,8 @@ const Gestao = () => {
                         <path d="M5 12h14" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                       </svg>
                     </div>
-                    <h3>Cadastrar Departamento</h3>
-                    <p>Adicionar novo departamento ao sistema</p>
+                    <h3>Criar Departamento</h3>
+                    <p>Adicionar nova unidade ou área ao negócio.</p>
                   </div>
                   <div className={styles.subMenuCard} onClick={() => setSubSection('consultar')}>
                     <div className={styles.subMenuIcon}>
@@ -246,28 +235,17 @@ const Gestao = () => {
                         <circle cx="10.5" cy="10.5" r="7.5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                       </svg>
                     </div>
-                    <h3>Consultar Departamentos</h3>
-                    <p>Ver todos os departamentos cadastrados</p>
+                    <h3>Consultar Base</h3>
+                    <p>Ver dados de todos organizados em lista.</p>
                   </div>
                 </div>
               </div>
             ) : subSection === 'cadastrar' ? (
               // Formulário de cadastro existente
               <div className={styles.sectionContent}>
-                <div className={styles.sectionHeader}>
-                  <button className={styles.backToMainButton} onClick={handleBackToDepartamentos}>
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                      <path d="M19 12H5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                      <path d="M12 19L5 12L12 5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                    </svg>
-                    Voltar
-                  </button>
-                  <h2 className={styles.sectionTitle}>Cadastro de Departamento</h2>
-                </div>
-                
                 <div className={styles.formContainer}>
                   <p className={styles.formDescription}>
-                    Preencha os dados do departamento para realizar o cadastro.
+                    Preencha os identificadores do novo departamento.
                   </p>
                   
                   <DepartamentoForm 
@@ -278,19 +256,11 @@ const Gestao = () => {
               </div>
             ) : subSection === 'consultar' ? (
               // Lista de departamentos sem container/fundo branco e sem envoltório extra
-              <>
-                <button style={{ marginBottom: 24 }} className={styles.backToMainButton} onClick={handleBackToDepartamentos}>
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M19 12H5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                    <path d="M12 19L5 12L12 5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                  </svg>
-                  Voltar
-                </button>
-                <h2 className={styles.sectionTitle} style={{ marginBottom: 16 }}>Departamentos Cadastrados</h2>
+              <div className={styles.sectionContent}>
                 {loadingDepartamentos ? (
                   <div className={styles.loadingContainer}>
                     <div className={styles.spinner}></div>
-                    <p>Carregando departamentos...</p>
+                    <p>Carregando dados da nuvem...</p>
                   </div>
                 ) : errorDepartamentos ? (
                   <div className={styles.errorContainer}>
@@ -310,19 +280,19 @@ const Gestao = () => {
                         <path d="M15 3v18" stroke="currentColor" strokeWidth="2"/>
                       </svg>
                     </div>
-                    <h3>Nenhum departamento encontrado</h3>
-                    <p>Ainda não há departamentos cadastrados no sistema.</p>
+                    <h3>Nenhum registro ainda</h3>
+                    <p>Você não possui itens de departamento salvos localmente.</p>
                     <button 
                       className={styles.addButton}
                       onClick={() => setSubSection('cadastrar')}
                     >
-                      Cadastrar Primeiro Departamento
+                      Cadastrar o Primeiro
                     </button>
                   </div>
                 ) : (
                   <>
                     <div className={styles.listHeader}>
-                      <h3>Total: {departamentos.length} departamento(s)</h3>
+                      <h3>Listagem Geral ({departamentos.length})</h3>
                       <button 
                         className={styles.addNewButton}
                         onClick={() => setSubSection('cadastrar')}
@@ -374,7 +344,7 @@ const Gestao = () => {
                                   }}
                                   disabled={deletando === departamento.idDepartamento}
                                 >
-                                  {deletando === departamento.idDepartamento ? 'Deletando...' : 'Deletar'}
+                                  {deletando === departamento.idDepartamento ? 'Aguarde...' : 'Excluir'}
                                 </button>
                               </div>
                             )}
@@ -384,7 +354,7 @@ const Gestao = () => {
                     </div>
                   </>
                 )}
-              </>
+              </div>
             ) : null
           ) : null}
         </div>
