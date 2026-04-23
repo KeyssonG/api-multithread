@@ -21,20 +21,20 @@ const LinkModuloForm: React.FC<LinkModuloFormProps> = ({ onSuccess, onError }) =
 
   const [selectedModulo, setSelectedModulo] = useState<CompanyModuloDTO | null>(null);
   const [selectedFuncionario, setSelectedFuncionario] = useState<FuncionarioConsulta | null>(null);
-  
+
   const [searchModulo, setSearchModulo] = useState('');
-  
+
   const [isEmployeeModalOpen, setIsEmployeeModalOpen] = useState(false);
-  
+
   const [departamentoSelecionado, setDepartamentoSelecionado] = useState('');
   const [dataInicio, setDataInicio] = useState('');
   const [dataFim, setDataFim] = useState('');
-  const [departamentos, setDepartamentos] = useState<{nomeDepartamento: string}[]>([]);
+  const [departamentos, setDepartamentos] = useState<{ nomeDepartamento: string }[]>([]);
 
   useEffect(() => {
     const carregarModulosEDepartamentos = async () => {
       if (!token) return;
-      
+
       setLoadingDados(true);
       try {
         const mods = await moduloService.getModulosByCompany(token);
@@ -60,7 +60,7 @@ const LinkModuloForm: React.FC<LinkModuloFormProps> = ({ onSuccess, onError }) =
       let data = [];
       const finalDataInicio = dataInicio || '2000-01-01';
       const finalDataFim = dataFim || new Date().toISOString().split('T')[0];
-      
+
       if (departamentoSelecionado === "") {
         data = await funcionarioService.buscarFuncionariosTodosDepartamentos(finalDataInicio, finalDataFim, token);
       } else {
@@ -107,7 +107,7 @@ const LinkModuloForm: React.FC<LinkModuloFormProps> = ({ onSuccess, onError }) =
     }
   };
 
-  const filteredModulos = modulos.filter(m => 
+  const filteredModulos = modulos.filter(m =>
     m.moduloName.toLowerCase().includes(searchModulo.toLowerCase())
   );
 
@@ -116,7 +116,7 @@ const LinkModuloForm: React.FC<LinkModuloFormProps> = ({ onSuccess, onError }) =
 
       {/* Navigation Tabs */}
       <div style={{ display: 'flex', gap: '10px', marginBottom: '2.5rem', backgroundColor: 'white', padding: '8px', borderRadius: '14px', width: 'fit-content', boxShadow: '0 4px 10px rgba(0,0,0,0.05)' }}>
-        <button 
+        <button
           style={{
             padding: '12px 25px',
             borderRadius: '10px',
@@ -130,7 +130,7 @@ const LinkModuloForm: React.FC<LinkModuloFormProps> = ({ onSuccess, onError }) =
         >
           📋 Consultar Vínculos
         </button>
-        <button 
+        <button
           style={{
             padding: '12px 25px',
             borderRadius: '10px',
@@ -147,26 +147,26 @@ const LinkModuloForm: React.FC<LinkModuloFormProps> = ({ onSuccess, onError }) =
       </div>
 
       {/* Two-column layout */}
-      <div style={{ display: 'flex', gap: '2rem', minHeight: '70vh' }}>
+      <div style={{ display: 'flex', gap: '2rem', height: 'calc(100vh - 380px)', minHeight: '400px' }}>
 
         {/* LEFT PANEL: Módulos Disponíveis */}
         <section style={{ flex: 1, backgroundColor: 'white', borderRadius: '20px', padding: '1.5rem', boxShadow: '0 4px 20px rgba(0,0,0,0.05)', display: 'flex', flexDirection: 'column' }}>
           <div style={{ marginBottom: '1.5rem' }}>
             <h2 style={{ fontSize: '1.4rem', color: '#1a237e', marginBottom: '1rem', fontWeight: '700' }}>Módulos Disponíveis</h2>
-            <input 
-              type="text" 
-              placeholder="Pesquisar módulo..." 
+            <input
+              type="text"
+              placeholder="Pesquisar módulo..."
               value={searchModulo}
               onChange={(e) => setSearchModulo(e.target.value)}
               style={{ width: '100%', padding: '12px 15px', borderRadius: '10px', border: '1px solid #ddd', outline: 'none' }}
             />
           </div>
-          
+
           <div style={{ flex: 1, overflowY: 'auto', display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))', gap: '1rem', padding: '10px', alignContent: 'start' }}>
             {loadingDados && modulos.length === 0 ? (
               <p style={{ gridColumn: '1/-1', textAlign: 'center', color: '#666' }}>Carregando...</p>
             ) : filteredModulos.map(modulo => (
-              <div 
+              <div
                 key={modulo.moduloId}
                 onClick={() => setSelectedModulo(modulo)}
                 style={{
@@ -190,7 +190,7 @@ const LinkModuloForm: React.FC<LinkModuloFormProps> = ({ onSuccess, onError }) =
         {/* RIGHT PANEL: Configurar Gestão */}
         <section style={{ width: '450px', backgroundColor: 'white', borderRadius: '20px', padding: '2rem', boxShadow: '0 4px 20px rgba(0,0,0,0.05)', display: 'flex', flexDirection: 'column' }}>
           <h2 style={{ fontSize: '1.4rem', color: '#1a237e', marginBottom: '2rem', fontWeight: '700' }}>Configurar Gestão</h2>
-          
+
           <div style={{ flex: 1 }}>
             <div style={{ marginBottom: '2.5rem' }}>
               <p style={{ fontSize: '0.75rem', color: '#1976d2', textTransform: 'uppercase', fontWeight: '800', marginBottom: '10px' }}>1. Módulo</p>
@@ -209,7 +209,7 @@ const LinkModuloForm: React.FC<LinkModuloFormProps> = ({ onSuccess, onError }) =
                   <button onClick={() => setSelectedFuncionario(null)} style={{ background: 'none', border: 'none', color: '#2e7d32', cursor: 'pointer' }}>✕</button>
                 </div>
               ) : (
-                <button 
+                <button
                   disabled={!selectedModulo || loadingSubmit}
                   onClick={() => setIsEmployeeModalOpen(true)}
                   style={{ width: '100%', padding: '1.2rem', borderRadius: '12px', border: '2px solid #2e7d32', backgroundColor: 'white', color: '#2e7d32', fontWeight: '700', cursor: selectedModulo ? 'pointer' : 'not-allowed' }}
@@ -243,7 +243,7 @@ const LinkModuloForm: React.FC<LinkModuloFormProps> = ({ onSuccess, onError }) =
 
             <div style={{ marginBottom: '1rem', display: 'flex', flexDirection: 'column', gap: '10px' }}>
               <select
-                className="w-full p-3 border border-[#ddd] rounded-[10px] text-sm focus:outline-none focus:border-[#1a237e]"
+                style={{ width: '100%', padding: '12px 15px', border: '1px solid #ddd', borderRadius: '10px', fontSize: '0.9rem', outline: 'none', backgroundColor: 'white', color: '#333', cursor: 'pointer' }}
                 value={departamentoSelecionado}
                 onChange={e => setDepartamentoSelecionado(e.target.value)}
               >
@@ -254,18 +254,24 @@ const LinkModuloForm: React.FC<LinkModuloFormProps> = ({ onSuccess, onError }) =
               </select>
 
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
-                <input
-                  type="date"
-                  className="w-full p-3 border border-[#ddd] rounded-[10px] text-sm focus:outline-none focus:border-[#1a237e]"
-                  value={dataInicio}
-                  onChange={e => setDataInicio(e.target.value)}
-                />
-                <input
-                  type="date"
-                  className="w-full p-3 border border-[#ddd] rounded-[10px] text-sm focus:outline-none focus:border-[#1a237e]"
-                  value={dataFim}
-                  onChange={e => setDataFim(e.target.value)}
-                />
+                <div style={{ position: 'relative', display: 'flex', flexDirection: 'column' }}>
+                  <span style={{ fontSize: '0.75rem', color: '#666', fontWeight: '600', marginBottom: '4px', marginLeft: '4px' }}>Data Início</span>
+                  <input
+                    type="date"
+                    style={{ width: '100%', padding: '12px 15px', border: '1px solid #ddd', borderRadius: '10px', fontSize: '0.9rem', outline: 'none', backgroundColor: 'white', color: '#333' }}
+                    value={dataInicio}
+                    onChange={e => setDataInicio(e.target.value)}
+                  />
+                </div>
+                <div style={{ position: 'relative', display: 'flex', flexDirection: 'column' }}>
+                  <span style={{ fontSize: '0.75rem', color: '#666', fontWeight: '600', marginBottom: '4px', marginLeft: '4px' }}>Data Fim</span>
+                  <input
+                    type="date"
+                    style={{ width: '100%', padding: '12px 15px', border: '1px solid #ddd', borderRadius: '10px', fontSize: '0.9rem', outline: 'none', backgroundColor: 'white', color: '#333' }}
+                    value={dataFim}
+                    onChange={e => setDataFim(e.target.value)}
+                  />
+                </div>
               </div>
 
               <button
