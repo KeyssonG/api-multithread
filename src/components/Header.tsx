@@ -17,11 +17,12 @@ const Header = () => {
     authContext = {
       name: null,
       logout: () => navigate('/login'),
-      isAuthenticated: false
+      isAuthenticated: false,
+      hasAccess: () => false
     };
   }
 
-  const { name, logout, isAuthenticated } = authContext;
+  const { name, logout, isAuthenticated, hasAccess } = authContext;
 
   const handleLogout = () => {
     logout();
@@ -75,12 +76,14 @@ const Header = () => {
           >
             Home
           </Link>
-          <Link
-            to={ROUTES.GESTAO_ACESSO}
-            className={`${styles.navLink} ${location.pathname === ROUTES.GESTAO_ACESSO ? styles.active : ''}`}
-          >
-            Gestão de Módulos
-          </Link>
+          {hasAccess('Gestão de Acesso de Módulos') && (
+            <Link
+              to={ROUTES.GESTAO_ACESSO}
+              className={`${styles.navLink} ${location.pathname === ROUTES.GESTAO_ACESSO ? styles.active : ''}`}
+            >
+              Gestão de Acesso de Módulos
+            </Link>
+          )}
         </nav>
       )}
 
