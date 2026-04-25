@@ -788,7 +788,7 @@ const FuncionarioForm: React.FC<FuncionarioFormProps> = ({ onSuccess, onError, m
                 {loadingDepartamentos ? 'Carregando departamentos...' : 'Selecione um departamento'}
               </option>
               {departamentos.map((dept, index) => (
-                <option key={index} value={dept.idDepartamento}>
+                <option key={index} value={dept.nomeDepartamento}>
                   {dept.nomeDepartamento}
                 </option>
               ))}
