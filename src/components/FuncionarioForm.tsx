@@ -174,13 +174,13 @@ const FuncionarioForm: React.FC<FuncionarioFormProps> = ({ onSuccess, onError, m
       } else {
         const errorMsg = response?.message || 'Erro desconhecido ao cadastrar funcionário';
         onError?.(errorMsg);
-        setPopup({ show: true, title: 'Erro ao cadastrar funcionário', message: errorMsg, type: 'error' });
+        setPopup({ show: true, title: 'Erro', message: errorMsg, type: 'error' });
       }
     } catch (error: any) {
       console.error('Erro completo:', error);
       const errorMessage = error?.message || 'Erro inesperado ao cadastrar funcionário';
       onError?.(errorMessage);
-      setPopup({ show: true, title: 'Erro ao cadastrar funcionário', message: errorMessage, type: 'error' });
+      setPopup({ show: true, title: 'Erro', message: errorMessage, type: 'error' });
     } finally {
       setLoading(false);
     }
