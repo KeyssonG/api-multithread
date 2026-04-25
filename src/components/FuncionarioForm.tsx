@@ -38,6 +38,7 @@ const FuncionarioForm: React.FC<FuncionarioFormProps> = ({ onSuccess, onError, m
   const [selectedFuncionario, setSelectedFuncionario] = useState<FuncionarioConsulta | null>(null);
   const [editingFuncionario, setEditingFuncionario] = useState<FuncionarioConsulta | null>(null);
   const [editFormData, setEditFormData] = useState<FuncionarioConsulta | null>(null);
+  const [popup, setPopup] = useState<{ show: boolean; title: string; message: string; type: 'success' | 'error' } | null>(null);
 
   useEffect(() => {
     const carregarDepartamentos = async () => {
@@ -143,7 +144,7 @@ const FuncionarioForm: React.FC<FuncionarioFormProps> = ({ onSuccess, onError, m
     if (!token) {
       const errorMsg = 'Token de autenticação não encontrado. Faça login novamente.';
       onError?.(errorMsg);
-      alert(errorMsg);
+      setPopup({ show: true, title: 'Erro', message: errorMsg, type: 'error' });
       return;
     }
 
@@ -157,7 +158,7 @@ const FuncionarioForm: React.FC<FuncionarioFormProps> = ({ onSuccess, onError, m
 
       if (response && response.success) {
         const successMsg = response.message || 'Funcionário cadastrado com sucesso!';
-        alert(successMsg);
+        setPopup({ show: true, title: 'Sucesso', message: successMsg, type: 'success' });
         setFormData({
           nome: '',
           dataNascimento: '',
@@ -173,13 +174,13 @@ const FuncionarioForm: React.FC<FuncionarioFormProps> = ({ onSuccess, onError, m
       } else {
         const errorMsg = response?.message || 'Erro desconhecido ao cadastrar funcionário';
         onError?.(errorMsg);
-        alert(`Erro: ${errorMsg}`);
+        setPopup({ show: true, title: 'Erro ao cadastrar funcionário', message: errorMsg, type: 'error' });
       }
     } catch (error: any) {
       console.error('Erro completo:', error);
       const errorMessage = error?.message || 'Erro inesperado ao cadastrar funcionário';
       onError?.(errorMessage);
-      alert(`Erro: ${errorMessage}`);
+      setPopup({ show: true, title: 'Erro ao cadastrar funcionário', message: errorMessage, type: 'error' });
     } finally {
       setLoading(false);
     }
@@ -859,6 +860,49 @@ const FuncionarioForm: React.FC<FuncionarioFormProps> = ({ onSuccess, onError, m
         <button onClick={buscarFuncionarios}>Buscar Todos os Departamentos</button>
       </div>
       */}
+
+      {/* Modal de Popup (Sucesso/Erro) */}
+      {popup && popup.show && (
+        <div className={styles.modalOverlay} style={{ zIndex: 9999 }} onClick={() => setPopup(null)}>
+          <div className={styles.modalContent} style={{ maxWidth: '400px', textAlign: 'center', padding: '2rem' }} onClick={e => e.stopPropagation()}>
+            <div style={{ marginBottom: '1rem' }}>
+              {popup.type === 'success' ? (
+                <svg width="64" height="64" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ color: '#10b981', margin: '0 auto' }}>
+                  <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  <polyline points="22 4 12 14.01 9 11.01" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              ) : (
+                <svg width="64" height="64" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ color: '#ef4444', margin: '0 auto' }}>
+                  <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  <line x1="12" y1="8" x2="12" y2="12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  <line x1="12" y1="16" x2="12.01" y2="16" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              )}
+            </div>
+            <h3 style={{ color: '#1a237e', fontSize: '1.25rem', marginBottom: '0.5rem', fontWeight: 'bold' }}>{popup.title}</h3>
+            <p style={{ color: '#666', marginBottom: '1.5rem', lineHeight: '1.5' }}>{popup.message}</p>
+            <button
+              onClick={() => setPopup(null)}
+              style={{
+                backgroundColor: popup.type === 'success' ? '#10b981' : '#ef4444',
+                color: 'white',
+                border: 'none',
+                padding: '0.75rem 2rem',
+                borderRadius: '8px',
+                fontWeight: 'bold',
+                cursor: 'pointer',
+                width: '100%',
+                transition: 'opacity 0.2s',
+                fontSize: '1rem'
+              }}
+              onMouseOver={(e) => e.currentTarget.style.opacity = '0.9'}
+              onMouseOut={(e) => e.currentTarget.style.opacity = '1'}
+            >
+              OK
+            </button>
+          </div>
+        </div>
+      )}
 
     </div>
   );
