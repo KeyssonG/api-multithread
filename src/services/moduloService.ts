@@ -49,10 +49,15 @@ export const moduloService = {
 
   async removerVinculoUsuarioModulo(userId: number, moduloId: number, token: string): Promise<void> {
     try {
-      await axios.delete(`${BASE_URL_VINCULO}?userId=${userId}&moduloId=${moduloId}`, {
+      await axios.delete(BASE_URL_VINCULO, {
         headers: {
+          'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`,
         },
+        data: {
+          userId,
+          moduloId
+        }
       });
     } catch (error) {
       console.error('Erro ao remover vínculo:', error);
