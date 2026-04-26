@@ -140,10 +140,6 @@ const ConsultarVinculos: React.FC = () => {
     setActiveTab(tab);
   };
 
-  const handleVoltar = () => {
-    navigate('/gestao-acesso'); // Volta para a página de gestão de acesso
-  };
-
   return (
     <div className={styles.container}>
       <Header />
