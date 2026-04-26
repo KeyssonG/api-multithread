@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import CustomPopup from '../components/CustomPopup';
@@ -9,7 +8,6 @@ import type { UserModuloResponseDTO, CompanyModuloDTO } from '../types/modulo';
 import styles from '../styles/ConsultarVinculos.module.css';
 
 const ConsultarVinculos: React.FC = () => {
-  const navigate = useNavigate();
   const { token } = useAuth();
   
   const [vinculos, setVinculos] = useState<UserModuloResponseDTO[]>([]);
