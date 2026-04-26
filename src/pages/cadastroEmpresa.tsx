@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { IMaskInput } from "react-imask";
 import AuthHeader from "../components/AuthHeader";
 import Footer from "../components/Footer";
+import CustomPopup from "../components/CustomPopup";
 import { API_CONFIG, ROUTES } from "../constants/config";
 import type { FormData } from "../types/common";
 
@@ -14,6 +15,18 @@ const CadastroEmpresa: React.FC = () => {
     cnpj: "",
     username: "",
     password: "",
+  });
+
+  const [popupConfig, setPopupConfig] = useState<{
+    isOpen: boolean;
+    title: string;
+    message: string;
+    type?: 'error' | 'success' | 'warning' | 'info';
+  }>({
+    isOpen: false,
+    title: '',
+    message: '',
+    type: 'error'
   });
 
   const navigate = useNavigate();
@@ -53,12 +66,28 @@ const CadastroEmpresa: React.FC = () => {
 
       const data = await response.json();
       console.log("Cadastro realizado:", data);
-      alert("Empresa cadastrada com sucesso!");
-      navigate(ROUTES.LOGIN);
+      setPopupConfig({
+        isOpen: true,
+        title: 'Sucesso',
+        message: 'Empresa cadastrada com sucesso!',
+        type: 'success'
+      });
+      setTimeout(() => {
+        navigate(ROUTES.LOGIN);
+      }, 2000);
     } catch (error) {
       console.error("Falha no cadastro:", error);
-      alert(error instanceof Error ? error.message : "Não foi possível realizar o cadastro.");
+      setPopupConfig({
+        isOpen: true,
+        title: 'Erro no Cadastro',
+        message: error instanceof Error ? error.message : "Não foi possível realizar o cadastro.",
+        type: 'error'
+      });
     }
+  };
+
+  const closePopup = () => {
+    setPopupConfig(prev => ({ ...prev, isOpen: false }));
   };
 
   return (
@@ -147,6 +176,15 @@ const CadastroEmpresa: React.FC = () => {
         </form>
       </div>
       <Footer />
+      
+      {/* Custom Popup */}
+      <CustomPopup
+        isOpen={popupConfig.isOpen}
+        onClose={closePopup}
+        title={popupConfig.title}
+        message={popupConfig.message}
+        type={popupConfig.type}
+      />
     </div>
   );
 };

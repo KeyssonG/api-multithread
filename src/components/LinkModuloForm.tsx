@@ -4,6 +4,7 @@ import { funcionarioService } from '../services/funcionarioService';
 import { moduloService } from '../services/moduloService';
 import type { FuncionarioConsulta } from '../types/funcionario';
 import type { CompanyModuloDTO } from '../types/modulo';
+import CustomPopup from './CustomPopup';
 
 interface LinkModuloFormProps {
   onSuccess?: () => void;
@@ -30,6 +31,18 @@ const LinkModuloForm: React.FC<LinkModuloFormProps> = ({ onSuccess, onError }) =
   const [dataInicio, setDataInicio] = useState('');
   const [dataFim, setDataFim] = useState('');
   const [departamentos, setDepartamentos] = useState<{ nomeDepartamento: string }[]>([]);
+
+  const [popupConfig, setPopupConfig] = useState<{
+    isOpen: boolean;
+    title: string;
+    message: string;
+    type?: 'error' | 'success' | 'warning' | 'info';
+  }>({
+    isOpen: false,
+    title: '',
+    message: '',
+    type: 'error'
+  });
 
   useEffect(() => {
     const carregarModulosEDepartamentos = async () => {
@@ -68,11 +81,21 @@ const LinkModuloForm: React.FC<LinkModuloFormProps> = ({ onSuccess, onError }) =
       }
       setFuncionarios(data || []);
       if (data && data.length === 0) {
-        alert('Nenhum funcionário encontrado para os filtros informados.');
+        setPopupConfig({
+          isOpen: true,
+          title: 'Aviso',
+          message: 'Nenhum funcionário encontrado para os filtros informados.',
+          type: 'warning'
+        });
       }
     } catch (error: any) {
       console.error('Erro ao buscar funcionários:', error);
-      alert(error.message || 'Erro ao buscar funcionários.');
+      setPopupConfig({
+        isOpen: true,
+        title: 'Erro ao Buscar',
+        message: error.message || 'Erro ao buscar funcionários.',
+        type: 'error'
+      });
     } finally {
       setLoadingDados(false);
     }
@@ -82,7 +105,12 @@ const LinkModuloForm: React.FC<LinkModuloFormProps> = ({ onSuccess, onError }) =
     if (!selectedModulo || !selectedFuncionario) return;
 
     if (!token) {
-      alert('Token de autenticação não encontrado.');
+      setPopupConfig({
+        isOpen: true,
+        title: 'Erro de Autenticação',
+        message: 'Token de autenticação não encontrado.',
+        type: 'error'
+      });
       return;
     }
 
@@ -93,7 +121,12 @@ const LinkModuloForm: React.FC<LinkModuloFormProps> = ({ onSuccess, onError }) =
         moduloId: selectedModulo.moduloId
       }, token);
 
-      alert('Módulo vinculado com sucesso ao funcionário!');
+      setPopupConfig({
+        isOpen: true,
+        title: 'Sucesso',
+        message: 'Módulo vinculado com sucesso ao funcionário!',
+        type: 'success'
+      });
       setSelectedFuncionario(null);
       setSelectedModulo(null);
       onSuccess?.();
@@ -101,7 +134,12 @@ const LinkModuloForm: React.FC<LinkModuloFormProps> = ({ onSuccess, onError }) =
       console.error('Erro ao vincular:', error);
       const msg = error.response?.data?.message || 'Erro inesperado ao vincular módulo.';
       onError?.(msg);
-      alert(msg);
+      setPopupConfig({
+        isOpen: true,
+        title: 'Erro ao Vincular',
+        message: msg,
+        type: 'error'
+      });
     } finally {
       setLoadingSubmit(false);
     }
@@ -110,6 +148,10 @@ const LinkModuloForm: React.FC<LinkModuloFormProps> = ({ onSuccess, onError }) =
   const filteredModulos = modulos.filter(m =>
     m.moduloName.toLowerCase().includes(searchModulo.toLowerCase())
   );
+
+  const closePopup = () => {
+    setPopupConfig(prev => ({ ...prev, isOpen: false }));
+  };
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
@@ -310,6 +352,15 @@ const LinkModuloForm: React.FC<LinkModuloFormProps> = ({ onSuccess, onError }) =
           `}</style>
         </div>
       )}
+
+      {/* Custom Popup */}
+      <CustomPopup
+        isOpen={popupConfig.isOpen}
+        onClose={closePopup}
+        title={popupConfig.title}
+        message={popupConfig.message}
+        type={popupConfig.type}
+      />
 
     </div>
   );

@@ -8,6 +8,7 @@ import DepartmentService from "../services/DepartmentService";
 import { useAuth } from "../contexts/AuthContext";
 import type { DepartmentData } from "../types/Types";
 import styles from "../styles/Gestao.module.css";
+import CustomPopup from "../components/CustomPopup";
 
 const Gestao = () => {
   const navigate = useNavigate();
@@ -73,18 +74,39 @@ const Gestao = () => {
   const [menuAberto, setMenuAberto] = useState<number | null>(null);
   const [deletando, setDeletando] = useState<number | null>(null);
 
+  const [popupConfig, setPopupConfig] = useState<{
+    isOpen: boolean;
+    title: string;
+    message: string;
+    type?: 'error' | 'success' | 'warning' | 'info';
+  }>({
+    isOpen: false,
+    title: '',
+    message: '',
+    type: 'error'
+  });
+
   const deletarDepartamento = async (id: number) => {
     setDeletando(id);
     try {
       await DepartmentService.deletarDepartamento({idDepartamento: id}, token!);
       carregarDepartamentos();
     } catch (error) {
-      alert('Erro ao deletar departamento');
+      setPopupConfig({
+        isOpen: true,
+        title: 'Erro ao Deletar',
+        message: 'Erro ao deletar departamento',
+        type: 'error'
+      });
     } finally {
       setDeletando(null);
       setMenuAberto(null);
     }
   }
+
+  const closePopup = () => {
+    setPopupConfig(prev => ({ ...prev, isOpen: false }));
+  };
 
   return (
     <div className={styles.container}>
@@ -360,6 +382,15 @@ const Gestao = () => {
         </div>
       </div>
       <Footer />
+      
+      {/* Custom Popup */}
+      <CustomPopup
+        isOpen={popupConfig.isOpen}
+        onClose={closePopup}
+        title={popupConfig.title}
+        message={popupConfig.message}
+        type={popupConfig.type}
+      />
     </div>
   );
 };

@@ -1,6 +1,8 @@
 import { useNavigate } from "react-router-dom";
+import { useState } from "react";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
+import CustomPopup from "../components/CustomPopup";
 import styles from "../styles/dashboard.module.css";
 import { ROUTES } from "../constants/config";
 import { useAuth } from "../contexts/AuthContext";
@@ -9,6 +11,18 @@ const Dashboard = () => {
   const navigate = useNavigate();
   const { hasAccess } = useAuth();
 
+  const [popupConfig, setPopupConfig] = useState<{
+    isOpen: boolean;
+    title: string;
+    message: string;
+    type?: 'error' | 'success' | 'warning' | 'info';
+  }>({
+    isOpen: false,
+    title: '',
+    message: '',
+    type: 'error'
+  });
+
   const gestaoPessoasAccess = hasAccess('Gestão de Pessoas');
   const gestaoAcessoAccess = hasAccess('Gestão de Acesso de Módulos');
 
@@ -16,7 +30,12 @@ const Dashboard = () => {
     if (gestaoPessoasAccess) {
       navigate(ROUTES.GESTAO);
     } else {
-      alert('Acesso restrito: Você não possui permissão para acessar o módulo Gestão de Pessoas.');
+      setPopupConfig({
+        isOpen: true,
+        title: 'Acesso restrito',
+        message: 'Você não possui permissão para acessar o módulo Gestão de Pessoas.',
+        type: 'error'
+      });
     }
   };
 
@@ -24,8 +43,17 @@ const Dashboard = () => {
     if (gestaoAcessoAccess) {
       navigate(ROUTES.GESTAO_ACESSO);
     } else {
-      alert('Acesso restrito: Você não possui permissão para acessar o módulo Gestão de Acesso de Módulos.');
+      setPopupConfig({
+        isOpen: true,
+        title: 'Acesso restrito',
+        message: 'Você não possui permissão para acessar o módulo Gestão de Acesso de Módulos.',
+        type: 'error'
+      });
     }
+  };
+
+  const closePopup = () => {
+    setPopupConfig(prev => ({ ...prev, isOpen: false }));
   };
 
   return (
@@ -69,6 +97,15 @@ const Dashboard = () => {
         </div>
       </div>
       <Footer />
+      
+      {/* Custom Popup */}
+      <CustomPopup
+        isOpen={popupConfig.isOpen}
+        onClose={closePopup}
+        title={popupConfig.title}
+        message={popupConfig.message}
+        type={popupConfig.type}
+      />
     </div>
   );
 };

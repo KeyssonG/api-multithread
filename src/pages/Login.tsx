@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { authService } from "../services/authService";
 import AuthHeader from "../components/AuthHeader";
 import Footer from "../components/Footer";
+import CustomPopup from "../components/CustomPopup";
 import { ROUTES } from "../constants/config";
 import type { LoginFormData } from "../types/common";
 
@@ -15,6 +16,18 @@ const Login = () => {
     empresaId: "",
   });
   const [carregando, setCarregando] = useState(false);
+
+  const [popupConfig, setPopupConfig] = useState<{
+    isOpen: boolean;
+    title: string;
+    message: string;
+    type?: 'error' | 'success' | 'warning' | 'info';
+  }>({
+    isOpen: false,
+    title: '',
+    message: '',
+    type: 'error'
+  });
 
   const { login } = useAuth();
   const navigate = useNavigate();
@@ -42,7 +55,12 @@ const Login = () => {
         login(token, formData.username);
         navigate(ROUTES.DASHBOARD);
       } else {
-        alert("Token não encontrado na resposta da API.");
+        setPopupConfig({
+          isOpen: true,
+          title: 'Erro de Autenticação',
+          message: 'Token não encontrado na resposta da API.',
+          type: 'error'
+        });
       }
     } catch (error: any) {
       console.error("Falha na autenticação:", error);
@@ -58,10 +76,19 @@ const Login = () => {
         errorMessage = "Erro de conexão. Verifique sua internet.";
       }
       
-      alert(errorMessage);
+      setPopupConfig({
+        isOpen: true,
+        title: 'Erro de Login',
+        message: errorMessage,
+        type: 'error'
+      });
     } finally {
       setCarregando(false);
     }
+  };
+
+  const closePopup = () => {
+    setPopupConfig(prev => ({ ...prev, isOpen: false }));
   };
 
   return (
@@ -129,6 +156,15 @@ const Login = () => {
         </form>
       </div>
       <Footer />
+      
+      {/* Custom Popup */}
+      <CustomPopup
+        isOpen={popupConfig.isOpen}
+        onClose={closePopup}
+        title={popupConfig.title}
+        message={popupConfig.message}
+        type={popupConfig.type}
+      />
     </div>
   );
 };
