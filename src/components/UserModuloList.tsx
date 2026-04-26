@@ -65,19 +65,25 @@ const UserModuloList: React.FC<UserModuloListProps> = ({ onNavigateToForm }) => 
     if (!token) return;
 
     try {
-      // TODO: Implement remove functionality when endpoint is available
+      await moduloService.removerVinculoUsuarioModulo(userId, moduloId, token);
+      
       setPopupConfig({
         isOpen: true,
-        title: 'Aviso',
-        message: 'Funcionalidade de remoção será implementada quando o endpoint estiver disponível.',
-        type: 'warning'
+        title: 'Sucesso',
+        message: 'Vínculo removido com sucesso!',
+        type: 'success'
       });
+      
+      // Recarregar os dados
+      const data = await moduloService.getUserModulos(token);
+      setUserModulos(data || []);
+      setFilteredData(data || []);
     } catch (error: any) {
       console.error('Erro ao remover vínculo:', error);
       setPopupConfig({
         isOpen: true,
         title: 'Erro ao Remover',
-        message: error.message || 'Erro ao remover vínculo.',
+        message: error.response?.data?.message || error.message || 'Erro ao remover vínculo.',
         type: 'error'
       });
     }

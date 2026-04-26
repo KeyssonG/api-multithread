@@ -17,3 +17,5 @@ export interface UserModuloResponse {
   moduloId: number;
   moduloName: string;
 }
+
+export type UserModuloResponseDTO = UserModuloResponse;

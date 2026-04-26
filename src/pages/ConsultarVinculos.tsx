@@ -22,7 +22,7 @@ const ConsultarVinculos: React.FC = () => {
   const [modulos, setModulos] = useState<CompanyModuloDTO[]>([]);
   const [moduloSearchTerm, setModuloSearchTerm] = useState('');
   const [selectedModulo, setSelectedModulo] = useState<CompanyModuloDTO | null>(null);
-  const [selectedFuncionario, setSelectedFuncionario] = useState<any>(null);
+  const [selectedFuncionario] = useState<any>(null);
   const [loadingModulos, setLoadingModulos] = useState(false);
   
   const [popupConfig, setPopupConfig] = useState<{
