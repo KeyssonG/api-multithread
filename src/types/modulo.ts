@@ -9,3 +9,11 @@ export interface LinkUserModuloRequest {
   userId: number;
   moduloId: number;
 }
+
+export interface UserModuloResponse {
+  id: number;
+  userId: number;
+  userName: string;
+  moduloId: number;
+  moduloName: string;
+}
