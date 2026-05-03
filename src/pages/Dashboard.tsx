@@ -25,6 +25,7 @@ const Dashboard = () => {
 
   const gestaoPessoasAccess = hasAccess('Gestão de Pessoas');
   const gestaoAcessoAccess = hasAccess('Gestão de Acesso de Módulos');
+  const gestaoEstoqueAccess = true; // Liberado para visualização conforme solicitado
 
   const handleGestaoClick = () => {
     if (gestaoPessoasAccess) {
@@ -50,6 +51,10 @@ const Dashboard = () => {
         type: 'error'
       });
     }
+  };
+
+  const handleGestaoEstoqueClick = () => {
+    navigate(ROUTES.GESTAO_ESTOQUE);
   };
 
   const closePopup = () => {
@@ -92,6 +97,19 @@ const Dashboard = () => {
                 </svg>
               </div>
               <span className={styles.moduleText}>Gestão de Acesso de Módulos</span>
+            </div>
+
+            <div 
+              className={styles.moduleCard} 
+              onClick={handleGestaoEstoqueClick}
+              style={{ filter: gestaoEstoqueAccess ? 'none' : 'grayscale(100%)', opacity: gestaoEstoqueAccess ? 1 : 0.6, cursor: gestaoEstoqueAccess ? 'pointer' : 'not-allowed' }}
+            >
+              <div className={styles.moduleIcon}>
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M20 7L12 3L4 7M20 7L12 11M20 7V17L12 21M12 11L4 7M12 11V21M4 7V17L12 21" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              </div>
+              <span className={styles.moduleText}>Gestão de Estoque</span>
             </div>
           </div>
         </div>

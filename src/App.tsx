@@ -10,6 +10,7 @@ import { ROUTES } from './constants/config';
 import ResetSenhaSolicitar from './pages/ResetSenhaSolicitar';
 import ResetSenhaConfirmar from './pages/ResetSenhaConfirmar';
 import GestaoAcesso from './pages/GestaoAcesso';
+import GestaoEstoque from './pages/GestaoEstoque';
 // Force TS reload
 
 const App = () => {
@@ -39,6 +40,14 @@ const App = () => {
           element={
             <PrivateRoute>
               <GestaoAcesso />
+            </PrivateRoute>
+          } 
+        />
+        <Route 
+          path={ROUTES.GESTAO_ESTOQUE} 
+          element={
+            <PrivateRoute>
+              <GestaoEstoque />
             </PrivateRoute>
           } 
         />

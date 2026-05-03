@@ -28,6 +28,7 @@ export const ROUTES = {
   REGISTER: '/cadastrar',
   GESTAO: '/gestao',
   GESTAO_ACESSO: '/gestao-acesso',
+  GESTAO_ESTOQUE: '/gestao-estoque',
   RESET_SENHA_SOLICITAR: '/reset-senha/solicitar',
   RESET_SENHA_CONFIRMAR: '/reset-senha/confirmar',
 } as const;
