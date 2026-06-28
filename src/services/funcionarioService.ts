@@ -1,11 +1,12 @@
 import axios from 'axios';
+import { API_CONFIG } from '../constants/config';
 import type { FuncionarioData, FuncionarioResponse } from '../types/funcionario';
 
 export const funcionarioService = {
   async cadastrarFuncionario(data: FuncionarioData, token: string): Promise<FuncionarioResponse> {
     try {
       const response = await axios.post(
-        'http://localhost:8087/cadastrar/funcionario-cliente',
+        `${API_CONFIG.BASE_URL}/cadastrar/funcionario-cliente`,
         data,
         {
           headers: {
@@ -61,7 +62,7 @@ export const funcionarioService = {
         dataInicio: dataInicio || new Date().toISOString().split('T')[0],
         dataFim: dataFim || new Date().toISOString().split('T')[0],
       };
-      const response = await axios.get(`http://localhost:8085/employees/${departamento}/date`, {
+      const response = await axios.get(`${API_CONFIG.BASE_URL}/employees/${departamento}/date`, {
         params,
         headers: {
           Authorization: `Bearer ${token}`,
@@ -80,7 +81,7 @@ export const funcionarioService = {
         dataInicio: dataInicio || new Date().toISOString().split('T')[0],
         dataFim: dataFim || new Date().toISOString().split('T')[0],
       };
-      const response = await axios.get('http://localhost:8085/employees/date', {
+      const response = await axios.get(`${API_CONFIG.BASE_URL}/employees/date`, {
         params,
         headers: {
           Authorization: `Bearer ${token}`,
@@ -96,7 +97,7 @@ export const funcionarioService = {
   async atualizarFuncionario(data: any, token: string): Promise<any> {
     try {
       const response = await axios.put(
-        'http://localhost:8087/employee/update',
+        `${API_CONFIG.BASE_URL}/employee/update`,
         data,
         {
           headers: {
@@ -144,7 +145,7 @@ export const funcionarioService = {
   async deletarFuncionario(companyId: number, userId: number, token: string): Promise<any> {
     try {
       await axios.delete(
-        `http://localhost:8085/employees/${companyId}/${userId}`,
+        `${API_CONFIG.BASE_URL}/employees/${companyId}/${userId}`,
         {
           headers: {
             'Authorization': `Bearer ${token}`,

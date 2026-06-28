@@ -1,8 +1,9 @@
 import axios from "axios";
+import { API_CONFIG } from "../constants/config";
 import type { DepartmentData } from "../types/Types";
 
 
-const BASE_URL = "http://localhost:8086/administracao/departamento";
+const BASE_URL = `${API_CONFIG.BASE_URL}/administracao/departamento`;
 
 export const DepartmentService = {
   async cadastrarDepartamento(

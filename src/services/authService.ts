@@ -1,8 +1,9 @@
 
 import axios from 'axios';
+import { API_CONFIG } from '../constants/config';
 
 const authApi = axios.create({
-  baseURL: 'http://localhost:8087',
+  baseURL: API_CONFIG.BASE_URL,
 });
 
 type LoginResponse = {

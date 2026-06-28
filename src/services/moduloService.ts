@@ -1,8 +1,9 @@
 import axios from 'axios';
+import { API_CONFIG } from '../constants/config';
 import type { CompanyModuloDTO, LinkUserModuloRequest, UserModuloResponse } from '../types/modulo';
 
-const BASE_URL_MODULOS = 'http://localhost:8086/administracao/empresa/modulos';
-const BASE_URL_VINCULO = 'http://localhost:8086/administracao/usuario/modulo';
+const BASE_URL_MODULOS = `${API_CONFIG.BASE_URL}/administracao/empresa/modulos`;
+const BASE_URL_VINCULO = `${API_CONFIG.BASE_URL}/administracao/usuario/modulo`;
 
 export const moduloService = {
   async getModulosByCompany(token: string): Promise<CompanyModuloDTO[]> {

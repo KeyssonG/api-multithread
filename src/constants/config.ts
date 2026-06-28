@@ -1,9 +1,27 @@
 // Configurações da API
+const getBaseUrl = () => {
+  if (import.meta.env.VITE_API_URL) {
+    return import.meta.env.VITE_API_URL;
+  }
+  return 'http://localhost:8085';
+};
+
 export const API_CONFIG = {
-  BASE_URL: 'http://localhost:8085',
+  BASE_URL: getBaseUrl(),
   ENDPOINTS: {
     LOGIN: '/login',
     REGISTER: '/register',
+    LOGIN_MULTITHREAD: '/login-multithread',
+    ALTERAR_SENHA: '/alterar/senha',
+    RESET_SENHA_SOLICITAR: '/reset-senha/solicitar',
+    RESET_SENHA_CONFIRMAR: '/reset-senha/confirmar',
+    CADASTRAR_FUNCIONARIO: '/cadastrar/funcionario-cliente',
+    EMPLOYEE_UPDATE: '/employee/update',
+    EMPLOYEES_DATE: '/employees/date',
+    EMPLOYEES_DEPARTAMENTO_DATE: '/employees',
+    ADMIN_DEPARTAMENTO: '/administracao/departamento',
+    ADMIN_EMPRESA_MODULOS: '/administracao/empresa/modulos',
+    ADMIN_USUARIO_MODULO: '/administracao/usuario/modulo',
   },
 } as const;
 

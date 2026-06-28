@@ -1,5 +1,5 @@
 pipeline {
-    agent any
+    agent { label 'docker' }
 
     environment {
         DOCKERHUB_IMAGE = "keyssong/react-multithread"
@@ -35,6 +35,7 @@ pipeline {
         stage('Build da Imagem Docker') {
             steps {
                 sh '''
+                    apt-get update -qq && apt-get install -y -qq docker.io
                     docker build -t $DOCKERHUB_IMAGE:$IMAGE_TAG .
                     docker tag $DOCKERHUB_IMAGE:$IMAGE_TAG $DOCKERHUB_IMAGE:latest
                 '''
@@ -45,7 +46,7 @@ pipeline {
             steps {
                 withCredentials([
                     usernamePassword(
-                        credentialsId: 'dockerhub',
+                        credentialsId: '9dc53a7e-e45d-4c90-90aa-e499be366396',
                         usernameVariable: 'DOCKER_USER',
                         passwordVariable: 'DOCKER_PASS'
                     )
@@ -63,7 +64,7 @@ pipeline {
             steps {
                 withCredentials([
                     usernamePassword(
-                        credentialsId: 'GitHub',
+                        credentialsId: 'be0b606d-4fdf-492f-a432-d091286311f4',
                         usernameVariable: 'GIT_USER',
                         passwordVariable: 'GIT_TOKEN'
                     )
@@ -74,7 +75,8 @@ pipeline {
                         git config user.email "jenkins@pipeline.com"
                         git config user.name "Jenkins"
 
-                        git remote set-url origin https://$GIT_USER:$GIT_TOKEN@github.com/KeyssonG/api-multithread.git
+                        GIT_TOKEN_ENCODED=$(python3 -c "import urllib.parse; print(urllib.parse.quote('$GIT_TOKEN', safe=''))")
+                        git remote set-url origin https://$GIT_USER:$GIT_TOKEN_ENCODED@github.com/KeyssonG/api-multithread.git
 
                         sed -i "s|image: .*|image: $DOCKERHUB_IMAGE:$IMAGE_TAG|" $DEPLOYMENT_FILE
 
@@ -95,10 +97,10 @@ pipeline {
 
     post {
         success {
-            echo "🚀 Pipeline concluída com sucesso! Imagem atualizada e GitOps acionado via ArgoCD."
+            echo "Pipeline concluida com sucesso!"
         }
         failure {
-            echo "❌ Erro na pipeline. Verifique os logs."
+            echo "Falha na pipeline. Verifique os logs."
         }
     }
 }
