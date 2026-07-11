@@ -1,10 +1,11 @@
 pipeline {
-    agent { label 'docker' }
+    agent any
 
     environment {
         DOCKERHUB_IMAGE = "keyssong/react-multithread"
         IMAGE_TAG = "latest"
         DEPLOYMENT_FILE = "k8s/multithread.deployment.yaml"
+        DOCKER_PATH = "C:\\Users\\keyss\\AppData\\Local\\Programs\\Rancher Desktop\\resources\\resources\\win32\\bin"
     }
 
     triggers {
@@ -34,10 +35,9 @@ pipeline {
 
         stage('Build da Imagem Docker') {
             steps {
-                sh '''
-                    apt-get update -qq && apt-get install -y -qq docker.io
-                    docker build -t $DOCKERHUB_IMAGE:$IMAGE_TAG .
-                    docker tag $DOCKERHUB_IMAGE:$IMAGE_TAG $DOCKERHUB_IMAGE:latest
+                powershell script: '''
+                    $env:Path = "$env:DOCKER_PATH;$env:Path"
+                    docker build -t "${env:DOCKERHUB_IMAGE}:${env:IMAGE_TAG}" -t "${env:DOCKERHUB_IMAGE}:latest" .
                 '''
             }
         }
@@ -46,15 +46,16 @@ pipeline {
             steps {
                 withCredentials([
                     usernamePassword(
-                        credentialsId: '9dc53a7e-e45d-4c90-90aa-e499be366396',
+                        credentialsId: 'DockerHub',
                         usernameVariable: 'DOCKER_USER',
                         passwordVariable: 'DOCKER_PASS'
                     )
                 ]) {
-                    sh '''
-                        echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
-                        docker push $DOCKERHUB_IMAGE:$IMAGE_TAG
-                        docker push $DOCKERHUB_IMAGE:latest
+                    powershell script: '''
+                        $env:Path = "$env:DOCKER_PATH;$env:Path"
+                        docker login -u "$env:DOCKER_USER" --password "$env:DOCKER_PASS"
+                        docker push "${env:DOCKERHUB_IMAGE}:${env:IMAGE_TAG}"
+                        docker push "${env:DOCKERHUB_IMAGE}:latest"
                     '''
                 }
             }
@@ -64,31 +65,30 @@ pipeline {
             steps {
                 withCredentials([
                     usernamePassword(
-                        credentialsId: 'be0b606d-4fdf-492f-a432-d091286311f4',
+                        credentialsId: 'GitHub',
                         usernameVariable: 'GIT_USER',
                         passwordVariable: 'GIT_TOKEN'
                     )
                 ]) {
-                    sh '''
+                    powershell script: '''
                         git checkout master
 
                         git config user.email "jenkins@pipeline.com"
                         git config user.name "Jenkins"
 
-                        GIT_TOKEN_ENCODED=$(python3 -c "import urllib.parse; print(urllib.parse.quote('$GIT_TOKEN', safe=''))")
-                        git remote set-url origin https://$GIT_USER:$GIT_TOKEN_ENCODED@github.com/KeyssonG/api-multithread.git
+                        git remote set-url origin https://$env:GIT_USER:$env:GIT_TOKEN@github.com/KeyssonG/api-multithread.git
 
-                        sed -i "s|image: .*|image: $DOCKERHUB_IMAGE:$IMAGE_TAG|" $DEPLOYMENT_FILE
+                        (Get-Content -Path $env:DEPLOYMENT_FILE) -replace 'image: .*', "image: $env:DOCKERHUB_IMAGE`:$env:IMAGE_TAG" | Set-Content -Path $env:DEPLOYMENT_FILE
 
-                        git add $DEPLOYMENT_FILE
+                        git add $env:DEPLOYMENT_FILE
 
-                        if ! git diff --cached --quiet; then
-                            git commit -m "Atualiza imagem Docker para latest"
+                        git diff --cached --quiet; if ($LASTEXITCODE -ne 0) {
+                            git commit -m "Atualiza imagem Docker para ${env:IMAGE_TAG}"
                             git push origin master
                             echo "Alterações detectadas e enviadas ao repositório."
-                        else
+                        } else {
                             echo "Nenhuma alteração detectada no deployment.yaml"
-                        fi
+                        }
                     '''
                 }
             }
@@ -97,10 +97,10 @@ pipeline {
 
     post {
         success {
-            echo "Pipeline concluida com sucesso!"
+            echo "Pipeline concluída com sucesso! Imagem atualizada e GitOps acionado."
         }
         failure {
-            echo "Falha na pipeline. Verifique os logs."
+            echo "Erro na pipeline. Verifique os logs."
         }
     }
 }
