@@ -6,7 +6,7 @@ const getBaseUrl = () => {
   if (import.meta.env.DEV) {
     return 'http://localhost:8085';
   }
-  return '';
+  return 'http://nexus-service.producao.svc.cluster.local:8085';
 };
 
 export const API_CONFIG = {
