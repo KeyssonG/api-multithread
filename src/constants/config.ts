@@ -6,7 +6,7 @@ const getBaseUrl = () => {
   if (import.meta.env.DEV) {
     return 'http://localhost:8085';
   }
-  return 'http://localhost:31000';
+  return '';
 };
 
 export const API_CONFIG = {
