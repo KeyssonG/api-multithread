@@ -82,6 +82,9 @@ pipeline {
 
                         (Get-Content -Path $env:DEPLOYMENT_FILE) -replace 'image: .*', "image: $env:DOCKERHUB_IMAGE`:$env:IMAGE_TAG" | Set-Content -Path $env:DEPLOYMENT_FILE
 
+                        $timestamp = Get-Date -Format "o"
+                        (Get-Content -Path $env:DEPLOYMENT_FILE) -replace 'restartedAt: .*', "restartedAt: $timestamp" | Set-Content -Path $env:DEPLOYMENT_FILE
+
                         git add $env:DEPLOYMENT_FILE
 
                         git diff --cached --quiet; if ($LASTEXITCODE -ne 0) {

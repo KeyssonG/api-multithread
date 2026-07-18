@@ -12,6 +12,8 @@ spec:
     metadata:
       labels:
         app: multithread-react
+      annotations:
+        kubectl.io/restartedAt: ""
     spec:
       containers:
         - name: multithread-container
