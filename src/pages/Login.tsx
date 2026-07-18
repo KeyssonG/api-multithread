@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import styles from "../styles/Login.module.css";
 import { useAuth } from "../contexts/AuthContext";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { authService } from "../services/authService";
 import AuthHeader from "../components/AuthHeader";
 import Footer from "../components/Footer";
@@ -149,9 +149,9 @@ const Login = () => {
             </p>
           </div>
           <div className={styles.forgotPassword}>
-            <a href="/reset-senha/solicitar">
+            <Link to="/reset-senha/solicitar">
               Esqueceu a senha?
-            </a>
+            </Link>
           </div>
         </form>
       </div>
