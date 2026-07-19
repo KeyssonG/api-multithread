@@ -13,7 +13,7 @@ spec:
       labels:
         app: multithread-react
       annotations:
-        kubectl.io/restartedAt: 2026-07-18T21:13:57.0921271-03:00
+        kubectl.io/restartedAt: 2026-07-18T21:14:55.9059608-03:00
     spec:
       containers:
         - name: multithread-container
