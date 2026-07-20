@@ -31,7 +31,7 @@ const Gestao = () => {
     setErrorDepartamentos(null);
     try {
       if (token) {
-        const departamentosList = await DepartmentService.listarDepartamentos(token);
+        const departamentosList = await DepartmentService.listarDepartamentos();
         setDepartamentos(departamentosList);
       }
     } catch (error) {
@@ -89,7 +89,7 @@ const Gestao = () => {
   const deletarDepartamento = async (id: number) => {
     setDeletando(id);
     try {
-      await DepartmentService.deletarDepartamento({idDepartamento: id}, token!);
+      await DepartmentService.deletarDepartamento({idDepartamento: id});
       carregarDepartamentos();
     } catch (error) {
       setPopupConfig({

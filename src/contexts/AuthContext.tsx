@@ -1,5 +1,4 @@
 import { createContext, useState, useEffect, useContext, type ReactNode } from "react";
-import axios from "axios";
 
 const decodeJwt = (token: string) => {
     try {
@@ -83,20 +82,6 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
                 logout();
             }
         }
-
-        const interceptor = axios.interceptors.response.use(
-            (response) => response,
-            (error) => {
-                if (error.response?.status === 401) {
-                    logout();
-                }
-                return Promise.reject(error);
-            }
-        );
-
-        return () => {
-            axios.interceptors.response.eject(interceptor);
-        };
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 

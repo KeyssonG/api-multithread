@@ -1,35 +1,24 @@
-import axios from "axios";
+import api from "./apiService";
 import { API_CONFIG } from "../constants/config";
 import type { DepartmentData } from "../types/Types";
 
 
-const BASE_URL = `${API_CONFIG.BASE_URL}/administracao/departamento`;
+const BASE_URL = API_CONFIG.ENDPOINTS.ADMIN_DEPARTAMENTO;
 
 export const DepartmentService = {
   async cadastrarDepartamento(
     data: DepartmentData,
-    token: string
   ): Promise<void> {
-    await axios.post(BASE_URL, data, {
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-    });
+    await api.post(BASE_URL, data);
   },
 
-  async listarDepartamentos(token: string): Promise<DepartmentData[]> {
-    const response = await axios.get(BASE_URL, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
+  async listarDepartamentos(): Promise<DepartmentData[]> {
+    const response = await api.get(BASE_URL);
     return response.data;
   },
 
-  async deletarDepartamento(data: { idDepartamento: number }, token: string): Promise<void> {
-    await axios.delete(BASE_URL, {
-      headers: { Authorization: `Bearer ${token}` },
+  async deletarDepartamento(data: { idDepartamento: number }): Promise<void> {
+    await api.delete(BASE_URL, {
       data,
     });
   }

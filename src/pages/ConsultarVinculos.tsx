@@ -58,7 +58,7 @@ const ConsultarVinculos: React.FC = () => {
     
     setLoading(true);
     try {
-      const data = await moduloService.getUserModulos(token);
+      const data = await moduloService.getUserModulos();
       setVinculos(data || []);
     } catch (error: any) {
       console.error('Erro ao carregar vínculos:', error);
@@ -78,7 +78,7 @@ const ConsultarVinculos: React.FC = () => {
     
     setLoadingModulos(true);
     try {
-      const data = await moduloService.getModulosByCompany(token);
+      const data = await moduloService.getModulosByCompany();
       setModulos(data || []);
     } catch (error: any) {
       console.error('Erro ao carregar módulos:', error);
@@ -105,7 +105,7 @@ const ConsultarVinculos: React.FC = () => {
       showConfirmButton: true,
       onConfirm: async () => {
         try {
-          await moduloService.removerVinculoUsuarioModulo(vinculo.userId, vinculo.moduloId, token);
+          await moduloService.removerVinculoUsuarioModulo(vinculo.userId, vinculo.moduloId);
           
           // Recarregar a lista de vínculos
           await carregarVinculos();

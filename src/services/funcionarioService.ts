@@ -1,23 +1,15 @@
-import axios from 'axios';
+import api from './apiService';
 import { API_CONFIG } from '../constants/config';
 import type { FuncionarioData, FuncionarioResponse } from '../types/funcionario';
 
 export const funcionarioService = {
-  async cadastrarFuncionario(data: FuncionarioData, token: string): Promise<FuncionarioResponse> {
+  async cadastrarFuncionario(data: FuncionarioData): Promise<FuncionarioResponse> {
     try {
-      const response = await axios.post(
-        `${API_CONFIG.BASE_URL}/cadastrar/funcionario-cliente`,
+      const response = await api.post(
+        API_CONFIG.ENDPOINTS.CADASTRAR_FUNCIONARIO,
         data,
-        {
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`,
-          },
-        }
       );
       
-      // Se o backend retorna void (sem resposta), consideramos sucesso
-      // Se retorna uma resposta, processamos normalmente
       if (response.status >= 200 && response.status < 300) {
         return {
           success: true,
@@ -32,7 +24,6 @@ export const funcionarioService = {
       }
     } catch (error: any) {
       if (error.response) {
-        // Erro da API
         const errorMessage = error.response.data?.message || 
                            error.response.data?.error || 
                            'Erro ao cadastrar funcionário';
@@ -41,13 +32,11 @@ export const funcionarioService = {
           message: errorMessage,
         };
       } else if (error.request) {
-        // Erro de rede
         return {
           success: false,
           message: 'Erro de conexão. Verifique sua internet.',
         };
       } else {
-        // Outro erro
         return {
           success: false,
           message: 'Erro inesperado ao cadastrar funcionário',
@@ -56,17 +45,14 @@ export const funcionarioService = {
     }
   },
 
-  async buscarFuncionariosPorDepartamento(departamento: string, dataInicio?: string, dataFim?: string, token?: string): Promise<any> {
+  async buscarFuncionariosPorDepartamento(departamento: string, dataInicio?: string, dataFim?: string): Promise<any> {
     try {
       const params = {
         dataInicio: dataInicio || new Date().toISOString().split('T')[0],
         dataFim: dataFim || new Date().toISOString().split('T')[0],
       };
-      const response = await axios.get(`${API_CONFIG.BASE_URL}/employees/${departamento}/date`, {
+      const response = await api.get(`${API_CONFIG.ENDPOINTS.EMPLOYEES_DEPARTAMENTO_DATE}/${departamento}/date`, {
         params,
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
       });
       return response.data;
     } catch (error) {
@@ -75,17 +61,14 @@ export const funcionarioService = {
     }
   },
 
-  async buscarFuncionariosTodosDepartamentos(dataInicio?: string, dataFim?: string, token?: string): Promise<any> {
+  async buscarFuncionariosTodosDepartamentos(dataInicio?: string, dataFim?: string): Promise<any> {
     try {
       const params = {
         dataInicio: dataInicio || new Date().toISOString().split('T')[0],
         dataFim: dataFim || new Date().toISOString().split('T')[0],
       };
-      const response = await axios.get(`${API_CONFIG.BASE_URL}/employees/date`, {
+      const response = await api.get(API_CONFIG.ENDPOINTS.EMPLOYEES_DATE, {
         params,
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
       });
       return response.data;
     } catch (error) {
@@ -94,17 +77,11 @@ export const funcionarioService = {
     }
   },
 
-  async atualizarFuncionario(data: any, token: string): Promise<any> {
+  async atualizarFuncionario(data: any): Promise<any> {
     try {
-      const response = await axios.put(
-        `${API_CONFIG.BASE_URL}/employee/update`,
+      const response = await api.put(
+        API_CONFIG.ENDPOINTS.EMPLOYEE_UPDATE,
         data,
-        {
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`,
-          },
-        }
       );
       
       if (response.status >= 200 && response.status < 300) {
@@ -142,15 +119,10 @@ export const funcionarioService = {
     }
   },
 
-  async deletarFuncionario(companyId: number, userId: number, token: string): Promise<any> {
+  async deletarFuncionario(companyId: number, userId: number): Promise<any> {
     try {
-      await axios.delete(
-        `${API_CONFIG.BASE_URL}/employees/${companyId}/${userId}`,
-        {
-          headers: {
-            'Authorization': `Bearer ${token}`,
-          },
-        }
+      await api.delete(
+        `/employees/${companyId}/${userId}`,
       );
       
       return {

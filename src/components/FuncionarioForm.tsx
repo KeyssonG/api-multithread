@@ -45,7 +45,7 @@ const FuncionarioForm: React.FC<FuncionarioFormProps> = ({ onSuccess, onError, m
       setLoadingDepartamentos(true);
       try {
         if (token) {
-          const departamentosList = await DepartmentService.listarDepartamentos(token);
+          const departamentosList = await DepartmentService.listarDepartamentos();
           setDepartamentos(departamentosList);
         }
       } catch (error) {
@@ -154,7 +154,7 @@ const FuncionarioForm: React.FC<FuncionarioFormProps> = ({ onSuccess, onError, m
       const response = await funcionarioService.cadastrarFuncionario({
         ...formData,
         sexo: formData.sexo as 'M' | 'F' | 'I',
-      }, token);
+      });
 
       if (response && response.success) {
         const successMsg = response.message || 'Funcionário cadastrado com sucesso!';
@@ -194,10 +194,10 @@ const FuncionarioForm: React.FC<FuncionarioFormProps> = ({ onSuccess, onError, m
         }
 
         if (departamentoSelecionado === "") {
-          const data = await funcionarioService.buscarFuncionariosTodosDepartamentos(dataInicio, dataFim, token);
+          const data = await funcionarioService.buscarFuncionariosTodosDepartamentos(dataInicio, dataFim);
           setResultados(data);
         } else {
-          const data = await funcionarioService.buscarFuncionariosPorDepartamento(departamentoSelecionado, dataInicio, dataFim, token);
+          const data = await funcionarioService.buscarFuncionariosPorDepartamento(departamentoSelecionado, dataInicio, dataFim);
           setResultados(data);
         }
         // Limpar funcionário selecionado quando buscar novos resultados
@@ -279,7 +279,7 @@ const FuncionarioForm: React.FC<FuncionarioFormProps> = ({ onSuccess, onError, m
 
       setLoading(true);
       try {
-        const response = await funcionarioService.atualizarFuncionario(editFormData, token);
+        const response = await funcionarioService.atualizarFuncionario(editFormData);
         
         if (response && response.success) {
           alert(response.message || 'Funcionário atualizado com sucesso!');
@@ -307,7 +307,7 @@ const FuncionarioForm: React.FC<FuncionarioFormProps> = ({ onSuccess, onError, m
       
       if (window.confirm(`Tem certeza que deseja excluir o funcionário(a) ${funcionario.nome}? (User ID: ${funcionario.id}, Company ID: ${compId})`)) {
         try {
-          const response = await funcionarioService.deletarFuncionario(compId, funcionario.id, token);
+          const response = await funcionarioService.deletarFuncionario(compId, funcionario.id);
           if (response && response.success) {
             alert(response.message || 'Funcionário excluído com sucesso!');
             buscarFuncionarios();

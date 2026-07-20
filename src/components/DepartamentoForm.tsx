@@ -52,7 +52,7 @@ const DepartamentoForm: React.FC<Props> = ({ onSuccess, onError }) => {
 
     const departamentoData: DepartmentData = { nomeDepartamento: nome.trim() };
     try {
-      await DepartmentService.cadastrarDepartamento(departamentoData, token!);
+      await DepartmentService.cadastrarDepartamento(departamentoData);
       setNome('');
       setErrors({});
       onSuccess();

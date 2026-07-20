@@ -63,11 +63,11 @@ const LinkModuloForm: React.FC<LinkModuloFormProps> = ({ onSuccess, onError }) =
 
       setLoadingDados(true);
       try {
-        const mods = await moduloService.getModulosByCompany(token);
+        const mods = await moduloService.getModulosByCompany();
         setModulos(mods || []);
 
         const { default: DepartmentService } = await import('../services/DepartmentService');
-        const depts = await DepartmentService.listarDepartamentos(token);
+        const depts = await DepartmentService.listarDepartamentos();
         setDepartamentos(depts || []);
       } catch (error) {
         console.error('Erro ao carregar dados iniciais:', error);
@@ -83,7 +83,7 @@ const LinkModuloForm: React.FC<LinkModuloFormProps> = ({ onSuccess, onError }) =
     if (!token) return;
     setLoadingDados(true);
     try {
-      const links = await moduloService.getUserModulos(token);
+      const links = await moduloService.getUserModulos();
       setUserLinks(links || []);
     } catch (error) {
       console.error('Erro ao buscar vínculos:', error);
@@ -102,9 +102,9 @@ const LinkModuloForm: React.FC<LinkModuloFormProps> = ({ onSuccess, onError }) =
       const finalDataFim = dataFim || new Date().toISOString().split('T')[0];
 
       if (departamentoSelecionado === "") {
-        data = await funcionarioService.buscarFuncionariosTodosDepartamentos(finalDataInicio, finalDataFim, token);
+        data = await funcionarioService.buscarFuncionariosTodosDepartamentos(finalDataInicio, finalDataFim);
       } else {
-        data = await funcionarioService.buscarFuncionariosPorDepartamento(departamentoSelecionado, finalDataInicio, finalDataFim, token);
+        data = await funcionarioService.buscarFuncionariosPorDepartamento(departamentoSelecionado, finalDataInicio, finalDataFim);
       }
       setFuncionarios(data || []);
       if (!data || data.length === 0) {
@@ -136,7 +136,7 @@ const LinkModuloForm: React.FC<LinkModuloFormProps> = ({ onSuccess, onError }) =
       await moduloService.vincularUsuarioModulo({
         userId: selectedFuncionario.id,
         moduloId: selectedModulo.moduloId
-      }, token);
+      });
 
       setPopupConfig({
         isOpen: true,
@@ -168,7 +168,7 @@ const LinkModuloForm: React.FC<LinkModuloFormProps> = ({ onSuccess, onError }) =
 
     setLoadingDados(true);
     try {
-      await moduloService.removerVinculoUsuarioModulo(userId, moduloId, token);
+      await moduloService.removerVinculoUsuarioModulo(userId, moduloId);
       setPopupConfig({
         isOpen: true,
         title: 'Sucesso',

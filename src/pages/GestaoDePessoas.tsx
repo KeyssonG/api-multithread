@@ -30,7 +30,7 @@ const GestaoDePessoas = () => {
     setErrorDepartamentos(null);
     try {
       if (token) {
-        const departamentosList = await DepartmentService.listarDepartamentos(token);
+        const departamentosList = await DepartmentService.listarDepartamentos();
         setDepartamentos(departamentosList);
       }
     } catch (error) {

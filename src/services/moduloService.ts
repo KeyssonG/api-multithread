@@ -1,18 +1,14 @@
-import axios from 'axios';
+import api from './apiService';
 import { API_CONFIG } from '../constants/config';
 import type { CompanyModuloDTO, LinkUserModuloRequest, UserModuloResponse } from '../types/modulo';
 
-const BASE_URL_MODULOS = `${API_CONFIG.BASE_URL}/administracao/empresa/modulos`;
-const BASE_URL_VINCULO = `${API_CONFIG.BASE_URL}/administracao/usuario/modulo`;
+const BASE_URL_MODULOS = API_CONFIG.ENDPOINTS.ADMIN_EMPRESA_MODULOS;
+const BASE_URL_VINCULO = API_CONFIG.ENDPOINTS.ADMIN_USUARIO_MODULO;
 
 export const moduloService = {
-  async getModulosByCompany(token: string): Promise<CompanyModuloDTO[]> {
+  async getModulosByCompany(): Promise<CompanyModuloDTO[]> {
     try {
-      const response = await axios.get(BASE_URL_MODULOS, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const response = await api.get(BASE_URL_MODULOS);
       return response.data;
     } catch (error) {
       console.error('Erro ao buscar módulos da empresa:', error);
@@ -20,27 +16,18 @@ export const moduloService = {
     }
   },
 
-  async vincularUsuarioModulo(data: LinkUserModuloRequest, token: string): Promise<void> {
+  async vincularUsuarioModulo(data: LinkUserModuloRequest): Promise<void> {
     try {
-      await axios.post(BASE_URL_VINCULO, data, {
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      await api.post(BASE_URL_VINCULO, data);
     } catch (error) {
       console.error('Erro ao vincular usuário ao módulo:', error);
       throw error;
     }
   },
 
-  async getUserModulos(token: string): Promise<UserModuloResponse[]> {
+  async getUserModulos(): Promise<UserModuloResponse[]> {
     try {
-      const response = await axios.get(BASE_URL_VINCULO, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const response = await api.get(BASE_URL_VINCULO);
       return response.data;
     } catch (error) {
       console.error('Erro ao buscar vínculos de usuários:', error);
@@ -48,13 +35,9 @@ export const moduloService = {
     }
   },
 
-  async removerVinculoUsuarioModulo(userId: number, moduloId: number, token: string): Promise<void> {
+  async removerVinculoUsuarioModulo(userId: number, moduloId: number): Promise<void> {
     try {
-      await axios.delete(BASE_URL_VINCULO, {
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
+      await api.delete(BASE_URL_VINCULO, {
         data: {
           userId,
           moduloId

@@ -34,7 +34,7 @@ const UserModuloList: React.FC<UserModuloListProps> = ({ onNavigateToForm }) => 
 
       setLoading(true);
       try {
-        const data = await moduloService.getUserModulos(token);
+        const data = await moduloService.getUserModulos();
         setUserModulos(data || []);
         setFilteredData(data || []);
       } catch (error: any) {
@@ -65,7 +65,7 @@ const UserModuloList: React.FC<UserModuloListProps> = ({ onNavigateToForm }) => 
     if (!token) return;
 
     try {
-      await moduloService.removerVinculoUsuarioModulo(userId, moduloId, token);
+      await moduloService.removerVinculoUsuarioModulo(userId, moduloId);
       
       setPopupConfig({
         isOpen: true,
@@ -75,7 +75,7 @@ const UserModuloList: React.FC<UserModuloListProps> = ({ onNavigateToForm }) => 
       });
       
       // Recarregar os dados
-      const data = await moduloService.getUserModulos(token);
+      const data = await moduloService.getUserModulos();
       setUserModulos(data || []);
       setFilteredData(data || []);
     } catch (error: any) {
