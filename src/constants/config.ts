@@ -25,6 +25,7 @@ export const API_CONFIG = {
     ADMIN_DEPARTAMENTO: '/administracao/departamento',
     ADMIN_EMPRESA_MODULOS: '/administracao/empresa/modulos',
     ADMIN_USUARIO_MODULO: '/administracao/usuario/modulo',
+    CENTROS_ARMazenAMENTO: '/api/centros',
   },
 } as const;
 

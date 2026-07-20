@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import DepartmentService from "../services/DepartmentService";
-import { useAuth } from "../contexts/AuthContext";
 import styles from "../styles/FuncionarioForm.module.css";
 import type { DepartmentData } from "../types/Types";
 
@@ -13,7 +12,6 @@ const DepartamentoForm: React.FC<Props> = ({ onSuccess, onError }) => {
   const [nome, setNome] = useState('');
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
-  const { token } = useAuth();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = e.target;

@@ -27,6 +27,7 @@ type AuthContextType = {
     name: string | null;
     modules: string[];
     isAuthenticated: boolean;
+    isLoading: boolean;
     login: (token: string, name: string) => void;
     logout: () => void;
     hasAccess: (module: string) => boolean;
@@ -51,6 +52,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     const [token, setToken] = useState<string | null>(null);
     const [name, setName] = useState<string | null>(null);
     const [modules, setModules] = useState<string[]>([]);
+    const [isLoading, setIsLoading] = useState(true);
 
     const hasAccess = (moduleName: string) => {
         return modules.includes(moduleName);
@@ -67,21 +69,21 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     useEffect(() => {
         const storedToken = localStorage.getItem('token');
         const storedName = localStorage.getItem('userName');
-        
-        if (storedToken) {
-            if (isTokenValid(storedToken)) {
-                setToken(storedToken);
-                if (storedName) {
-                    setName(storedName);
-                }
-                const payload = decodeJwt(storedToken);
-                if (payload?.modules) {
-                    setModules(payload.modules);
-                }
-            } else {
-                logout();
+
+        if (storedToken && isTokenValid(storedToken)) {
+            setToken(storedToken);
+            if (storedName) {
+                setName(storedName);
             }
+            const payload = decodeJwt(storedToken);
+            if (payload?.modules) {
+                setModules(payload.modules);
+            }
+        } else if (storedToken) {
+            logout();
         }
+
+        setIsLoading(false);
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
@@ -98,13 +100,12 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         }
     };
 
-    // logout function moved above useEffect
-
     const value = {
         token,
         name,
         modules,
         isAuthenticated: !!token,
+        isLoading,
         login,
         logout,
         hasAccess,

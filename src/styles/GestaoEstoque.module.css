@@ -1,203 +1,300 @@
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 
 .container {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
-  background: #dfdfdf;
+  background: #f4f7f9;
+  font-family: 'Inter', sans-serif;
 }
 
 .content {
   flex: 1;
-  padding: 100px 40px 40px 40px;
+  padding: 110px 5% 60px;
   max-width: 1200px;
   margin: 0 auto;
   width: 100%;
 }
 
-.headerSection {
+/* Dynamic Header */
+.dynamicHeader {
   display: flex;
   align-items: center;
-  margin-bottom: 30px;
-  gap: 20px;
-}
-
-.backButton {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  background: #fff;
-  border: 1px solid #ddd;
-  padding: 8px 16px;
-  border-radius: 8px;
-  cursor: pointer;
-  font-family: 'Poppins', sans-serif;
-  font-weight: 500;
-  transition: all 0.2s ease;
-  color: #333;
-}
-
-.backButton:hover {
-  background: #f5f5f5;
-  border-color: #bbb;
-}
-
-.pageTitle {
-  font-family: 'Poppins', sans-serif;
-  font-size: 2rem;
-  font-weight: 600;
-  color: #333;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-}
-
-.summaryCards {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 20px;
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(10px);
+  padding: 16px 24px;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
   margin-bottom: 40px;
+  gap: 12px;
+  border: 1px solid rgba(255, 255, 255, 1);
 }
 
-.card {
-  background: #fff;
-  padding: 24px;
-  border-radius: 12px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
-  display: flex;
-  flex-direction: column;
-}
-
-.cardTitle {
-  font-family: 'Poppins', sans-serif;
-  font-size: 0.9rem;
-  color: #666;
-  margin-bottom: 8px;
-  text-transform: uppercase;
-}
-
-.cardValue {
-  font-family: 'Poppins', sans-serif;
-  font-size: 2rem;
-  font-weight: 700;
-  color: #333;
-}
-
-.actionsSection {
-  display: flex;
-  gap: 15px;
-  margin-bottom: 30px;
-  flex-wrap: wrap;
-}
-
-.actionButton {
+.backIconButton {
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 12px 24px;
-  border-radius: 10px;
-  font-family: 'Poppins', sans-serif;
-  font-weight: 600;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: #f8f9fa;
+  color: #5d6cf6;
+  border: 1px solid #e9ecef;
   cursor: pointer;
   transition: all 0.2s ease;
-  border: none;
+  margin-right: 8px;
 }
 
-.primaryButton {
-  background: #2e7d32;
-  color: #fff;
+.backIconButton:hover {
+  background: #5d6cf6;
+  color: white;
+  transform: translateX(-4px);
+  box-shadow: 0 4px 12px rgba(93, 108, 246, 0.3);
 }
 
-.primaryButton:hover {
-  background: #1b5e20;
+.breadcrumbSeparator {
+  color: #adb5bd;
+  display: flex;
+  align-items: center;
 }
 
-.secondaryButton {
-  background: #1976d2;
-  color: #fff;
+.breadcrumbText {
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: #6c757d;
+  cursor: pointer;
+  transition: color 0.2s;
 }
 
-.secondaryButton:hover {
-  background: #1565c0;
+.breadcrumbText:hover {
+  color: #5d6cf6;
 }
 
-.outlineButton {
-  background: #fff;
-  border: 2px solid #2e7d32;
-  color: #2e7d32;
+.breadcrumbTextActive {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #212529;
+  letter-spacing: -0.3px;
 }
 
-.outlineButton:hover {
-  background: #f1f8e9;
+/* Intro Text */
+.welcomeText {
+  font-size: 1.8rem;
+  color: #212529;
+  margin-bottom: 8px;
+  font-weight: 700;
+  text-align: center;
+  letter-spacing: -0.5px;
 }
 
-.tableContainer {
-  background: #fff;
-  border-radius: 12px;
-  padding: 20px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
-  overflow-x: auto;
+.descriptionText {
+  font-size: 1.05rem;
+  color: #6c757d;
+  margin-bottom: 40px;
+  text-align: center;
 }
 
-.tableTitle {
-  font-family: 'Poppins', sans-serif;
-  font-size: 1.2rem;
-  font-weight: 600;
-  color: #333;
-  margin-bottom: 20px;
+/* Cards Grid */
+.featuresGrid,
+.subMenuGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 24px;
+  margin-top: 20px;
 }
 
-.inventoryTable {
+.featureCard,
+.subMenuCard {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  border-radius: 24px;
+  padding: 40px 30px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.03);
+  position: relative;
+  overflow: hidden;
+}
+
+.featureCard::before,
+.subMenuCard::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
   width: 100%;
-  border-collapse: collapse;
-  font-family: 'Poppins', sans-serif;
+  height: 4px;
+  background: linear-gradient(90deg, #5d6cf6, #8096ff);
+  opacity: 0;
+  transition: opacity 0.3s;
 }
 
-.inventoryTable th {
-  text-align: left;
-  padding: 12px;
-  border-bottom: 2px solid #eee;
-  color: #666;
+.featureCard:hover::before,
+.subMenuCard:hover::before {
+  opacity: 1;
+}
+
+.featureCard:hover,
+.subMenuCard:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 15px 40px rgba(93, 108, 246, 0.15);
+  background: #ffffff;
+}
+
+.featureIcon,
+.subMenuIcon {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 72px;
+  height: 72px;
+  background: #f0f3ff;
+  color: #5d6cf6;
+  border-radius: 20px;
+  margin: 0 auto 24px;
+  transition: all 0.4s ease;
+}
+
+.featureCard:hover .featureIcon,
+.subMenuCard:hover .subMenuIcon {
+  background: #5d6cf6;
+  color: white;
+  transform: scale(1.05) rotate(-5deg);
+  border-radius: 16px;
+}
+
+.featureCard h3,
+.subMenuCard h3 {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #212529;
+  margin-bottom: 12px;
+  letter-spacing: -0.3px;
+}
+
+.featureCard p,
+.subMenuCard p {
+  font-size: 0.95rem;
+  color: #6c757d;
+  line-height: 1.5;
+  margin: 0;
+}
+
+/* Disabled Card */
+.cardDisabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.cardDisabled:hover {
+  transform: none;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.03);
+  background: rgba(255, 255, 255, 0.7);
+}
+
+.cardDisabled:hover::before {
+  opacity: 0;
+}
+
+.cardDisabled:hover .featureIcon {
+  background: #f0f3ff;
+  color: #5d6cf6;
+  transform: none;
+  border-radius: 20px;
+}
+
+.comingSoon {
+  display: inline-block;
+  margin-top: 12px;
+  font-size: 0.75rem;
   font-weight: 600;
-}
-
-.inventoryTable td {
-  padding: 15px 12px;
-  border-bottom: 1px solid #eee;
-  color: #333;
-}
-
-.statusBadge {
+  color: #adb5bd;
+  background: #f1f3f5;
   padding: 4px 12px;
   border-radius: 20px;
-  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Forms & Lists */
+.sectionContent {
+  animation: fadeIn 0.4s ease forwards;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.formContainer {
+  background: white;
+  border-radius: 20px;
+  padding: 40px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.04);
+  border: 1px solid rgba(0, 0, 0, 0.02);
+}
+
+.formDescription {
+  font-size: 1.05rem;
+  color: #6c757d;
+  margin-bottom: 30px;
+}
+
+/* Toast */
+.toast {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  padding: 16px 24px;
+  border-radius: 12px;
+  font-family: 'Poppins', sans-serif;
+  font-size: 0.9rem;
   font-weight: 500;
+  color: white;
+  cursor: pointer;
+  z-index: 9999;
+  animation: slideIn 0.3s ease, fadeOut 0.3s ease 3.7s forwards;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
 }
 
-.statusOk {
-  background: #e8f5e9;
-  color: #2e7d32;
+.toastSuccess {
+  background: #2e7d32;
 }
 
-.statusLow {
-  background: #fff3e0;
-  color: #ef6c00;
+.toastError {
+  background: #c62828;
 }
 
-.statusCritical {
-  background: #ffebee;
-  color: #c62828;
+@keyframes slideIn {
+  from { transform: translateY(20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
 }
 
+@keyframes fadeOut {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+
+/* Responsive */
 @media (max-width: 768px) {
   .content {
     padding: 80px 20px 20px 20px;
   }
-  
-  .summaryCards {
+
+  .dynamicHeader {
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 12px;
+  }
+
+  .featuresGrid,
+  .subMenuGrid {
     grid-template-columns: 1fr;
   }
-  
-  .actionsSection {
-    flex-direction: column;
+
+  .formContainer {
+    padding: 20px;
   }
 }
