@@ -26,6 +26,15 @@ export const API_CONFIG = {
     ADMIN_EMPRESA_MODULOS: '/administracao/empresa/modulos',
     ADMIN_USUARIO_MODULO: '/administracao/usuario/modulo',
     CENTROS_ARMazenAMENTO: '/api/centros',
+    ESTOQUE: '/estoque',
+    ESTOQUE_CENTROS: '/estoque/centros',
+    ESTOQUE_CATEGORIAS: '/estoque/categorias',
+    ESTOQUE_PRODUTOS: '/estoque/produtos',
+    ESTOQUE_MOVIMENTACOES: '/estoque/movimentacoes',
+    ESTOQUE_INVENTARIO: '/estoque/inventario',
+    ESTOQUE_DASHBOARD: '/estoque/dashboard',
+    ESTOQUE_RELATORIO_VALOR: '/estoque/relatorios/valor',
+    ESTOQUE_RELATORIO_GIRO: '/estoque/relatorios/giro',
   },
 } as const;
 
