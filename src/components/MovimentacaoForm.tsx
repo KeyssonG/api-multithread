@@ -141,17 +141,15 @@ const MovimentacaoForm: React.FC<Props> = ({ onError, onSuccess }) => {
 
     setLoading(true);
     try {
-      const payload: Record<string, any> = {
+      await movimentacaoService.registrarEntrada({
         id_produto: Number(formDataEntrada.id_produto),
         quantidade: Number(formDataEntrada.quantidade),
         origem: formDataEntrada.origem,
-      };
-      if (formDataEntrada.numero_nf) payload.numero_nf = formDataEntrada.numero_nf;
-      if (formDataEntrada.lote) payload.lote = formDataEntrada.lote;
-      if (formDataEntrada.validade) payload.validade = formDataEntrada.validade;
-      if (formDataEntrada.observacao) payload.observacao = formDataEntrada.observacao;
-
-      await movimentacaoService.registrarEntrada(payload);
+        numero_nf: formDataEntrada.numero_nf || undefined,
+        lote: formDataEntrada.lote || undefined,
+        validade: formDataEntrada.validade || undefined,
+        observacao: formDataEntrada.observacao || undefined,
+      });
       setFormDataEntrada(initialEntrada);
       setErrors({});
       onSuccess('Entrada registrada com sucesso!');
@@ -168,15 +166,13 @@ const MovimentacaoForm: React.FC<Props> = ({ onError, onSuccess }) => {
 
     setLoading(true);
     try {
-      const payload: Record<string, any> = {
+      await movimentacaoService.registrarSaida({
         id_produto: Number(formDataSaida.id_produto),
         quantidade: Number(formDataSaida.quantidade),
         origem: formDataSaida.origem,
-      };
-      if (formDataSaida.numero_nf) payload.numero_nf = formDataSaida.numero_nf;
-      if (formDataSaida.observacao) payload.observacao = formDataSaida.observacao;
-
-      await movimentacaoService.registrarSaida(payload);
+        numero_nf: formDataSaida.numero_nf || undefined,
+        observacao: formDataSaida.observacao || undefined,
+      });
       setFormDataSaida(initialSaida);
       setErrors({});
       onSuccess('Saída registrada com sucesso!');

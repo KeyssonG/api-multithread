@@ -14,9 +14,9 @@ export default function DashboardEstoque({ onError }: Props) {
   useEffect(() => {
     setLoading(true);
     dashboardService
-      .getDashboard()
+      .buscarDashboard()
       .then(setDashboard)
-      .catch((err) => onError(err?.message || 'Erro ao carregar dashboard'))
+      .catch((err: unknown) => onError(err instanceof Error ? err.message : 'Erro ao carregar dashboard'))
       .finally(() => setLoading(false));
   }, [onError]);
 
