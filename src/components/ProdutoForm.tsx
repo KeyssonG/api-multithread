@@ -175,7 +175,7 @@ const ProdutoForm: React.FC<Props> = ({
             className={errors.id_categoria ? styles.inputError : styles.input}
           >
             <option value={0}>Selecione a categoria</option>
-            {categorias.map(cat => (
+            {(Array.isArray(categorias) ? categorias : []).map(cat => (
               <option key={cat.id_categoria} value={cat.id_categoria}>{cat.nome}</option>
             ))}
           </select>
@@ -192,7 +192,7 @@ const ProdutoForm: React.FC<Props> = ({
             className={errors.id_centro_padrao ? styles.inputError : styles.input}
           >
             <option value={0}>Selecione o centro</option>
-            {centros.map(c => (
+            {(Array.isArray(centros) ? centros : []).map(c => (
               <option key={c.id_centro} value={c.id_centro}>{c.nome}</option>
             ))}
           </select>

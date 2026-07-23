@@ -38,9 +38,12 @@ export default function RelatoriosEstoque({ onError }: Props) {
     );
   }
 
-  const totalProdutos = relatorioValor.reduce((sum, r) => sum + r.total_produtos, 0);
-  const totalQuantidade = relatorioValor.reduce((sum, r) => sum + r.quantidade_total, 0);
-  const totalValor = relatorioValor.reduce((sum, r) => sum + r.valor_total, 0);
+  const listValor = Array.isArray(relatorioValor) ? relatorioValor : [];
+  const listGiro = Array.isArray(relatorioGiro) ? relatorioGiro : [];
+
+  const totalProdutos = listValor.reduce((sum, r) => sum + (r.total_produtos || 0), 0);
+  const totalQuantidade = listValor.reduce((sum, r) => sum + (r.quantidade_total || 0), 0);
+  const totalValor = listValor.reduce((sum, r) => sum + (r.valor_total || 0), 0);
 
   return (
     <div>
@@ -61,7 +64,7 @@ export default function RelatoriosEstoque({ onError }: Props) {
 
       {activeTab === 'valor' && (
         <>
-          {relatorioValor.length === 0 ? (
+          {listValor.length === 0 ? (
             <div className={styles.emptyContainer}>
               <div className={styles.emptyIcon} />
               <p>Nenhum dado de valor por categoria disponível.</p>
@@ -77,7 +80,7 @@ export default function RelatoriosEstoque({ onError }: Props) {
                 </tr>
               </thead>
               <tbody>
-                {relatorioValor.map((item) => (
+                {listValor.map((item) => (
                   <tr key={item.id_categoria}>
                     <td className={styles.reportTableCell}>{item.categoria_nome}</td>
                     <td className={styles.reportTableCell}>{item.total_produtos}</td>
@@ -101,7 +104,7 @@ export default function RelatoriosEstoque({ onError }: Props) {
 
       {activeTab === 'giro' && (
         <>
-          {relatorioGiro.length === 0 ? (
+          {listGiro.length === 0 ? (
             <div className={styles.emptyContainer}>
               <div className={styles.emptyIcon} />
               <p>Nenhum dado de giro de estoque disponível.</p>
@@ -119,7 +122,7 @@ export default function RelatoriosEstoque({ onError }: Props) {
                 </tr>
               </thead>
               <tbody>
-                {relatorioGiro.map((item) => (
+                {listGiro.map((item) => (
                   <tr key={item.id_produto}>
                     <td className={styles.reportTableCell}>{item.produto_nome}</td>
                     <td className={styles.reportTableCell}>{item.categoria_nome}</td>

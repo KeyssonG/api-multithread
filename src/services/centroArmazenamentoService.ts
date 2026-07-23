@@ -2,12 +2,14 @@ import api from './apiService';
 import { API_CONFIG } from '../constants/config';
 import type { CentroArmazenamento, CentroArmazenamentoFormData } from '../types/centroArmazenamento';
 
-const ENDPOINT = API_CONFIG.ENDPOINTS.CENTROS_ARMazenAMENTO;
+import { ensureArray } from '../utils/arrayUtils';
+
+const ENDPOINT = API_CONFIG.ENDPOINTS.ESTOQUE_CENTROS;
 
 const centroArmazenamentoService = {
   async listar(): Promise<CentroArmazenamento[]> {
-    const response = await api.get<CentroArmazenamento[]>(ENDPOINT);
-    return response.data;
+    const response = await api.get(ENDPOINT);
+    return ensureArray<CentroArmazenamento>(response.data);
   },
 
   async buscarPorId(id: number): Promise<CentroArmazenamento> {

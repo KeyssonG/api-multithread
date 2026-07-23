@@ -215,7 +215,7 @@ const MovimentacaoForm: React.FC<Props> = ({ onError, onSuccess }) => {
                 className={errors.id_produto ? styles.inputError : styles.input}
               >
                 <option value="">Selecione o produto</option>
-                {produtos
+                {(Array.isArray(produtos) ? produtos : [])
                   .filter(p => p.status === 'ATIVO')
                   .map(p => (
                     <option key={p.id_produto} value={p.id_produto}>
@@ -336,7 +336,7 @@ const MovimentacaoForm: React.FC<Props> = ({ onError, onSuccess }) => {
                 className={errors.id_produto ? styles.inputError : styles.input}
               >
                 <option value="">Selecione o produto</option>
-                {produtos
+                {(Array.isArray(produtos) ? produtos : [])
                   .filter(p => p.status === 'ATIVO')
                   .map(p => (
                     <option key={p.id_produto} value={p.id_produto}>

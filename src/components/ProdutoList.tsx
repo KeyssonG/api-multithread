@@ -57,6 +57,8 @@ const ProdutoList: React.FC<Props> = ({ onNovo, onEditar, onError }) => {
     return { label: 'Normal', color: '#28a745' };
   };
 
+  const listaProdutos = Array.isArray(produtos) ? produtos : [];
+
   if (loading) {
     return (
       <div className={styles.loadingContainer}>
@@ -66,7 +68,7 @@ const ProdutoList: React.FC<Props> = ({ onNovo, onEditar, onError }) => {
     );
   }
 
-  if (produtos.length === 0) {
+  if (listaProdutos.length === 0) {
     return (
       <div className={styles.emptyContainer}>
         <div className={styles.emptyIcon}>
@@ -87,7 +89,7 @@ const ProdutoList: React.FC<Props> = ({ onNovo, onEditar, onError }) => {
   return (
     <>
       <div className={styles.listHeader}>
-        <h3>Produtos ({produtos.length})</h3>
+        <h3>Produtos ({listaProdutos.length})</h3>
         <button className={styles.addNewButton} onClick={onNovo}>
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M12 5v14" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
@@ -98,7 +100,7 @@ const ProdutoList: React.FC<Props> = ({ onNovo, onEditar, onError }) => {
       </div>
 
       <div className={styles.gridCard}>
-        {produtos.map(produto => {
+        {listaProdutos.map(produto => {
           const estoqueStatus = getEstoqueStatus(produto);
           return (
             <div key={produto.id_produto} className={styles.cardBadge}>

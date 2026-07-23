@@ -1,6 +1,7 @@
 import api from './apiService';
 import { API_CONFIG } from '../constants/config';
 import type { FuncionarioData, FuncionarioResponse } from '../types/funcionario';
+import { ensureArray } from '../utils/arrayUtils';
 
 export const funcionarioService = {
   async cadastrarFuncionario(data: FuncionarioData): Promise<FuncionarioResponse> {
@@ -54,7 +55,7 @@ export const funcionarioService = {
       const response = await api.get(`${API_CONFIG.ENDPOINTS.EMPLOYEES_DEPARTAMENTO_DATE}/${departamento}/date`, {
         params,
       });
-      return response.data;
+      return ensureArray(response.data);
     } catch (error) {
       console.error('Erro ao buscar funcionários por departamento:', error);
       throw error;
@@ -70,7 +71,7 @@ export const funcionarioService = {
       const response = await api.get(API_CONFIG.ENDPOINTS.EMPLOYEES_DATE, {
         params,
       });
-      return response.data;
+      return ensureArray(response.data);
     } catch (error) {
       console.error('Erro ao buscar funcionários de todos os departamentos:', error);
       throw error;

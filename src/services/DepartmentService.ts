@@ -1,7 +1,7 @@
 import api from "./apiService";
 import { API_CONFIG } from "../constants/config";
 import type { DepartmentData } from "../types/Types";
-
+import { ensureArray } from "../utils/arrayUtils";
 
 const BASE_URL = API_CONFIG.ENDPOINTS.ADMIN_DEPARTAMENTO;
 
@@ -14,7 +14,7 @@ export const DepartmentService = {
 
   async listarDepartamentos(): Promise<DepartmentData[]> {
     const response = await api.get(BASE_URL);
-    return response.data;
+    return ensureArray<DepartmentData>(response.data);
   },
 
   async deletarDepartamento(data: { idDepartamento: number }): Promise<void> {

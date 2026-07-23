@@ -64,6 +64,8 @@ const CentroArmazenamentoList: React.FC<Props> = ({ onNovo, onEditar, onError })
     }
   };
 
+  const listaCentros = Array.isArray(centros) ? centros : [];
+
   if (loading) {
     return (
       <div className={styles.loadingContainer}>
@@ -73,7 +75,7 @@ const CentroArmazenamentoList: React.FC<Props> = ({ onNovo, onEditar, onError })
     );
   }
 
-  if (centros.length === 0) {
+  if (listaCentros.length === 0) {
     return (
       <div className={styles.emptyContainer}>
         <div className={styles.emptyIcon}>
@@ -94,7 +96,7 @@ const CentroArmazenamentoList: React.FC<Props> = ({ onNovo, onEditar, onError })
   return (
     <>
       <div className={styles.listHeader}>
-        <h3>Centros de Armazenamento ({centros.length})</h3>
+        <h3>Centros de Armazenamento ({listaCentros.length})</h3>
         <button className={styles.addNewButton} onClick={onNovo}>
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M12 5v14" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
@@ -105,7 +107,7 @@ const CentroArmazenamentoList: React.FC<Props> = ({ onNovo, onEditar, onError })
       </div>
 
       <div className={styles.centrosGrid}>
-        {centros.map(centro => (
+        {listaCentros.map(centro => (
           <div key={centro.id_centro} className={styles.centroCard}>
             <div className={styles.centroIcon}>
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">

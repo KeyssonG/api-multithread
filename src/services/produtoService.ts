@@ -1,14 +1,15 @@
 import api from './apiService';
 import { API_CONFIG } from '../constants/config';
 import type { Produto, ProdutoFormData, Categoria } from '../types/produto';
+import { ensureArray } from '../utils/arrayUtils';
 
 const ENDPOINT = API_CONFIG.ENDPOINTS.ESTOQUE_PRODUTOS;
 const CATEGORIA_ENDPOINT = API_CONFIG.ENDPOINTS.ESTOQUE_CATEGORIAS;
 
 const produtoService = {
   async listar(): Promise<Produto[]> {
-    const response = await api.get<Produto[]>(ENDPOINT);
-    return response.data;
+    const response = await api.get(ENDPOINT);
+    return ensureArray<Produto>(response.data);
   },
 
   async buscarPorId(id: number): Promise<Produto> {
@@ -30,8 +31,8 @@ const produtoService = {
   },
 
   async listarCategorias(): Promise<Categoria[]> {
-    const response = await api.get<Categoria[]>(CATEGORIA_ENDPOINT);
-    return response.data;
+    const response = await api.get(CATEGORIA_ENDPOINT);
+    return ensureArray<Categoria>(response.data);
   },
 };
 

@@ -1,6 +1,7 @@
 import api from './apiService';
 import { API_CONFIG } from '../constants/config';
 import type { Movimentacao, EstoqueDisponivel } from '../types/movimentacao';
+import { ensureArray } from '../utils/arrayUtils';
 
 const ENDPOINT = API_CONFIG.ENDPOINTS.ESTOQUE_MOVIMENTACOES;
 
@@ -37,13 +38,13 @@ const movimentacaoService = {
     if (tipo) params.tipo = tipo;
     if (dataInicio) params.dataInicio = dataInicio;
     if (dataFim) params.dataFim = dataFim;
-    const response = await api.get<Movimentacao[]>(ENDPOINT, { params });
-    return response.data;
+    const response = await api.get(ENDPOINT, { params });
+    return ensureArray<Movimentacao>(response.data);
   },
 
   async historicoProduto(idProduto: number): Promise<Movimentacao[]> {
-    const response = await api.get<Movimentacao[]>(`${API_CONFIG.ENDPOINTS.ESTOQUE_PRODUTOS}/${idProduto}/movimentacoes`);
-    return response.data;
+    const response = await api.get(`${API_CONFIG.ENDPOINTS.ESTOQUE_PRODUTOS}/${idProduto}/movimentacoes`);
+    return ensureArray<Movimentacao>(response.data);
   },
 
   async estoqueDisponivel(idProduto: number): Promise<EstoqueDisponivel> {

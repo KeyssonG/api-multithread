@@ -92,6 +92,8 @@ const InventarioList: React.FC<Props> = ({ onError, onSuccess }) => {
     }
   };
 
+  const listaDivergencias = Array.isArray(divergencias) ? divergencias : [];
+
   if (loading) {
     return (
       <div className={styles.loadingContainer}>
@@ -101,7 +103,7 @@ const InventarioList: React.FC<Props> = ({ onError, onSuccess }) => {
     );
   }
 
-  if (divergencias.length === 0) {
+  if (listaDivergencias.length === 0) {
     return (
       <div className={styles.emptyContainer}>
         <div className={styles.emptyIcon}>
@@ -120,11 +122,11 @@ const InventarioList: React.FC<Props> = ({ onError, onSuccess }) => {
   return (
     <>
       <div className={styles.listHeader}>
-        <h3>Divergências ({divergencias.length})</h3>
+        <h3>Divergências ({listaDivergencias.length})</h3>
       </div>
 
       <div className={styles.gridCard}>
-        {divergencias.map((item) => (
+        {listaDivergencias.map((item) => (
           <div key={item.id_inventario} className={styles.cardInfo}>
             <div className={styles.cardHeader}>
               <h4 className={styles.cardName}>{item.produto_nome}</h4>
