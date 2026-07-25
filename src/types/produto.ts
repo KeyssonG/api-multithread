@@ -36,7 +36,15 @@ export interface Categoria {
   id_categoria: number;
   nome: string;
   descricao?: string;
+  status: 'ATIVO' | 'INATIVO';
   criado_em?: string;
+  atualizado_em?: string;
+}
+
+export interface CategoriaFormData {
+  nome: string;
+  descricao?: string;
+  status?: string;
 }
 
 export const UNIDADE_MEDIDA = [

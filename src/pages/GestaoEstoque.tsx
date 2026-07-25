@@ -10,12 +10,14 @@ import MovimentacaoForm from "../components/MovimentacaoForm";
 import DashboardEstoque from "../components/DashboardEstoque";
 import InventarioList from "../components/InventarioList";
 import RelatoriosEstoque from "../components/RelatoriosEstoque";
+import CategoriaForm from "../components/CategoriaForm";
+import CategoriaList from "../components/CategoriaList";
 import type { CentroArmazenamento, CentroArmazenamentoFormData } from "../types/centroArmazenamento";
-import type { Produto } from "../types/produto";
+import type { Produto, Categoria, CategoriaFormData } from "../types/produto";
 import { ROUTES } from "../constants/config";
 import styles from "../styles/GestaoEstoque.module.css";
 
-type ActiveSection = 'centros' | 'produtos' | 'movimentacoes' | 'inventario' | 'relatorios' | 'dashboard' | null;
+type ActiveSection = 'centros' | 'produtos' | 'categorias' | 'movimentacoes' | 'inventario' | 'relatorios' | 'dashboard' | null;
 
 const GestaoEstoque = () => {
   const navigate = useNavigate();
@@ -23,6 +25,7 @@ const GestaoEstoque = () => {
   const [subSection, setSubSection] = useState<string | null>(null);
   const [centroEditando, setCentroEditando] = useState<CentroArmazenamento | null>(null);
   const [produtoEditando, setProdutoEditando] = useState<Produto | null>(null);
+  const [categoriaEditando, setCategoriaEditando] = useState<Categoria | null>(null);
   const [popupMessage, setPopupMessage] = useState<string | null>(null);
   const [popupType, setPopupType] = useState<'success' | 'error'>('success');
 
@@ -35,12 +38,14 @@ const GestaoEstoque = () => {
     setSubSection(null);
     setCentroEditando(null);
     setProdutoEditando(null);
+    setCategoriaEditando(null);
   };
 
   const handleBackToSection = () => {
     setSubSection(null);
     setCentroEditando(null);
     setProdutoEditando(null);
+    setCategoriaEditando(null);
   };
 
   const handleNovoCentro = () => {
@@ -63,11 +68,22 @@ const GestaoEstoque = () => {
     setSubSection('cadastrar');
   };
 
+  const handleNovaCategoria = () => {
+    setCategoriaEditando(null);
+    setSubSection('cadastrar');
+  };
+
+  const handleEditarCategoria = (categoria: Categoria) => {
+    setCategoriaEditando(categoria);
+    setSubSection('cadastrar');
+  };
+
   const handleFormSuccess = (msg?: string) => {
-    showPopup(msg || (centroEditando || produtoEditando ? 'Atualizado com sucesso!' : 'Cadastrado com sucesso!'), 'success');
+    showPopup(msg || (centroEditando || produtoEditando || categoriaEditando ? 'Atualizado com sucesso!' : 'Cadastrado com sucesso!'), 'success');
     setSubSection('consultar');
     setCentroEditando(null);
     setProdutoEditando(null);
+    setCategoriaEditando(null);
   };
 
   const handleFormError = (msg: string) => {
@@ -96,6 +112,7 @@ const GestaoEstoque = () => {
     switch (activeSection) {
       case 'centros': return 'Centro de Armazenamento';
       case 'produtos': return 'Produtos';
+      case 'categorias': return 'Categorias';
       case 'movimentacoes': return 'Movimentações';
       case 'inventario': return 'Inventário';
       case 'relatorios': return 'Relatórios';
@@ -111,6 +128,9 @@ const GestaoEstoque = () => {
     }
     if (activeSection === 'produtos') {
       return produtoEditando ? 'Editar' : subSection === 'cadastrar' ? 'Cadastrar' : 'Consultar';
+    }
+    if (activeSection === 'categorias') {
+      return categoriaEditando ? 'Editar' : subSection === 'cadastrar' ? 'Cadastrar' : 'Consultar';
     }
     return '';
   };
@@ -193,6 +213,18 @@ const GestaoEstoque = () => {
                   </div>
                   <h3>Produtos</h3>
                   <p>Cadastro e gestão de produtos do catálogo.</p>
+                </div>
+
+                <div className={styles.featureCard} onClick={() => setActiveSection('categorias')}>
+                  <div className={styles.featureIcon}>
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M4 4h16v16H4z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                      <path d="M4 9h16" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                      <path d="M9 21V9" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                  </div>
+                  <h3>Categorias</h3>
+                  <p>Gerencie as categorias de produtos.</p>
                 </div>
 
                 <div className={styles.featureCard} onClick={() => setActiveSection('movimentacoes')}>
@@ -355,6 +387,62 @@ const GestaoEstoque = () => {
                 <ProdutoList
                   onNovo={handleNovoProduto}
                   onEditar={handleEditarProduto}
+                  onError={(msg) => showPopup(msg, 'error')}
+                />
+              </div>
+            ) : null
+          ) : activeSection === 'categorias' ? (
+            !subSection ? (
+              <div className={styles.sectionContent}>
+                <div className={styles.subMenuGrid}>
+                  <div className={styles.subMenuCard} onClick={handleNovaCategoria}>
+                    <div className={styles.subMenuIcon}>
+                      <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12 5v14" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                        <path d="M5 12h14" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                      </svg>
+                    </div>
+                    <h3>Cadastrar Categoria</h3>
+                    <p>Adicionar nova categoria de produto.</p>
+                  </div>
+                  <div className={styles.subMenuCard} onClick={() => setSubSection('consultar')}>
+                    <div className={styles.subMenuIcon}>
+                      <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M21 21L16.514 16.506" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                        <circle cx="10.5" cy="10.5" r="7.5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                      </svg>
+                    </div>
+                    <h3>Consultar Categorias</h3>
+                    <p>Visualizar todas as categorias cadastradas.</p>
+                  </div>
+                </div>
+              </div>
+            ) : subSection === 'cadastrar' ? (
+              <div className={styles.sectionContent}>
+                <div className={styles.formContainer}>
+                  <p className={styles.formDescription}>
+                    {categoriaEditando
+                      ? `Editando: ${categoriaEditando.nome}`
+                      : 'Preencha os dados da nova categoria.'}
+                  </p>
+                  <CategoriaForm
+                    onSuccess={() => handleFormSuccess(categoriaEditando ? 'Categoria atualizada com sucesso!' : 'Categoria cadastrada com sucesso!')}
+                    onError={handleFormError}
+                    dadosIniciais={categoriaEditando ? {
+                      nome: categoriaEditando.nome,
+                      descricao: categoriaEditando.descricao || '',
+                      status: categoriaEditando.status,
+                    } : undefined}
+                    idEdicao={categoriaEditando?.id_categoria}
+                    modoEdicao={!!categoriaEditando}
+                  />
+                </div>
+              </div>
+            ) : subSection === 'consultar' ? (
+              <div className={styles.sectionContent}>
+                <CategoriaList
+                  onNovo={handleNovaCategoria}
+                  onEditar={handleEditarCategoria}
                   onError={(msg) => showPopup(msg, 'error')}
                 />
               </div>
