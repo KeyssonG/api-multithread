@@ -303,6 +303,7 @@ select:focus {
   transition: all 0.3s ease;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02);
   position: relative;
+  overflow: hidden;
 }
 
 .gridCard:hover {
@@ -378,6 +379,12 @@ select:focus {
   align-items: center;
   gap: 12px;
   margin-bottom: 6px;
+  flex-wrap: wrap;
+}
+
+.cardDetails span {
+  overflow-wrap: break-word;
+  word-break: break-word;
 }
 
 .cardSubtitle {
