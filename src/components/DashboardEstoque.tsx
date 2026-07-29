@@ -51,8 +51,8 @@ export default function DashboardEstoque({ onError }: Props) {
     );
   }
 
-  const formatCurrency = (value: number) =>
-    new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value);
+  const formatCurrency = (value?: number) =>
+    new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value ?? 0);
 
   const cards = [
     {
@@ -66,7 +66,7 @@ export default function DashboardEstoque({ onError }: Props) {
           <path d="M12 22V12" />
         </svg>
       ),
-      format: (v: number) => v.toLocaleString('pt-BR'),
+      format: (v?: number) => (v ?? 0).toLocaleString('pt-BR'),
     },
     {
       label: 'Estoque Baixo',
@@ -79,7 +79,7 @@ export default function DashboardEstoque({ onError }: Props) {
           <line x1="12" y1="17" x2="12.01" y2="17" />
         </svg>
       ),
-      format: (v: number) => v.toLocaleString('pt-BR'),
+      format: (v?: number) => (v ?? 0).toLocaleString('pt-BR'),
     },
     {
       label: 'Alertas Críticos',
@@ -92,7 +92,7 @@ export default function DashboardEstoque({ onError }: Props) {
           <line x1="12" y1="16" x2="12.01" y2="16" />
         </svg>
       ),
-      format: (v: number) => v.toLocaleString('pt-BR'),
+      format: (v?: number) => (v ?? 0).toLocaleString('pt-BR'),
     },
     {
       label: 'Valor Total do Estoque',
@@ -104,7 +104,7 @@ export default function DashboardEstoque({ onError }: Props) {
           <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
         </svg>
       ),
-      format: (v: number) => formatCurrency(v),
+      format: (v?: number) => formatCurrency(v),
     },
   ];
 
