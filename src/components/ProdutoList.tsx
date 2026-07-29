@@ -47,13 +47,20 @@ const ProdutoList: React.FC<Props> = ({ onNovo, onEditar, onError }) => {
   };
 
   const formatarMoeda = (value: number) => {
+    if (value == null || isNaN(value)) return 'R$ 0,00';
     return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value);
   };
 
   const getEstoqueStatus = (produto: Produto) => {
-    if (produto.qtd_estoque_atual <= 0) return { label: 'Sem Estoque', color: '#dc3545' };
-    if (produto.qtd_estoque_atual < produto.qtd_estoque_minimo) return { label: 'Estoque Baixo', color: '#fd7e14' };
-    if (produto.qtd_estoque_atual > produto.qtd_estoque_maximo) return { label: 'Estoque Alto', color: '#fd7e14' };
+    const atual = produto.qtd_estoque_atual;
+    const min = produto.qtd_estoque_minimo;
+    const max = produto.qtd_estoque_maximo;
+    if (atual == null || isNaN(atual) || min == null || isNaN(min) || max == null || isNaN(max)) {
+      return { label: 'Indisponível', color: '#6c757d' };
+    }
+    if (atual <= 0) return { label: 'Sem Estoque', color: '#dc3545' };
+    if (atual < min) return { label: 'Estoque Baixo', color: '#fd7e14' };
+    if (atual > max) return { label: 'Estoque Alto', color: '#fd7e14' };
     return { label: 'Normal', color: '#28a745' };
   };
 
@@ -122,10 +129,10 @@ const ProdutoList: React.FC<Props> = ({ onNovo, onEditar, onError }) => {
                 <div className={styles.cardDetails}>
                   {produto.categoria_nome && <span>Categoria: {produto.categoria_nome}</span>}
                   {produto.centro_padrao_nome && <span>Centro: {produto.centro_padrao_nome}</span>}
-                  <span>Unidade: {produto.unidade_medida}</span>
+                  <span>Unidade: {produto.unidade_medida || 'Não informado'}</span>
                   <span>Custo: {formatarMoeda(produto.preco_custo)}</span>
                   <span>
-                    Estoque: {produto.qtd_estoque_atual} (min: {produto.qtd_estoque_minimo} / max: {produto.qtd_estoque_maximo})
+                    Estoque: {produto.qtd_estoque_atual} (min: {produto.qtd_estoque_minimo || 'N/I'} / max: {produto.qtd_estoque_maximo || 'N/I'})
                   </span>
                   <span style={{ color: estoqueStatus.color }}>{estoqueStatus.label}</span>
                 </div>

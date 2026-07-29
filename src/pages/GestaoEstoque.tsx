@@ -372,7 +372,7 @@ const GestaoEstoque = () => {
                       id_centro_padrao: produtoEditando.id_centro_padrao,
                       unidade_medida: produtoEditando.unidade_medida,
                       preco_custo: produtoEditando.preco_custo,
-                      preco_venda: produtoEditando.preco_venda || null,
+                      preco_venda: produtoEditando.preco_venda ?? null,
                       qtd_estoque_minimo: produtoEditando.qtd_estoque_minimo,
                       qtd_estoque_maximo: produtoEditando.qtd_estoque_maximo,
                       status: produtoEditando.status,
