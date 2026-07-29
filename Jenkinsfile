@@ -4,6 +4,7 @@ pipeline {
     environment {
         DOCKERHUB_IMAGE = "keyssong/react-multithread"
         IMAGE_TAG = "latest"
+        DOCKER_PATH = "C:\\Users\\keyss\\AppData\\Local\\Programs\\Rancher Desktop\\resources\\resources\\win32\\bin"
     }
 
     triggers {
@@ -62,8 +63,8 @@ pipeline {
         stage('Deploy no Kubernetes') {
             steps {
                 powershell script: '''
-                    kubectl set image deployment/multithread-app multithread-app=$env:DOCKERHUB_IMAGE:$env:IMAGE_TAG --record
-                    kubectl rollout restart deployment/multithread-app
+                    kubectl set image deployment/multithread-deployment -n producao multithread-container=$env:DOCKERHUB_IMAGE:$env:IMAGE_TAG --record
+                    kubectl rollout restart deployment/multithread-deployment -n producao
                 '''
             }
         }
