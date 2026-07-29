@@ -12,7 +12,6 @@ interface Props {
 const CategoriaList: React.FC<Props> = ({ onNovo, onEditar, onError }) => {
   const [categorias, setCategorias] = useState<Categoria[]>([]);
   const [loading, setLoading] = useState(true);
-  const [menuAberto, setMenuAberto] = useState<number | null>(null);
   const [deletando, setDeletando] = useState<number | null>(null);
 
   useEffect(() => {

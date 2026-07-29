@@ -13,7 +13,7 @@ import RelatoriosEstoque from "../components/RelatoriosEstoque";
 import CategoriaForm from "../components/CategoriaForm";
 import CategoriaList from "../components/CategoriaList";
 import type { CentroArmazenamento, CentroArmazenamentoFormData } from "../types/centroArmazenamento";
-import type { Produto, Categoria, CategoriaFormData } from "../types/produto";
+import type { Produto, Categoria } from "../types/produto";
 import { ROUTES } from "../constants/config";
 import styles from "../styles/GestaoEstoque.module.css";
 
