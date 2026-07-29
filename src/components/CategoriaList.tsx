@@ -41,7 +41,6 @@ const CategoriaList: React.FC<Props> = ({ onNovo, onEditar, onError }) => {
       onError(msg);
     } finally {
       setDeletando(null);
-      setMenuAberto(null);
     }
   };
 
