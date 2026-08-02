@@ -7,6 +7,7 @@ import CentroArmazenamentoList from "../components/CentroArmazenamentoList";
 import ProdutoForm from "../components/ProdutoForm";
 import ProdutoList from "../components/ProdutoList";
 import MovimentacaoForm from "../components/MovimentacaoForm";
+import MovimentacaoList from "../components/MovimentacaoList";
 import DashboardEstoque from "../components/DashboardEstoque";
 import InventarioList from "../components/InventarioList";
 import RelatoriosEstoque from "../components/RelatoriosEstoque";
@@ -131,6 +132,9 @@ const GestaoEstoque = () => {
     }
     if (activeSection === 'categorias') {
       return categoriaEditando ? 'Editar' : subSection === 'cadastrar' ? 'Cadastrar' : 'Consultar';
+    }
+    if (activeSection === 'movimentacoes') {
+      return subSection === 'cadastrar' ? 'Registrar' : 'Consultar';
     }
     return '';
   };
@@ -448,17 +452,50 @@ const GestaoEstoque = () => {
               </div>
             ) : null
           ) : activeSection === 'movimentacoes' ? (
-            <div className={styles.sectionContent}>
-              <div className={styles.formContainer}>
-                <p className={styles.formDescription}>
-                  Registre entradas e saídas de mercadoria no estoque.
-                </p>
-                <MovimentacaoForm
+            !subSection ? (
+              <div className={styles.sectionContent}>
+                <div className={styles.subMenuGrid}>
+                  <div className={styles.subMenuCard} onClick={() => setSubSection('cadastrar')}>
+                    <div className={styles.subMenuIcon}>
+                      <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <line x1="12" y1="5" x2="12" y2="19" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                        <polyline points="19 12 12 19 5 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                      </svg>
+                    </div>
+                    <h3>Registrar Movimentação</h3>
+                    <p>Registrar entradas e saídas de estoque.</p>
+                  </div>
+                  <div className={styles.subMenuCard} onClick={() => setSubSection('consultar')}>
+                    <div className={styles.subMenuIcon}>
+                      <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M21 21L16.514 16.506" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                        <circle cx="10.5" cy="10.5" r="7.5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                      </svg>
+                    </div>
+                    <h3>Histórico de Movimentações</h3>
+                    <p>Visualizar todas as movimentações registradas.</p>
+                  </div>
+                </div>
+              </div>
+            ) : subSection === 'cadastrar' ? (
+              <div className={styles.sectionContent}>
+                <div className={styles.formContainer}>
+                  <p className={styles.formDescription}>
+                    Registre entradas e saídas de mercadoria no estoque.
+                  </p>
+                  <MovimentacaoForm
+                    onError={(msg) => showPopup(msg, 'error')}
+                    onSuccess={(msg) => showPopup(msg, 'success')}
+                  />
+                </div>
+              </div>
+            ) : subSection === 'consultar' ? (
+              <div className={styles.sectionContent}>
+                <MovimentacaoList
                   onError={(msg) => showPopup(msg, 'error')}
-                  onSuccess={(msg) => showPopup(msg, 'success')}
                 />
               </div>
-            </div>
+            ) : null
           ) : activeSection === 'dashboard' ? (
             <div className={styles.sectionContent}>
               <DashboardEstoque

@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import inventarioService from '../services/inventarioService';
+import produtoService from '../services/produtoService';
 import type { Inventario } from '../types/inventario';
+import type { Produto } from '../types/produto';
 import styles from '../styles/Estoque.module.css';
 
 interface Props {
@@ -11,6 +13,9 @@ interface Props {
 const InventarioList: React.FC<Props> = ({ onError, onSuccess }) => {
   const [loading, setLoading] = useState(true);
   const [divergencias, setDivergencias] = useState<Inventario[]>([]);
+  const [produtos, setProdutos] = useState<Produto[]>([]);
+  const [idProduto, setIdProduto] = useState('');
+  const [iniciando, setIniciando] = useState(false);
   const [contagemForm, setContagemForm] = useState<{
     [id: number]: { qtd_fisica: string; observacao: string };
   }>({});
@@ -18,7 +23,18 @@ const InventarioList: React.FC<Props> = ({ onError, onSuccess }) => {
 
   useEffect(() => {
     carregarDivergencias();
+    carregarProdutos();
   }, []);
+
+  const carregarProdutos = async () => {
+    try {
+      const data = await produtoService.listar();
+      setProdutos(data);
+    } catch (err: any) {
+      const msg = err.response?.data?.message || err.message || 'Erro ao carregar produtos';
+      onError(msg);
+    }
+  };
 
   const carregarDivergencias = async () => {
     setLoading(true);
@@ -30,6 +46,22 @@ const InventarioList: React.FC<Props> = ({ onError, onSuccess }) => {
       onError(msg);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleIniciarInventario = async () => {
+    if (!idProduto) return;
+    setIniciando(true);
+    try {
+      await inventarioService.iniciar(Number(idProduto));
+      onSuccess('Inventário iniciado com sucesso');
+      setIdProduto('');
+      await carregarDivergencias();
+    } catch (err: any) {
+      const msg = err.response?.data?.message || err.message || 'Erro ao iniciar inventário';
+      onError(msg);
+    } finally {
+      setIniciando(false);
     }
   };
 
@@ -94,119 +126,149 @@ const InventarioList: React.FC<Props> = ({ onError, onSuccess }) => {
 
   const listaDivergencias = Array.isArray(divergencias) ? divergencias : [];
 
-  if (loading) {
-    return (
-      <div className={styles.loadingContainer}>
-        <div className={styles.spinner}></div>
-        <p>Carregando inventário...</p>
-      </div>
-    );
-  }
-
-  if (listaDivergencias.length === 0) {
-    return (
-      <div className={styles.emptyContainer}>
-        <div className={styles.emptyIcon}>
-          <svg width="64" height="64" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-            <rect x="9" y="3" width="6" height="4" rx="1" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-            <path d="M9 14l2 2 4-4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-          </svg>
-        </div>
-        <h3>Nenhuma divergência pendente</h3>
-        <p>Todas as contagens foram realizadas ou não há inventário em andamento.</p>
-      </div>
-    );
-  }
-
   return (
     <>
       <div className={styles.listHeader}>
-        <h3>Divergências ({listaDivergencias.length})</h3>
+        <h3>Iniciar Inventário</h3>
       </div>
 
-      <div className={styles.gridCard}>
-        {listaDivergencias.map((item) => (
-          <div key={item.id_inventario} className={styles.cardInfo}>
-            <div className={styles.cardHeader}>
-              <h4 className={styles.cardName}>{item.produto_nome}</h4>
-              <span className={`${styles.statusBadge} ${getStatusBadgeClass(item.status)}`}>
-                {item.status}
-              </span>
-            </div>
+      <div className={styles.formGrid}>
+        <div className={styles.formGroup}>
+          <label htmlFor="inv_produto">Produto</label>
+          <select
+            id="inv_produto"
+            className={styles.input}
+            value={idProduto}
+            onChange={(e) => setIdProduto(e.target.value)}
+          >
+            <option value="">Selecione o produto</option>
+            {(Array.isArray(produtos) ? produtos : [])
+              .filter(p => p.status === 'ATIVO')
+              .map(p => (
+                <option key={p.id_produto} value={p.id_produto}>
+                  {p.nome} (Estoque: {p.qtd_estoque_atual})
+                </option>
+              ))}
+          </select>
+        </div>
+        <div className={styles.formGroup} style={{ justifyContent: 'flex-end' }}>
+          <button
+            className={styles.addButton}
+            onClick={handleIniciarInventario}
+            disabled={!idProduto || iniciando}
+          >
+            {iniciando ? 'Iniciando...' : 'Iniciar Inventário'}
+          </button>
+        </div>
+      </div>
 
-            <div className={styles.cardDetails}>
-              <div>
-                <span>Sistema: </span>
-                <strong>{item.qtd_sistema}</strong>
-              </div>
-              {item.qtd_fisica !== null && (
-                <div>
-                  <span>Física: </span>
-                  <strong>{item.qtd_fisica}</strong>
-                </div>
-              )}
-              {item.divergencia !== null && (
-                <div>
-                  <span>Divergência: </span>
-                  <strong className={getDivergenciaColor(item.divergencia)}>
-                    {item.divergencia > 0 ? '+' : ''}{item.divergencia}
-                  </strong>
-                </div>
-              )}
-              {item.observacao && (
-                <div>
-                  <span>Obs: </span>
-                  <span>{item.observacao}</span>
-                </div>
-              )}
-            </div>
+      {loading ? (
+        <div className={styles.loadingContainer}>
+          <div className={styles.spinner}></div>
+          <p>Carregando inventário...</p>
+        </div>
+      ) : listaDivergencias.length === 0 ? (
+        <div className={styles.emptyContainer}>
+          <div className={styles.emptyIcon}>
+            <svg width="64" height="64" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              <rect x="9" y="3" width="6" height="4" rx="1" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              <path d="M9 14l2 2 4-4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+          </div>
+          <h3>Nenhuma divergência pendente</h3>
+          <p>Todas as contagens foram realizadas ou não há inventário em andamento.</p>
+        </div>
+      ) : (
+        <>
+          <div className={styles.listHeader}>
+            <h3>Divergências ({listaDivergencias.length})</h3>
+          </div>
 
-            {item.status === 'PENDENTE' && (
-              <div className={styles.formGrid}>
-                <div className={styles.formGroup}>
-                  <label>Qtd. Física</label>
-                  <input
-                    type="number"
-                    className={styles.input}
-                    placeholder="Quantidade contada"
-                    value={contagemForm[item.id_inventario]?.qtd_fisica || ''}
-                    onChange={(e) => updateForm(item.id_inventario, 'qtd_fisica', e.target.value)}
-                  />
+          <div className={styles.gridCard}>
+            {listaDivergencias.map((item) => (
+              <div key={item.id_inventario} className={styles.cardInfo}>
+                <div className={styles.cardHeader}>
+                  <h4 className={styles.cardName}>{item.produto_nome}</h4>
+                  <span className={`${styles.statusBadge} ${getStatusBadgeClass(item.status)}`}>
+                    {item.status}
+                  </span>
                 </div>
-                <div className={styles.formGroup}>
-                  <label>Observação</label>
-                  <input
-                    type="text"
-                    className={styles.input}
-                    placeholder="Observação (opcional)"
-                    value={contagemForm[item.id_inventario]?.observacao || ''}
-                    onChange={(e) => updateForm(item.id_inventario, 'observacao', e.target.value)}
-                  />
-                </div>
-                <div style={{ display: 'flex', gap: '8px' }}>
-                  <button
-                    className={styles.submitButton}
-                    onClick={() => handleRegistrarContagem(item.id_inventario)}
-                    disabled={!contagemForm[item.id_inventario]?.qtd_fisica}
-                  >
-                    Registrar Contagem
-                  </button>
-                  {contagemForm[item.id_inventario]?.qtd_fisica && (
-                    <button
-                      className={styles.editButton}
-                      onClick={() => handleAjustar(item.id_inventario)}
-                      disabled={ajustandoId === item.id_inventario}
-                    >
-                      {ajustandoId === item.id_inventario ? 'Ajustando...' : 'Aplicar Ajuste'}
-                    </button>
+
+                <div className={styles.cardDetails}>
+                  <div>
+                    <span>Sistema: </span>
+                    <strong>{item.qtd_sistema}</strong>
+                  </div>
+                  {item.qtd_fisica !== null && (
+                    <div>
+                      <span>Física: </span>
+                      <strong>{item.qtd_fisica}</strong>
+                    </div>
+                  )}
+                  {item.divergencia !== null && (
+                    <div>
+                      <span>Divergência: </span>
+                      <strong className={getDivergenciaColor(item.divergencia)}>
+                        {item.divergencia > 0 ? '+' : ''}{item.divergencia}
+                      </strong>
+                    </div>
+                  )}
+                  {item.observacao && (
+                    <div>
+                      <span>Obs: </span>
+                      <span>{item.observacao}</span>
+                    </div>
                   )}
                 </div>
+
+                {item.status === 'PENDENTE' && (
+                  <div className={styles.formGrid}>
+                    <div className={styles.formGroup}>
+                      <label>Qtd. Física</label>
+                      <input
+                        type="number"
+                        className={styles.input}
+                        placeholder="Quantidade contada"
+                        value={contagemForm[item.id_inventario]?.qtd_fisica || ''}
+                        onChange={(e) => updateForm(item.id_inventario, 'qtd_fisica', e.target.value)}
+                      />
+                    </div>
+                    <div className={styles.formGroup}>
+                      <label>Observação</label>
+                      <input
+                        type="text"
+                        className={styles.input}
+                        placeholder="Observação (opcional)"
+                        value={contagemForm[item.id_inventario]?.observacao || ''}
+                        onChange={(e) => updateForm(item.id_inventario, 'observacao', e.target.value)}
+                      />
+                    </div>
+                    <div style={{ display: 'flex', gap: '8px' }}>
+                      <button
+                        className={styles.submitButton}
+                        onClick={() => handleRegistrarContagem(item.id_inventario)}
+                        disabled={!contagemForm[item.id_inventario]?.qtd_fisica}
+                      >
+                        Registrar Contagem
+                      </button>
+                      {contagemForm[item.id_inventario]?.qtd_fisica && (
+                        <button
+                          className={styles.editButton}
+                          onClick={() => handleAjustar(item.id_inventario)}
+                          disabled={ajustandoId === item.id_inventario}
+                        >
+                          {ajustandoId === item.id_inventario ? 'Ajustando...' : 'Aplicar Ajuste'}
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                )}
               </div>
-            )}
+            ))}
           </div>
-        ))}
-      </div>
+        </>
+      )}
     </>
   );
 };
