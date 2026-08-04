@@ -57,6 +57,7 @@ export default function DashboardEstoque({ onError }: Props) {
   const cards = [
     {
       label: 'Total de Itens',
+      description: 'Total de produtos ativos cadastrados no estoque.',
       value: dashboard.totalItens,
       color: '#5d6cf6',
       icon: (
@@ -70,6 +71,7 @@ export default function DashboardEstoque({ onError }: Props) {
     },
     {
       label: 'Estoque Baixo',
+      description: 'Produtos ativos com quantidade acima de zero e igual ou abaixo do estoque mínimo.',
       value: dashboard.estoqueBaixo,
       color: '#f59e0b',
       icon: (
@@ -83,6 +85,7 @@ export default function DashboardEstoque({ onError }: Props) {
     },
     {
       label: 'Alertas Críticos',
+      description: 'Produtos ativos com quantidade atual zerada ou negativa.',
       value: dashboard.alertasCriticos,
       color: '#ef4444',
       icon: (
@@ -96,6 +99,7 @@ export default function DashboardEstoque({ onError }: Props) {
     },
     {
       label: 'Valor Total do Estoque',
+      description: 'Soma do valor de custo de todos os produtos ativos (quantidade atual × preço de custo).',
       value: dashboard.valorTotalEstoque,
       color: '#10b981',
       icon: (
@@ -109,16 +113,41 @@ export default function DashboardEstoque({ onError }: Props) {
   ];
 
   return (
-    <div className={styles.indicatorGrid}>
-      {cards.map((card) => (
-        <div key={card.label} className={styles.indicatorCard} style={{ borderTop: `3px solid ${card.color}` }}>
-          <div className={styles.indicatorIcon} style={{ color: card.color }}>
-            {card.icon}
+    <>
+      <div className={styles.dashboardHeader}>
+        <h3>Dashboard</h3>
+        <div className={styles.legendWrap}>
+          <button type="button" className={styles.legendIcon} aria-label="Legenda dos indicadores">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <circle cx="12" cy="12" r="10" />
+              <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" />
+              <path d="M12 17h.01" />
+            </svg>
+          </button>
+          <div className={styles.legendTooltip}>
+            <strong>Legenda dos indicadores</strong>
+            {cards.map((card) => (
+              <div key={card.label} className={styles.legendItem}>
+                <span className={styles.legendDot} style={{ background: card.color }} />
+                <span>
+                  <strong>{card.label}:</strong> {card.description}
+                </span>
+              </div>
+            ))}
           </div>
-          <div className={styles.indicatorValue}>{card.format(card.value)}</div>
-          <div className={styles.indicatorLabel}>{card.label}</div>
         </div>
-      ))}
-    </div>
+      </div>
+      <div className={styles.indicatorGrid}>
+        {cards.map((card) => (
+          <div key={card.label} className={styles.indicatorCard} style={{ borderTop: `3px solid ${card.color}` }}>
+            <div className={styles.indicatorIcon} style={{ color: card.color }}>
+              {card.icon}
+            </div>
+            <div className={styles.indicatorValue}>{card.format(card.value)}</div>
+            <div className={styles.indicatorLabel}>{card.label}</div>
+          </div>
+        ))}
+      </div>
+    </>
   );
 }

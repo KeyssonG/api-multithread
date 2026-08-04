@@ -100,7 +100,7 @@ const InventarioList: React.FC<Props> = ({ onError, onSuccess }) => {
   const updateForm = (id: number, field: 'qtd_fisica' | 'observacao', value: string) => {
     setContagemForm((prev) => ({
       ...prev,
-      [id]: { ...prev[id], qtd_fisica: '', observacao: '', [field]: value },
+      [id]: { ...prev[id], [field]: value },
     }));
   };
 
@@ -115,6 +115,8 @@ const InventarioList: React.FC<Props> = ({ onError, onSuccess }) => {
     switch (status) {
       case 'PENDENTE':
         return styles.statusPendente;
+      case 'FINALIZADO':
+        return styles.statusFinalizado;
       case 'AJUSTADO':
         return styles.statusAtivo;
       case 'REJEITADO':
@@ -210,7 +212,7 @@ const InventarioList: React.FC<Props> = ({ onError, onSuccess }) => {
                     <div>
                       <span>Divergência: </span>
                       <strong className={getDivergenciaColor(item.divergencia)}>
-                        {item.divergencia > 0 ? '+' : ''}{item.divergencia}
+                        {item.divergencia}
                       </strong>
                     </div>
                   )}
@@ -252,15 +254,19 @@ const InventarioList: React.FC<Props> = ({ onError, onSuccess }) => {
                       >
                         Registrar Contagem
                       </button>
-                      {contagemForm[item.id_inventario]?.qtd_fisica && (
-                        <button
-                          className={styles.editButton}
-                          onClick={() => handleAjustar(item.id_inventario)}
-                          disabled={ajustandoId === item.id_inventario}
-                        >
-                          {ajustandoId === item.id_inventario ? 'Ajustando...' : 'Aplicar Ajuste'}
-                        </button>
-                      )}
+                    </div>
+                  </div>
+                )}
+                {item.status === 'FINALIZADO' && (
+                  <div className={styles.formGrid}>
+                    <div className={styles.formGroup}>
+                      <button
+                        className={styles.editButton}
+                        onClick={() => handleAjustar(item.id_inventario)}
+                        disabled={ajustandoId === item.id_inventario}
+                      >
+                        {ajustandoId === item.id_inventario ? 'Ajustando...' : 'Aplicar Ajuste'}
+                      </button>
                     </div>
                   </div>
                 )}
