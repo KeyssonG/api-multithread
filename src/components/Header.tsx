@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { useNavigate, useLocation, Link } from 'react-router-dom';
-import { ROUTES } from '../constants/config';
+import { MODULES, ROUTES } from '../constants/config';
 import styles from '../styles/Header.module.css';
 import { useAuth } from '../contexts/AuthContext';
 
@@ -76,7 +76,7 @@ const Header = () => {
           >
             Home
           </Link>
-          {hasAccess('Gestão de Acesso de Módulos') && (
+          {hasAccess(MODULES.GESTAO_ACESSO_MODULOS) && (
             <Link
               to={ROUTES.GESTAO_ACESSO}
               className={`${styles.navLink} ${location.pathname === ROUTES.GESTAO_ACESSO ? styles.active : ''}`}

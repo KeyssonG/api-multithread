@@ -64,6 +64,13 @@ export const ROUTES = {
   RESET_SENHA_CONFIRMAR: '/reset-senha/confirmar',
 } as const;
 
+// Nomes dos módulos (devem corresponder à tabela modulos no banco)
+export const MODULES = {
+  GESTAO_PESSOAS: 'Gestão de Pessoas',
+  GESTAO_ACESSO_MODULOS: 'Gestão de Acesso de Módulos',
+  GESTAO_ACESSO_ESTOQUE: 'Gestão de Acesso de Estoque',
+} as const;
+
 // Configurações de validação
 export const VALIDATION = {
   PASSWORD_MIN_LENGTH: 6,

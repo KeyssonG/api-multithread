@@ -4,7 +4,7 @@ import Header from "../components/Header";
 import Footer from "../components/Footer";
 import CustomPopup from "../components/CustomPopup";
 import styles from "../styles/dashboard.module.css";
-import { ROUTES } from "../constants/config";
+import { MODULES, ROUTES } from "../constants/config";
 import { useAuth } from "../contexts/AuthContext";
 
 const Dashboard = () => {
@@ -23,9 +23,9 @@ const Dashboard = () => {
     type: 'error'
   });
 
-  const gestaoPessoasAccess = hasAccess('Gestão de Pessoas');
-  const gestaoAcessoAccess = hasAccess('Gestão de Acesso de Módulos');
-  const gestaoEstoqueAccess = true; // Liberado para visualização conforme solicitado
+  const gestaoPessoasAccess = hasAccess(MODULES.GESTAO_PESSOAS);
+  const gestaoAcessoAccess = hasAccess(MODULES.GESTAO_ACESSO_MODULOS);
+  const gestaoEstoqueAccess = hasAccess(MODULES.GESTAO_ACESSO_ESTOQUE);
 
   const handleGestaoClick = () => {
     if (gestaoPessoasAccess) {
@@ -54,7 +54,16 @@ const Dashboard = () => {
   };
 
   const handleGestaoEstoqueClick = () => {
-    navigate(ROUTES.GESTAO_ESTOQUE);
+    if (gestaoEstoqueAccess) {
+      navigate(ROUTES.GESTAO_ESTOQUE);
+    } else {
+      setPopupConfig({
+        isOpen: true,
+        title: 'Acesso restrito',
+        message: 'Você não possui permissão para acessar o módulo Gestão de Estoque.',
+        type: 'error'
+      });
+    }
   };
 
   const closePopup = () => {

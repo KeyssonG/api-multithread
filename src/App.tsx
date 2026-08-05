@@ -6,7 +6,7 @@ import CadastroEmpresa from './pages/cadastroEmpresa';
 import Dashboard from './pages/Dashboard';
 import Gestao from './pages/Gestao';
 import PrivateRoute from './components/PrivateRoute';
-import { ROUTES } from './constants/config';
+import { MODULES, ROUTES } from './constants/config';
 import ResetSenhaSolicitar from './pages/ResetSenhaSolicitar';
 import ResetSenhaConfirmar from './pages/ResetSenhaConfirmar';
 import GestaoAcesso from './pages/GestaoAcesso';
@@ -30,7 +30,7 @@ const App = () => {
         <Route 
           path={ROUTES.GESTAO} 
           element={
-            <PrivateRoute>
+            <PrivateRoute requiredModule={MODULES.GESTAO_PESSOAS}>
               <Gestao />
             </PrivateRoute>
           } 
@@ -38,7 +38,7 @@ const App = () => {
         <Route 
           path={ROUTES.GESTAO_ACESSO} 
           element={
-            <PrivateRoute>
+            <PrivateRoute requiredModule={MODULES.GESTAO_ACESSO_MODULOS}>
               <GestaoAcesso />
             </PrivateRoute>
           } 
@@ -46,7 +46,7 @@ const App = () => {
         <Route 
           path={ROUTES.GESTAO_ESTOQUE} 
           element={
-            <PrivateRoute>
+            <PrivateRoute requiredModule={MODULES.GESTAO_ACESSO_ESTOQUE}>
               <GestaoEstoque />
             </PrivateRoute>
           } 
