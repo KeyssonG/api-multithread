@@ -13,12 +13,14 @@ import InventarioList from "../components/InventarioList";
 import RelatoriosEstoque from "../components/RelatoriosEstoque";
 import CategoriaForm from "../components/CategoriaForm";
 import CategoriaList from "../components/CategoriaList";
+import LocalizacaoForm from "../components/LocalizacaoForm";
+import LocalizacaoList from "../components/LocalizacaoList";
 import type { CentroArmazenamento, CentroArmazenamentoFormData } from "../types/centroArmazenamento";
 import type { Produto, Categoria } from "../types/produto";
 import { ROUTES } from "../constants/config";
 import styles from "../styles/GestaoEstoque.module.css";
 
-type ActiveSection = 'centros' | 'produtos' | 'categorias' | 'movimentacoes' | 'inventario' | 'relatorios' | 'dashboard' | null;
+type ActiveSection = 'centros' | 'produtos' | 'categorias' | 'localizacoes' | 'movimentacoes' | 'inventario' | 'relatorios' | 'dashboard' | null;
 
 const GestaoEstoque = () => {
   const navigate = useNavigate();
@@ -114,6 +116,7 @@ const GestaoEstoque = () => {
       case 'centros': return 'Centro de Armazenamento';
       case 'produtos': return 'Produtos';
       case 'categorias': return 'Categorias';
+      case 'localizacoes': return 'Localizações';
       case 'movimentacoes': return 'Movimentações';
       case 'inventario': return 'Inventário';
       case 'relatorios': return 'Relatórios';
@@ -229,6 +232,18 @@ const GestaoEstoque = () => {
                   </div>
                   <h3>Categorias</h3>
                   <p>Gerencie as categorias de produtos.</p>
+                </div>
+
+                <div className={styles.featureCard} onClick={() => setActiveSection('localizacoes')}>
+                  <div className={styles.featureIcon}>
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                      <polyline points="3.27 6.96 12 12.01 20.73 6.96" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                      <line x1="12" y1="22.08" x2="12" y2="12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                  </div>
+                  <h3>Localizações</h3>
+                  <p>Cadastre prateleiras, corredores e vínculo de produtos.</p>
                 </div>
 
                 <div className={styles.featureCard} onClick={() => setActiveSection('movimentacoes')}>
@@ -448,6 +463,53 @@ const GestaoEstoque = () => {
                   onNovo={handleNovaCategoria}
                   onEditar={handleEditarCategoria}
                   onError={(msg) => showPopup(msg, 'error')}
+                />
+              </div>
+            ) : null
+          ) : activeSection === 'localizacoes' ? (
+            !subSection ? (
+              <div className={styles.sectionContent}>
+                <div className={styles.subMenuGrid}>
+                  <div className={styles.subMenuCard} onClick={() => setSubSection('cadastrar')}>
+                    <div className={styles.subMenuIcon}>
+                      <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12 5v14" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                        <path d="M5 12h14" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                      </svg>
+                    </div>
+                    <h3>Cadastrar Localização</h3>
+                    <p>Adicionar prateleira, corredor ou endereço interno de um centro.</p>
+                  </div>
+                  <div className={styles.subMenuCard} onClick={() => setSubSection('consultar')}>
+                    <div className={styles.subMenuIcon}>
+                      <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M21 21L16.514 16.506" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                        <circle cx="10.5" cy="10.5" r="7.5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                      </svg>
+                    </div>
+                    <h3>Consultar Localizações</h3>
+                    <p>Visualizar localizações por centro e vincular produtos.</p>
+                  </div>
+                </div>
+              </div>
+            ) : subSection === 'cadastrar' ? (
+              <div className={styles.sectionContent}>
+                <div className={styles.formContainer}>
+                  <p className={styles.formDescription}>
+                    Preencha os dados da nova localização.
+                  </p>
+                  <LocalizacaoForm
+                    onSuccess={() => handleFormSuccess('Localização cadastrada com sucesso!')}
+                    onError={handleFormError}
+                  />
+                </div>
+              </div>
+            ) : subSection === 'consultar' ? (
+              <div className={styles.sectionContent}>
+                <LocalizacaoList
+                  onNovo={() => setSubSection('cadastrar')}
+                  onError={(msg) => showPopup(msg, 'error')}
+                  onSuccess={(msg) => showPopup(msg, 'success')}
                 />
               </div>
             ) : null
