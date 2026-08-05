@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from "react";
 import centroArmazenamentoService from "../services/centroArmazenamentoService";
 import localizacaoService from "../services/localizacaoService";
+import produtoService from "../services/produtoService";
 import type { LocalizacaoFormData } from "../types/localizacao";
 import type { CentroArmazenamento } from "../types/centroArmazenamento";
+import type { Produto } from "../types/produto";
 import styles from "../styles/CentroArmazenamento.module.css";
 
 interface Props {
@@ -14,6 +16,7 @@ const LocalizacaoForm: React.FC<Props> = ({ onSuccess, onError }) => {
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [centros, setCentros] = useState<CentroArmazenamento[]>([]);
+  const [produtos, setProdutos] = useState<Produto[]>([]);
 
   const [formData, setFormData] = useState<LocalizacaoFormData>({
     codigo: '',
@@ -25,11 +28,18 @@ const LocalizacaoForm: React.FC<Props> = ({ onSuccess, onError }) => {
     status: 'ATIVO',
   });
   const [idCentro, setIdCentro] = useState<number>(0);
+  const [idProduto, setIdProduto] = useState<number>(0);
+  const [quantidade, setQuantidade] = useState<number | null>(null);
 
   useEffect(() => {
     centroArmazenamentoService
       .listar()
       .then(setCentros)
+      .catch(() => {});
+
+    produtoService
+      .listar()
+      .then(setProdutos)
       .catch(() => {});
   }, []);
 
@@ -40,6 +50,10 @@ const LocalizacaoForm: React.FC<Props> = ({ onSuccess, onError }) => {
 
     if (name === 'id_centro') {
       setIdCentro(Number(value));
+    } else if (name === 'id_produto') {
+      setIdProduto(Number(value));
+    } else if (name === 'quantidade') {
+      setQuantidade(value === '' ? null : Number(value));
     } else if (name === 'capacidade_max') {
       setFormData(prev => ({
         ...prev,
@@ -59,6 +73,14 @@ const LocalizacaoForm: React.FC<Props> = ({ onSuccess, onError }) => {
 
     if (!idCentro) {
       newErrors.id_centro = 'Centro de armazenamento é obrigatório';
+    }
+
+    if (!idProduto) {
+      newErrors.id_produto = 'Selecione o produto para esta localização';
+    }
+
+    if (quantidade != null && quantidade < 1) {
+      newErrors.quantidade = 'Quantidade deve ser no mínimo 1';
     }
 
     if (!formData.codigo.trim()) {
@@ -83,7 +105,14 @@ const LocalizacaoForm: React.FC<Props> = ({ onSuccess, onError }) => {
     setLoading(true);
 
     try {
-      await localizacaoService.cadastrar(idCentro, formData);
+      const idLocalizacao = await localizacaoService.cadastrar(idCentro, formData);
+      if (idProduto) {
+        await localizacaoService.vincularProduto({
+          id_produto: idProduto,
+          id_localizacao: idLocalizacao,
+          quantidade: quantidade != null && quantidade > 0 ? quantidade : null,
+        });
+      }
       setFormData({
         codigo: '',
         descricao: '',
@@ -94,6 +123,8 @@ const LocalizacaoForm: React.FC<Props> = ({ onSuccess, onError }) => {
         status: 'ATIVO',
       });
       setIdCentro(0);
+      setIdProduto(0);
+      setQuantidade(null);
       setErrors({});
       onSuccess();
     } catch (err: any) {
@@ -123,6 +154,47 @@ const LocalizacaoForm: React.FC<Props> = ({ onSuccess, onError }) => {
             ))}
           </select>
           {errors.id_centro && <span className={styles.errorMessage}>{errors.id_centro}</span>}
+        </div>
+
+        <div className={styles.formGroup}>
+          <label htmlFor="id_produto" className={styles.labelWithHelp}>
+            Produto *
+            <span className={styles.helpTooltip} tabIndex={0}>
+              <span className={styles.helpIcon}>?</span>
+              <span className={styles.helpContent}>
+                <strong>Produto</strong> que será armazenado nesta localização. O vínculo fica
+                registrado com o id da empresa, garantindo isolamento por empresa.
+              </span>
+            </span>
+          </label>
+          <select
+            id="id_produto"
+            name="id_produto"
+            value={idProduto}
+            onChange={handleChange}
+            className={errors.id_produto ? styles.inputError : styles.input}
+          >
+            <option value={0}>Selecione o produto</option>
+            {(Array.isArray(produtos) ? produtos : []).map(p => (
+              <option key={p.id_produto} value={p.id_produto}>{p.nome}</option>
+            ))}
+          </select>
+          {errors.id_produto && <span className={styles.errorMessage}>{errors.id_produto}</span>}
+        </div>
+
+        <div className={styles.formGroup}>
+          <label htmlFor="quantidade">Quantidade</label>
+          <input
+            type="number"
+            id="quantidade"
+            name="quantidade"
+            value={quantidade ?? ''}
+            onChange={handleChange}
+            className={errors.quantidade ? styles.inputError : styles.input}
+            placeholder="Opcional"
+            min="1"
+          />
+          {errors.quantidade && <span className={styles.errorMessage}>{errors.quantidade}</span>}
         </div>
 
         <div className={styles.formGroup}>
