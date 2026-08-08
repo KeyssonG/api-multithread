@@ -6,6 +6,7 @@ import type { Localizacao, LocalizacaoFormData } from "../types/localizacao";
 import type { CentroArmazenamento } from "../types/centroArmazenamento";
 import type { Produto } from "../types/produto";
 import styles from "../styles/Estoque.module.css";
+import formStyles from "../styles/CentroArmazenamento.module.css";
 
 interface Props {
   onNovo: () => void;
@@ -32,6 +33,7 @@ const LocalizacaoList: React.FC<Props> = ({ onNovo, onError, onSuccess }) => {
   const [menuAberto, setMenuAberto] = useState<number | null>(null);
   const [editandoId, setEditandoId] = useState<number | null>(null);
   const [formEdicao, setFormEdicao] = useState<LocalizacaoFormData>(FORM_VAZIO);
+  const [errorsEdicao, setErrorsEdicao] = useState<Record<string, string>>({});
   const [idProdutoEdicao, setIdProdutoEdicao] = useState<number>(0);
   const [quantidadeEdicao, setQuantidadeEdicao] = useState<number | null>(null);
   const [salvando, setSalvando] = useState(false);
@@ -74,6 +76,8 @@ const LocalizacaoList: React.FC<Props> = ({ onNovo, onError, onSuccess }) => {
     carregarLocalizacoes(id);
   };
 
+  const produtoSelecionadoEdicao = produtos.find(p => p.id_produto === idProdutoEdicao);
+
   const abrirEdicao = (loc: Localizacao) => {
     setEditandoId(loc.id_localizacao);
     setFormEdicao({
@@ -85,6 +89,7 @@ const LocalizacaoList: React.FC<Props> = ({ onNovo, onError, onSuccess }) => {
       capacidade_max: loc.capacidade_max ?? null,
       status: loc.status,
     });
+    setErrorsEdicao({});
     setIdProdutoEdicao(loc.id_produto ?? 0);
     setQuantidadeEdicao(loc.quantidade ?? null);
     setMenuAberto(null);
@@ -93,6 +98,7 @@ const LocalizacaoList: React.FC<Props> = ({ onNovo, onError, onSuccess }) => {
   const fecharEdicao = () => {
     setEditandoId(null);
     setFormEdicao(FORM_VAZIO);
+    setErrorsEdicao({});
     setIdProdutoEdicao(0);
     setQuantidadeEdicao(null);
   };
@@ -101,6 +107,9 @@ const LocalizacaoList: React.FC<Props> = ({ onNovo, onError, onSuccess }) => {
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
   ) => {
     const { name, value } = e.target;
+    if (name === 'codigo' || name === 'capacidade_max') {
+      setErrorsEdicao(prev => ({ ...prev, [name]: '' }));
+    }
     setFormEdicao(prev => ({
       ...prev,
       [name]: name === 'capacidade_max' ? (value === '' ? null : Number(value)) : value,
@@ -108,12 +117,28 @@ const LocalizacaoList: React.FC<Props> = ({ onNovo, onError, onSuccess }) => {
   };
 
   const salvarEdicao = async (loc: Localizacao) => {
+    const newErrors: Record<string, string> = {};
+
     if (!formEdicao.codigo.trim()) {
-      onError('Código da localização é obrigatório');
-      return;
+      newErrors.codigo = 'Código da localização é obrigatório';
+    } else if (formEdicao.codigo.trim().length > 50) {
+      newErrors.codigo = 'Código deve ter no máximo 50 caracteres';
     }
+
     if (formEdicao.capacidade_max != null && formEdicao.capacidade_max < 0) {
-      onError('Capacidade máxima não pode ser negativa');
+      newErrors.capacidade_max = 'Capacidade máxima não pode ser negativa';
+    }
+
+    if (!idProdutoEdicao) {
+      newErrors.id_produto = 'Selecione o produto para esta localização';
+    }
+
+    if (quantidadeEdicao != null && quantidadeEdicao < 1) {
+      newErrors.quantidade = 'Quantidade deve ser no mínimo 1';
+    }
+
+    setErrorsEdicao(newErrors);
+    if (Object.keys(newErrors).length > 0) {
       return;
     }
     setSalvando(true);
@@ -241,15 +266,23 @@ const LocalizacaoList: React.FC<Props> = ({ onNovo, onError, onSuccess }) => {
                   <div className={styles.cardDetails}>
                     <span className={`${styles.cardBadge} ${styles.produtoBadge}`}>
                       Produto: {loc.produto_nome}
-                      {loc.quantidade != null ? ` · ${loc.quantidade} un` : ''}
+                      {loc.quantidade != null ? ` · Vinculado: ${loc.quantidade} un` : ''}
                     </span>
+                    {(() => {
+                      const prod = produtos.find(p => p.id_produto === loc.id_produto);
+                      return prod ? (
+                        <span className={styles.cardFooter}>
+                          Estoque atual: {prod.qtd_estoque_atual} {prod.unidade_medida}
+                        </span>
+                      ) : null;
+                    })()}
                   </div>
                 )}
 
                 {editandoId === loc.id_localizacao && (
-                  <div className={styles.editPanel}>
-                    <div className={styles.formGrid}>
-                      <div className={styles.formGroup}>
+                  <div className={formStyles.form}>
+                    <div className={formStyles.formGrid}>
+                      <div className={formStyles.formGroup}>
                         <label htmlFor={`codigo-${loc.id_localizacao}`}>Código *</label>
                         <input
                           type="text"
@@ -257,12 +290,15 @@ const LocalizacaoList: React.FC<Props> = ({ onNovo, onError, onSuccess }) => {
                           name="codigo"
                           value={formEdicao.codigo}
                           onChange={handleChangeEdicao}
-                          className={styles.input}
+                          className={errorsEdicao.codigo ? formStyles.inputError : formStyles.input}
                           maxLength={50}
                         />
+                        {errorsEdicao.codigo && (
+                          <span className={formStyles.errorMessage}>{errorsEdicao.codigo}</span>
+                        )}
                       </div>
 
-                      <div className={styles.formGroup}>
+                      <div className={formStyles.formGroup}>
                         <label htmlFor={`corredor-${loc.id_localizacao}`}>Corredor</label>
                         <input
                           type="text"
@@ -270,12 +306,12 @@ const LocalizacaoList: React.FC<Props> = ({ onNovo, onError, onSuccess }) => {
                           name="corredor"
                           value={formEdicao.corredor || ''}
                           onChange={handleChangeEdicao}
-                          className={styles.input}
+                          className={formStyles.input}
                           placeholder="Ex: A, B, C"
                         />
                       </div>
 
-                      <div className={styles.formGroup}>
+                      <div className={formStyles.formGroup}>
                         <label htmlFor={`prateleira-${loc.id_localizacao}`}>Prateleira</label>
                         <input
                           type="text"
@@ -283,12 +319,12 @@ const LocalizacaoList: React.FC<Props> = ({ onNovo, onError, onSuccess }) => {
                           name="prateleira"
                           value={formEdicao.prateleira || ''}
                           onChange={handleChangeEdicao}
-                          className={styles.input}
+                          className={formStyles.input}
                           placeholder="Ex: 01, 02"
                         />
                       </div>
 
-                      <div className={styles.formGroup}>
+                      <div className={formStyles.formGroup}>
                         <label htmlFor={`nivel-${loc.id_localizacao}`}>Nível</label>
                         <input
                           type="text"
@@ -296,12 +332,12 @@ const LocalizacaoList: React.FC<Props> = ({ onNovo, onError, onSuccess }) => {
                           name="nivel"
                           value={formEdicao.nivel || ''}
                           onChange={handleChangeEdicao}
-                          className={styles.input}
+                          className={formStyles.input}
                           placeholder="Ex: 1, 2, 3"
                         />
                       </div>
 
-                      <div className={styles.formGroup}>
+                      <div className={formStyles.formGroup}>
                         <label htmlFor={`capacidade-${loc.id_localizacao}`}>Capacidade Máxima</label>
                         <input
                           type="number"
@@ -309,80 +345,112 @@ const LocalizacaoList: React.FC<Props> = ({ onNovo, onError, onSuccess }) => {
                           name="capacidade_max"
                           value={formEdicao.capacidade_max ?? ''}
                           onChange={handleChangeEdicao}
-                          className={styles.input}
+                          className={errorsEdicao.capacidade_max ? formStyles.inputError : formStyles.input}
                           placeholder="Opcional"
                           min="0"
                         />
+                        {errorsEdicao.capacidade_max && (
+                          <span className={formStyles.errorMessage}>{errorsEdicao.capacidade_max}</span>
+                        )}
                       </div>
 
-                      <div className={styles.formGroup}>
+                      <div className={formStyles.formGroup}>
                         <label htmlFor={`status-${loc.id_localizacao}`}>Status</label>
                         <select
                           id={`status-${loc.id_localizacao}`}
                           name="status"
                           value={formEdicao.status}
                           onChange={handleChangeEdicao}
-                          className={styles.input}
+                          className={formStyles.input}
                         >
                           <option value="ATIVO">Ativo</option>
                           <option value="INATIVO">Inativo</option>
                         </select>
                       </div>
 
-                      <div className={styles.formGroup}>
-                        <label htmlFor={`produto-${loc.id_localizacao}`}>Produto</label>
+                      <div className={formStyles.formGroup}>
+                        <label htmlFor={`produto-${loc.id_localizacao}`}>Produto *</label>
                         <select
                           id={`produto-${loc.id_localizacao}`}
                           value={idProdutoEdicao}
-                          onChange={e => setIdProdutoEdicao(Number(e.target.value))}
-                          className={styles.input}
+                          onChange={e => {
+                            setIdProdutoEdicao(Number(e.target.value));
+                            if (errorsEdicao.id_produto) {
+                              setErrorsEdicao(prev => ({ ...prev, id_produto: '' }));
+                            }
+                          }}
+                          className={errorsEdicao.id_produto ? formStyles.inputError : formStyles.input}
                         >
                           <option value={0}>Selecione o produto</option>
                           {(Array.isArray(produtos) ? produtos : []).map(p => (
                             <option key={p.id_produto} value={p.id_produto}>{p.nome}</option>
                           ))}
                         </select>
+                        {errorsEdicao.id_produto && (
+                          <span className={formStyles.errorMessage}>{errorsEdicao.id_produto}</span>
+                        )}
+                        {produtoSelecionadoEdicao && (
+                          <span className={formStyles.estoqueInfo}>
+                            Estoque disponível: <strong>{produtoSelecionadoEdicao.qtd_estoque_atual}</strong>{' '}
+                            {produtoSelecionadoEdicao.unidade_medida}
+                          </span>
+                        )}
                       </div>
 
-                      <div className={styles.formGroup}>
+                      <div className={formStyles.formGroup}>
                         <label htmlFor={`quantidade-${loc.id_localizacao}`}>Quantidade</label>
                         <input
                           type="number"
                           id={`quantidade-${loc.id_localizacao}`}
                           value={quantidadeEdicao ?? ''}
-                          onChange={e =>
-                            setQuantidadeEdicao(e.target.value === '' ? null : Number(e.target.value))
-                          }
-                          className={styles.input}
+                          onChange={e => {
+                            setQuantidadeEdicao(e.target.value === '' ? null : Number(e.target.value));
+                            if (errorsEdicao.quantidade) {
+                              setErrorsEdicao(prev => ({ ...prev, quantidade: '' }));
+                            }
+                          }}
+                          className={errorsEdicao.quantidade ? formStyles.inputError : formStyles.input}
                           placeholder="Opcional"
                           min="1"
                         />
+                        {errorsEdicao.quantidade && (
+                          <span className={formStyles.errorMessage}>{errorsEdicao.quantidade}</span>
+                        )}
+                        {produtoSelecionadoEdicao && produtoSelecionadoEdicao.qtd_estoque_atual > 0 && (
+                          <button
+                            type="button"
+                            className={formStyles.selectAllButton}
+                            onClick={() => setQuantidadeEdicao(produtoSelecionadoEdicao.qtd_estoque_atual)}
+                          >
+                            Selecionar tudo ({produtoSelecionadoEdicao.qtd_estoque_atual})
+                          </button>
+                        )}
                       </div>
 
-                      <div className={`${styles.formGroup} ${styles.fullWidth}`}>
+                      <div className={`${formStyles.formGroup} ${formStyles.fullWidth}`}>
                         <label htmlFor={`descricao-${loc.id_localizacao}`}>Descrição</label>
                         <textarea
                           id={`descricao-${loc.id_localizacao}`}
                           name="descricao"
                           value={formEdicao.descricao || ''}
                           onChange={handleChangeEdicao}
-                          className={styles.textarea}
+                          className={formStyles.textarea}
                           placeholder="Descrição da localização (opcional)"
                           rows={2}
                         />
                       </div>
                     </div>
 
-                    <div className={styles.formActions}>
+                    <div className={formStyles.formActions}>
                       <button
-                        className={styles.submitButton}
+                        className={formStyles.submitButton}
                         onClick={() => salvarEdicao(loc)}
                         disabled={salvando}
                       >
                         {salvando ? 'Salvando...' : 'Salvar'}
                       </button>
                       <button
-                        className={styles.deleteButton}
+                        className={formStyles.deleteButton}
                         onClick={fecharEdicao}
                         disabled={salvando}
                       >
