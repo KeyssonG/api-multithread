@@ -31,6 +31,8 @@ const LocalizacaoForm: React.FC<Props> = ({ onSuccess, onError }) => {
   const [idProduto, setIdProduto] = useState<number>(0);
   const [quantidade, setQuantidade] = useState<number | null>(null);
 
+  const produtoSelecionado = produtos.find(p => p.id_produto === idProduto);
+
   useEffect(() => {
     centroArmazenamentoService
       .listar()
@@ -180,6 +182,12 @@ const LocalizacaoForm: React.FC<Props> = ({ onSuccess, onError }) => {
             ))}
           </select>
           {errors.id_produto && <span className={styles.errorMessage}>{errors.id_produto}</span>}
+          {produtoSelecionado && (
+            <span className={styles.estoqueInfo}>
+              Estoque disponível: <strong>{produtoSelecionado.qtd_estoque_atual}</strong>{' '}
+              {produtoSelecionado.unidade_medida}
+            </span>
+          )}
         </div>
 
         <div className={styles.formGroup}>
@@ -195,6 +203,15 @@ const LocalizacaoForm: React.FC<Props> = ({ onSuccess, onError }) => {
             min="1"
           />
           {errors.quantidade && <span className={styles.errorMessage}>{errors.quantidade}</span>}
+          {produtoSelecionado && produtoSelecionado.qtd_estoque_atual > 0 && (
+            <button
+              type="button"
+              className={styles.selectAllButton}
+              onClick={() => setQuantidade(produtoSelecionado.qtd_estoque_atual)}
+            >
+              Selecionar tudo ({produtoSelecionado.qtd_estoque_atual})
+            </button>
+          )}
         </div>
 
         <div className={styles.formGroup}>

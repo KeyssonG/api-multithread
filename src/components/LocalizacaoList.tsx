@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import centroArmazenamentoService from "../services/centroArmazenamentoService";
 import localizacaoService from "../services/localizacaoService";
 import produtoService from "../services/produtoService";
-import type { Localizacao } from "../types/localizacao";
+import type { Localizacao, LocalizacaoFormData } from "../types/localizacao";
 import type { CentroArmazenamento } from "../types/centroArmazenamento";
 import type { Produto } from "../types/produto";
 import styles from "../styles/Estoque.module.css";
@@ -13,6 +13,16 @@ interface Props {
   onSuccess?: (msg: string) => void;
 }
 
+const FORM_VAZIO: LocalizacaoFormData = {
+  codigo: '',
+  descricao: '',
+  corredor: '',
+  prateleira: '',
+  nivel: '',
+  capacidade_max: null,
+  status: 'ATIVO',
+};
+
 const LocalizacaoList: React.FC<Props> = ({ onNovo, onError, onSuccess }) => {
   const [centros, setCentros] = useState<CentroArmazenamento[]>([]);
   const [idCentroSelecionado, setIdCentroSelecionado] = useState<number>(0);
@@ -20,9 +30,10 @@ const LocalizacaoList: React.FC<Props> = ({ onNovo, onError, onSuccess }) => {
   const [produtos, setProdutos] = useState<Produto[]>([]);
   const [loading, setLoading] = useState(true);
   const [menuAberto, setMenuAberto] = useState<number | null>(null);
-  const [vinculandoId, setVinculandoId] = useState<number | null>(null);
-  const [idProduto, setIdProduto] = useState<number>(0);
-  const [quantidade, setQuantidade] = useState<number | null>(null);
+  const [editandoId, setEditandoId] = useState<number | null>(null);
+  const [formEdicao, setFormEdicao] = useState<LocalizacaoFormData>(FORM_VAZIO);
+  const [idProdutoEdicao, setIdProdutoEdicao] = useState<number>(0);
+  const [quantidadeEdicao, setQuantidadeEdicao] = useState<number | null>(null);
   const [salvando, setSalvando] = useState(false);
 
   useEffect(() => {
@@ -59,31 +70,69 @@ const LocalizacaoList: React.FC<Props> = ({ onNovo, onError, onSuccess }) => {
   const handleSelecionarCentro = (id: number) => {
     setIdCentroSelecionado(id);
     setMenuAberto(null);
-    setVinculandoId(null);
+    fecharEdicao();
     carregarLocalizacoes(id);
   };
 
-  const handleVincularProduto = async (idLocalizacao: number) => {
-    if (!idProduto) {
-      onError('Selecione um produto para vincular');
+  const abrirEdicao = (loc: Localizacao) => {
+    setEditandoId(loc.id_localizacao);
+    setFormEdicao({
+      codigo: loc.codigo,
+      descricao: loc.descricao || '',
+      corredor: loc.corredor || '',
+      prateleira: loc.prateleira || '',
+      nivel: loc.nivel || '',
+      capacidade_max: loc.capacidade_max ?? null,
+      status: loc.status,
+    });
+    setIdProdutoEdicao(loc.id_produto ?? 0);
+    setQuantidadeEdicao(loc.quantidade ?? null);
+    setMenuAberto(null);
+  };
+
+  const fecharEdicao = () => {
+    setEditandoId(null);
+    setFormEdicao(FORM_VAZIO);
+    setIdProdutoEdicao(0);
+    setQuantidadeEdicao(null);
+  };
+
+  const handleChangeEdicao = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
+  ) => {
+    const { name, value } = e.target;
+    setFormEdicao(prev => ({
+      ...prev,
+      [name]: name === 'capacidade_max' ? (value === '' ? null : Number(value)) : value,
+    }));
+  };
+
+  const salvarEdicao = async (loc: Localizacao) => {
+    if (!formEdicao.codigo.trim()) {
+      onError('Código da localização é obrigatório');
+      return;
+    }
+    if (formEdicao.capacidade_max != null && formEdicao.capacidade_max < 0) {
+      onError('Capacidade máxima não pode ser negativa');
       return;
     }
     setSalvando(true);
     try {
-      await localizacaoService.vincularProduto({
-        id_produto: idProduto,
-        id_localizacao: idLocalizacao,
-        quantidade: quantidade != null && quantidade > 0 ? quantidade : null,
-      });
-      setIdProduto(0);
-      setQuantidade(null);
-      setVinculandoId(null);
-      setMenuAberto(null);
-      if (onSuccess) {
-        onSuccess('Produto vinculado à localização com sucesso!');
+      await localizacaoService.atualizar(idCentroSelecionado, loc.id_localizacao, formEdicao);
+      if (idProdutoEdicao) {
+        await localizacaoService.atualizarVinculoProduto({
+          id_produto: idProdutoEdicao,
+          id_localizacao: loc.id_localizacao,
+          quantidade: quantidadeEdicao != null && quantidadeEdicao > 0 ? quantidadeEdicao : null,
+        });
       }
+      fecharEdicao();
+      if (onSuccess) {
+        onSuccess('Localização atualizada com sucesso!');
+      }
+      await carregarLocalizacoes(idCentroSelecionado);
     } catch (err: any) {
-      const msg = err.response?.data?.message || err.message || 'Erro ao vincular produto';
+      const msg = err.response?.data?.message || err.message || 'Erro ao atualizar localização';
       onError(msg);
     } finally {
       setSalvando(false);
@@ -187,6 +236,161 @@ const LocalizacaoList: React.FC<Props> = ({ onNovo, onError, onSuccess }) => {
                   {loc.nivel && <span>Nível: {loc.nivel}</span>}
                   <span>Capacidade: {loc.capacidade_max != null ? loc.capacidade_max : 'N/I'}</span>
                 </div>
+
+                {loc.produto_nome && (
+                  <div className={styles.cardDetails}>
+                    <span className={`${styles.cardBadge} ${styles.produtoBadge}`}>
+                      Produto: {loc.produto_nome}
+                      {loc.quantidade != null ? ` · ${loc.quantidade} un` : ''}
+                    </span>
+                  </div>
+                )}
+
+                {editandoId === loc.id_localizacao && (
+                  <div className={styles.editPanel}>
+                    <div className={styles.formGrid}>
+                      <div className={styles.formGroup}>
+                        <label htmlFor={`codigo-${loc.id_localizacao}`}>Código *</label>
+                        <input
+                          type="text"
+                          id={`codigo-${loc.id_localizacao}`}
+                          name="codigo"
+                          value={formEdicao.codigo}
+                          onChange={handleChangeEdicao}
+                          className={styles.input}
+                          maxLength={50}
+                        />
+                      </div>
+
+                      <div className={styles.formGroup}>
+                        <label htmlFor={`corredor-${loc.id_localizacao}`}>Corredor</label>
+                        <input
+                          type="text"
+                          id={`corredor-${loc.id_localizacao}`}
+                          name="corredor"
+                          value={formEdicao.corredor || ''}
+                          onChange={handleChangeEdicao}
+                          className={styles.input}
+                          placeholder="Ex: A, B, C"
+                        />
+                      </div>
+
+                      <div className={styles.formGroup}>
+                        <label htmlFor={`prateleira-${loc.id_localizacao}`}>Prateleira</label>
+                        <input
+                          type="text"
+                          id={`prateleira-${loc.id_localizacao}`}
+                          name="prateleira"
+                          value={formEdicao.prateleira || ''}
+                          onChange={handleChangeEdicao}
+                          className={styles.input}
+                          placeholder="Ex: 01, 02"
+                        />
+                      </div>
+
+                      <div className={styles.formGroup}>
+                        <label htmlFor={`nivel-${loc.id_localizacao}`}>Nível</label>
+                        <input
+                          type="text"
+                          id={`nivel-${loc.id_localizacao}`}
+                          name="nivel"
+                          value={formEdicao.nivel || ''}
+                          onChange={handleChangeEdicao}
+                          className={styles.input}
+                          placeholder="Ex: 1, 2, 3"
+                        />
+                      </div>
+
+                      <div className={styles.formGroup}>
+                        <label htmlFor={`capacidade-${loc.id_localizacao}`}>Capacidade Máxima</label>
+                        <input
+                          type="number"
+                          id={`capacidade-${loc.id_localizacao}`}
+                          name="capacidade_max"
+                          value={formEdicao.capacidade_max ?? ''}
+                          onChange={handleChangeEdicao}
+                          className={styles.input}
+                          placeholder="Opcional"
+                          min="0"
+                        />
+                      </div>
+
+                      <div className={styles.formGroup}>
+                        <label htmlFor={`status-${loc.id_localizacao}`}>Status</label>
+                        <select
+                          id={`status-${loc.id_localizacao}`}
+                          name="status"
+                          value={formEdicao.status}
+                          onChange={handleChangeEdicao}
+                          className={styles.input}
+                        >
+                          <option value="ATIVO">Ativo</option>
+                          <option value="INATIVO">Inativo</option>
+                        </select>
+                      </div>
+
+                      <div className={styles.formGroup}>
+                        <label htmlFor={`produto-${loc.id_localizacao}`}>Produto</label>
+                        <select
+                          id={`produto-${loc.id_localizacao}`}
+                          value={idProdutoEdicao}
+                          onChange={e => setIdProdutoEdicao(Number(e.target.value))}
+                          className={styles.input}
+                        >
+                          <option value={0}>Selecione o produto</option>
+                          {(Array.isArray(produtos) ? produtos : []).map(p => (
+                            <option key={p.id_produto} value={p.id_produto}>{p.nome}</option>
+                          ))}
+                        </select>
+                      </div>
+
+                      <div className={styles.formGroup}>
+                        <label htmlFor={`quantidade-${loc.id_localizacao}`}>Quantidade</label>
+                        <input
+                          type="number"
+                          id={`quantidade-${loc.id_localizacao}`}
+                          value={quantidadeEdicao ?? ''}
+                          onChange={e =>
+                            setQuantidadeEdicao(e.target.value === '' ? null : Number(e.target.value))
+                          }
+                          className={styles.input}
+                          placeholder="Opcional"
+                          min="1"
+                        />
+                      </div>
+
+                      <div className={`${styles.formGroup} ${styles.fullWidth}`}>
+                        <label htmlFor={`descricao-${loc.id_localizacao}`}>Descrição</label>
+                        <textarea
+                          id={`descricao-${loc.id_localizacao}`}
+                          name="descricao"
+                          value={formEdicao.descricao || ''}
+                          onChange={handleChangeEdicao}
+                          className={styles.textarea}
+                          placeholder="Descrição da localização (opcional)"
+                          rows={2}
+                        />
+                      </div>
+                    </div>
+
+                    <div className={styles.formActions}>
+                      <button
+                        className={styles.submitButton}
+                        onClick={() => salvarEdicao(loc)}
+                        disabled={salvando}
+                      >
+                        {salvando ? 'Salvando...' : 'Salvar'}
+                      </button>
+                      <button
+                        className={styles.deleteButton}
+                        onClick={fecharEdicao}
+                        disabled={salvando}
+                      >
+                        Cancelar
+                      </button>
+                    </div>
+                  </div>
+                )}
               </div>
 
               <div className={styles.menuContainer}>
@@ -202,71 +406,13 @@ const LocalizacaoList: React.FC<Props> = ({ onNovo, onError, onSuccess }) => {
                   <div className={styles.menuDropdown}>
                     <button
                       className={styles.editButton}
-                      onClick={() => {
-                        setVinculandoId(vinculandoId === loc.id_localizacao ? null : loc.id_localizacao);
-                        setMenuAberto(null);
-                      }}
+                      onClick={() => abrirEdicao(loc)}
                     >
-                      Vincular Produto
+                      Editar
                     </button>
                   </div>
                 )}
               </div>
-
-              {vinculandoId === loc.id_localizacao && (
-                <div className={styles.inlineForm}>
-                  <div className={styles.inlineFormGroup}>
-                    <label htmlFor={`produto-${loc.id_localizacao}`}>
-                      Produto
-                    </label>
-                    <select
-                      id={`produto-${loc.id_localizacao}`}
-                      value={idProduto}
-                      onChange={e => setIdProduto(Number(e.target.value))}
-                      className={styles.input}
-                    >
-                      <option value={0}>Selecione o produto</option>
-                      {(Array.isArray(produtos) ? produtos : []).map(p => (
-                        <option key={p.id_produto} value={p.id_produto}>{p.nome}</option>
-                      ))}
-                    </select>
-                  </div>
-                  <div className={styles.inlineFormGroup}>
-                    <label htmlFor={`quantidade-${loc.id_localizacao}`}>
-                      Quantidade
-                    </label>
-                    <input
-                      type="number"
-                      id={`quantidade-${loc.id_localizacao}`}
-                      value={quantidade ?? ''}
-                      onChange={e =>
-                        setQuantidade(e.target.value === '' ? null : Number(e.target.value))
-                      }
-                      className={styles.input}
-                      placeholder="Opcional"
-                      min="1"
-                    />
-                  </div>
-                  <button
-                    className={styles.addButton}
-                    onClick={() => handleVincularProduto(loc.id_localizacao)}
-                    disabled={salvando}
-                  >
-                    {salvando ? 'Vinculando...' : 'Vincular'}
-                  </button>
-                  <button
-                    className={styles.deleteButton}
-                    onClick={() => {
-                      setVinculandoId(null);
-                      setIdProduto(0);
-                      setQuantidade(null);
-                    }}
-                    disabled={salvando}
-                  >
-                    Cancelar
-                  </button>
-                </div>
-              )}
             </div>
           ))}
         </div>

@@ -26,6 +26,10 @@ const normalizeLocalizacao = (p: any): Localizacao => ({
       : undefined,
   status: (p.status ?? 'ATIVO') as Localizacao['status'],
   criado_em: p.criadoEm ?? p.criado_em ?? undefined,
+  id_produto_localizacao: p.idProdutoLocalizacao ?? p.id_produto_localizacao ?? undefined,
+  id_produto: p.idProduto ?? p.id_produto ?? undefined,
+  produto_nome: p.produtoNome ?? p.produto_nome ?? undefined,
+  quantidade: p.quantidade != null ? Number(p.quantidade) : undefined,
 });
 
 const normalizeProdutoLocalizacao = (p: any): ProdutoLocalizacao => ({
@@ -48,8 +52,16 @@ const localizacaoService = {
     return response.data;
   },
 
+  async atualizar(idCentro: number, idLocalizacao: number, data: LocalizacaoFormData): Promise<void> {
+    await api.put(`${ENDPOINT}/${idCentro}/localizacoes/${idLocalizacao}`, data);
+  },
+
   async vincularProduto(data: VincularProdutoLocalizacaoRequest): Promise<void> {
     await api.post(`${PRODUTO_ENDPOINT}/localizacoes`, data);
+  },
+
+  async atualizarVinculoProduto(data: VincularProdutoLocalizacaoRequest): Promise<void> {
+    await api.put(`${PRODUTO_ENDPOINT}/localizacoes`, data);
   },
 
   async listarLocalizacoesProduto(idProduto: number): Promise<ProdutoLocalizacao[]> {

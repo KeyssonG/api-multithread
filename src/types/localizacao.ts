@@ -9,6 +9,10 @@ export interface Localizacao {
   capacidade_max?: number;
   status: 'ATIVO' | 'INATIVO';
   criado_em?: string;
+  id_produto_localizacao?: number;
+  id_produto?: number;
+  produto_nome?: string;
+  quantidade?: number;
 }
 
 export interface LocalizacaoFormData {

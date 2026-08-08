@@ -488,7 +488,7 @@ const GestaoEstoque = () => {
                       </svg>
                     </div>
                     <h3>Consultar Localizações</h3>
-                    <p>Visualizar localizações por centro e vincular produtos.</p>
+                    <p>Visualizar localizações por centro e editar a localização e o produto reservado.</p>
                   </div>
                 </div>
               </div>
