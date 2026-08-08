@@ -16,6 +16,7 @@ import CategoriaList from "../components/CategoriaList";
 import LocalizacaoForm from "../components/LocalizacaoForm";
 import LocalizacaoList from "../components/LocalizacaoList";
 import type { CentroArmazenamento, CentroArmazenamentoFormData } from "../types/centroArmazenamento";
+import type { Localizacao } from "../types/localizacao";
 import type { Produto, Categoria } from "../types/produto";
 import { ROUTES } from "../constants/config";
 import styles from "../styles/GestaoEstoque.module.css";
@@ -29,6 +30,7 @@ const GestaoEstoque = () => {
   const [centroEditando, setCentroEditando] = useState<CentroArmazenamento | null>(null);
   const [produtoEditando, setProdutoEditando] = useState<Produto | null>(null);
   const [categoriaEditando, setCategoriaEditando] = useState<Categoria | null>(null);
+  const [localizacaoEditando, setLocalizacaoEditando] = useState<Localizacao | null>(null);
   const [popupMessage, setPopupMessage] = useState<string | null>(null);
   const [popupType, setPopupType] = useState<'success' | 'error'>('success');
 
@@ -42,6 +44,7 @@ const GestaoEstoque = () => {
     setCentroEditando(null);
     setProdutoEditando(null);
     setCategoriaEditando(null);
+    setLocalizacaoEditando(null);
   };
 
   const handleBackToSection = () => {
@@ -49,6 +52,7 @@ const GestaoEstoque = () => {
     setCentroEditando(null);
     setProdutoEditando(null);
     setCategoriaEditando(null);
+    setLocalizacaoEditando(null);
   };
 
   const handleNovoCentro = () => {
@@ -81,12 +85,23 @@ const GestaoEstoque = () => {
     setSubSection('cadastrar');
   };
 
+  const handleNovaLocalizacao = () => {
+    setLocalizacaoEditando(null);
+    setSubSection('cadastrar');
+  };
+
+  const handleEditarLocalizacao = (loc: Localizacao) => {
+    setLocalizacaoEditando(loc);
+    setSubSection('cadastrar');
+  };
+
   const handleFormSuccess = (msg?: string) => {
-    showPopup(msg || (centroEditando || produtoEditando || categoriaEditando ? 'Atualizado com sucesso!' : 'Cadastrado com sucesso!'), 'success');
+    showPopup(msg || (centroEditando || produtoEditando || categoriaEditando || localizacaoEditando ? 'Atualizado com sucesso!' : 'Cadastrado com sucesso!'), 'success');
     setSubSection('consultar');
     setCentroEditando(null);
     setProdutoEditando(null);
     setCategoriaEditando(null);
+    setLocalizacaoEditando(null);
   };
 
   const handleFormError = (msg: string) => {
@@ -135,6 +150,9 @@ const GestaoEstoque = () => {
     }
     if (activeSection === 'categorias') {
       return categoriaEditando ? 'Editar' : subSection === 'cadastrar' ? 'Cadastrar' : 'Consultar';
+    }
+    if (activeSection === 'localizacoes') {
+      return localizacaoEditando ? 'Editar' : subSection === 'cadastrar' ? 'Cadastrar' : 'Consultar';
     }
     if (activeSection === 'movimentacoes') {
       return subSection === 'cadastrar' ? 'Registrar' : 'Consultar';
@@ -470,7 +488,7 @@ const GestaoEstoque = () => {
             !subSection ? (
               <div className={styles.sectionContent}>
                 <div className={styles.subMenuGrid}>
-                  <div className={styles.subMenuCard} onClick={() => setSubSection('cadastrar')}>
+                  <div className={styles.subMenuCard} onClick={handleNovaLocalizacao}>
                     <div className={styles.subMenuIcon}>
                       <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path d="M12 5v14" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
@@ -496,20 +514,36 @@ const GestaoEstoque = () => {
               <div className={styles.sectionContent}>
                 <div className={styles.formContainer}>
                   <p className={styles.formDescription}>
-                    Preencha os dados da nova localização.
+                    {localizacaoEditando
+                      ? `Editando: ${localizacaoEditando.codigo}`
+                      : 'Preencha os dados da nova localização.'}
                   </p>
                   <LocalizacaoForm
-                    onSuccess={() => handleFormSuccess('Localização cadastrada com sucesso!')}
+                    onSuccess={() => handleFormSuccess(localizacaoEditando ? 'Localização atualizada com sucesso!' : 'Localização cadastrada com sucesso!')}
                     onError={handleFormError}
+                    dadosIniciais={localizacaoEditando ? {
+                      codigo: localizacaoEditando.codigo,
+                      descricao: localizacaoEditando.descricao || '',
+                      corredor: localizacaoEditando.corredor || '',
+                      prateleira: localizacaoEditando.prateleira || '',
+                      nivel: localizacaoEditando.nivel || '',
+                      capacidade_max: localizacaoEditando.capacidade_max ?? null,
+                      status: localizacaoEditando.status,
+                      id_centro: localizacaoEditando.id_centro,
+                    } : undefined}
+                    idEdicao={localizacaoEditando?.id_localizacao}
+                    idProdutoEdicao={localizacaoEditando?.id_produto ?? 0}
+                    quantidadeEdicao={localizacaoEditando?.quantidade ?? null}
+                    modoEdicao={!!localizacaoEditando}
                   />
                 </div>
               </div>
             ) : subSection === 'consultar' ? (
               <div className={styles.sectionContent}>
                 <LocalizacaoList
-                  onNovo={() => setSubSection('cadastrar')}
+                  onNovo={handleNovaLocalizacao}
+                  onEditar={handleEditarLocalizacao}
                   onError={(msg) => showPopup(msg, 'error')}
-                  onSuccess={(msg) => showPopup(msg, 'success')}
                 />
               </div>
             ) : null

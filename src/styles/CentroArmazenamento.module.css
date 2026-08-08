@@ -163,18 +163,23 @@ select:focus {
 .selectAllButton {
   font-family: 'Poppins', sans-serif;
   font-size: 0.8rem;
-  font-weight: 500;
+  font-weight: 600;
   color: #5d6cf6;
-  background: none;
-  border: none;
-  padding: 0;
+  background: #eef0fe;
+  border: 1px solid #dbe0fd;
+  padding: 6px 14px;
   margin-top: 8px;
+  border-radius: 8px;
   cursor: pointer;
-  text-decoration: underline;
+  transition: all 0.2s ease;
+  align-self: flex-start;
 }
 
 .selectAllButton:hover {
-  color: #4b57cc;
+  background: #5d6cf6;
+  color: white;
+  border-color: #5d6cf6;
+  box-shadow: 0 3px 10px rgba(93, 108, 246, 0.3);
 }
 
 .formActions {

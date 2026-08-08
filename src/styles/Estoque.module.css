@@ -742,6 +742,7 @@ select:focus {
   align-items: flex-end;
   flex-wrap: wrap;
   margin-top: 12px;
+  margin-bottom: 16px;
 }
 
 .inlineFormGroup {

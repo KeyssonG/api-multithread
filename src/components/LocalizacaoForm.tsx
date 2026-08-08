@@ -10,9 +10,22 @@ import styles from "../styles/CentroArmazenamento.module.css";
 interface Props {
   onSuccess: () => void;
   onError: (msg: string) => void;
+  dadosIniciais?: LocalizacaoFormData & { id_centro?: number };
+  idEdicao?: number;
+  idProdutoEdicao?: number;
+  quantidadeEdicao?: number | null;
+  modoEdicao?: boolean;
 }
 
-const LocalizacaoForm: React.FC<Props> = ({ onSuccess, onError }) => {
+const LocalizacaoForm: React.FC<Props> = ({
+  onSuccess,
+  onError,
+  dadosIniciais,
+  idEdicao,
+  idProdutoEdicao = 0,
+  quantidadeEdicao = null,
+  modoEdicao = false,
+}) => {
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [centros, setCentros] = useState<CentroArmazenamento[]>([]);
@@ -44,6 +57,23 @@ const LocalizacaoForm: React.FC<Props> = ({ onSuccess, onError }) => {
       .then(setProdutos)
       .catch(() => {});
   }, []);
+
+  useEffect(() => {
+    if (dadosIniciais && modoEdicao) {
+      setFormData({
+        codigo: dadosIniciais.codigo,
+        descricao: dadosIniciais.descricao || '',
+        corredor: dadosIniciais.corredor || '',
+        prateleira: dadosIniciais.prateleira || '',
+        nivel: dadosIniciais.nivel || '',
+        capacidade_max: dadosIniciais.capacidade_max ?? null,
+        status: dadosIniciais.status || 'ATIVO',
+      });
+      setIdCentro(dadosIniciais.id_centro ?? 0);
+      setIdProduto(idProdutoEdicao);
+      setQuantidade(quantidadeEdicao ?? null);
+    }
+  }, [dadosIniciais, modoEdicao, idProdutoEdicao, quantidadeEdicao]);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
@@ -107,13 +137,22 @@ const LocalizacaoForm: React.FC<Props> = ({ onSuccess, onError }) => {
     setLoading(true);
 
     try {
-      const idLocalizacao = await localizacaoService.cadastrar(idCentro, formData);
-      if (idProduto) {
-        await localizacaoService.vincularProduto({
+      if (modoEdicao && idEdicao) {
+        await localizacaoService.atualizar(idCentro, idEdicao, formData);
+        await localizacaoService.atualizarVinculoProduto({
           id_produto: idProduto,
-          id_localizacao: idLocalizacao,
+          id_localizacao: idEdicao,
           quantidade: quantidade != null && quantidade > 0 ? quantidade : null,
         });
+      } else {
+        const idLocalizacao = await localizacaoService.cadastrar(idCentro, formData);
+        if (idProduto) {
+          await localizacaoService.vincularProduto({
+            id_produto: idProduto,
+            id_localizacao: idLocalizacao,
+            quantidade: quantidade != null && quantidade > 0 ? quantidade : null,
+          });
+        }
       }
       setFormData({
         codigo: '',
@@ -329,7 +368,11 @@ const LocalizacaoForm: React.FC<Props> = ({ onSuccess, onError }) => {
           className={styles.submitButton}
           disabled={loading}
         >
-          {loading ? 'Salvando...' : 'Cadastrar Localização'}
+          {loading
+            ? 'Salvando...'
+            : modoEdicao
+              ? 'Atualizar Localização'
+              : 'Cadastrar Localização'}
         </button>
       </div>
     </form>
